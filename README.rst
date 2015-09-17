@@ -8,7 +8,7 @@ If the function has sphinx autodoc style docstring, it is also used.
 tl;dr
 ----------------------------------------
 
-..code-block:: python
+.. code-block:: python
 
   # greeting.py
   from cathand import as_command
@@ -19,7 +19,7 @@ tl;dr
       print("{name}: {message}{suffix}".format(name=name, message=message, suffix=suffix))
 
 
-..code-block:: bash
+.. code-block:: bash
 
   $ python greeting.py
   usage: greeting.py [-h] [--is_surprised] [--name NAME] message
@@ -61,7 +61,7 @@ with docstring
       print("{name}: {message}{suffix}".format(name=name, message=message, suffix=suffix))
 
 
-..code-block:: bash
+.. code-block:: bash
 
   $ python greeting.py -h
   usage: greeting.py [-h] [--is_surprised] [--name NAME] message
