@@ -43,3 +43,62 @@ class TestIterateFunction(unittest.TestCase):
         target = self._makeOne(f)
         result = list(target._iterate_optionals())
         self.assertEqual([("z", None), ("flag", False)], result)
+
+
+class TestGetHelpDict(unittest.TestCase):
+    def _callFUT(self, doc):
+        from cathand import get_help_dict
+        return get_help_dict(doc)
+
+    def test_it(self):
+        doc = """
+        this is description message
+        hello hello hello
+
+        :param x: x of args
+        :param y: y of args
+        :rtype: int
+        """
+        result = self._callFUT(doc)
+        expected = {"x": "x of args", "y": "y of args"}
+        self.assertEqual(expected, result)
+
+    def test_it_with_type(self):
+        doc = """
+        this is description message
+        :param int x: x of args
+        :param str y: y of args
+        :rtype: int
+        """
+        result = self._callFUT(doc)
+        expected = {"x": "x of args", "y": "y of args"}
+        self.assertEqual(expected, result)
+
+
+class TestGetDescription(unittest.TestCase):
+    def _callFUT(self, doc):
+        from cathand import get_description
+        return get_description(doc)
+
+    def test_it(self):
+        doc = """
+        this is description message
+        :param int x: x of args
+        :param str y: y of args
+        :rtype: int
+        """
+        result = self._callFUT(doc)
+        expected = "this is description message"
+        self.assertEqual(expected, result)
+
+    def test_it__long(self):
+        doc = """
+        this is description message
+        hello hello hello
+        :param int x: x of args
+        :param str y: y of args
+        :rtype: int
+        """
+        result = self._callFUT(doc)
+        expected = """this is description message\nhello hello hello"""
+        self.assertEqual(expected, result)
