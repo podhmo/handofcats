@@ -28,7 +28,7 @@ tests_require = [
 testing_extras = tests_require + [
 ]
 
-setup(name='cathand',
+setup(name='handofcats',
       version='0.1.1',
       description='python function to command translator',
       long_description=README + '\n\n' + CHANGES,
@@ -40,7 +40,7 @@ setup(name='cathand',
       author="",
       author_email="",
       url="",
-      packages=find_packages(exclude=["cathand.tests"]),
+      packages=find_packages(exclude=["handofcats.tests"]),
       include_package_data=True,
       zip_safe=False,
       install_requires=install_requires,
@@ -50,6 +50,6 @@ setup(name='cathand',
       },
       tests_require=tests_require,
       license="mit",
-      test_suite="cathand.tests",
+      test_suite="handofcats.tests",
       entry_points="""
 """)

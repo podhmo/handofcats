@@ -95,4 +95,4 @@ def as_command(fn):
     return CommandFromFunction(fn, argspec, help_dict, description).activate(level=2)
 
 # alias
-cathand = as_command
+handofcats = as_command

@@ -1,4 +1,4 @@
-cathand
+handofcats
 ========================================
 
 A tiny Converter that making executable command script from python function.
@@ -11,7 +11,7 @@ tl;dr
 .. code-block:: python
 
   # greeting.py
-  from cathand import as_command
+  from handofcats import as_command
 
   @as_command
   def greeting(message, is_surprised=False, name="foo"):
@@ -46,7 +46,7 @@ with docstring
 
 .. code-block:: python
 
-  from cmdfromfn import as_command
+  from handofcats import as_command
 
 
   @as_command

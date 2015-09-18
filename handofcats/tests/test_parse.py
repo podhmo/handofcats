@@ -4,7 +4,7 @@ import unittest
 
 class TestIterateFunction(unittest.TestCase):
     def _getTargetClass(self):
-        from cathand import CommandFromFunction
+        from handofcats import CommandFromFunction
         return CommandFromFunction
 
     def _makeOne(self, fn):
@@ -47,7 +47,7 @@ class TestIterateFunction(unittest.TestCase):
 
 class TestGetHelpDict(unittest.TestCase):
     def _callFUT(self, doc):
-        from cathand import get_help_dict
+        from handofcats import get_help_dict
         return get_help_dict(doc)
 
     def test_it(self):
@@ -77,7 +77,7 @@ class TestGetHelpDict(unittest.TestCase):
 
 class TestGetDescription(unittest.TestCase):
     def _callFUT(self, doc):
-        from cathand import get_description
+        from handofcats import get_description
         return get_description(doc)
 
     def test_it(self):

@@ -15,7 +15,7 @@ def mustcall(self, status=True):
 
 class TestCreatParser(unittest.TestCase):
     def _getTargetClass(self):
-        from cathand import CommandFromFunction
+        from handofcats import CommandFromFunction
         return CommandFromFunction
 
     def _makeOne(self, positionals, optionals, fn):

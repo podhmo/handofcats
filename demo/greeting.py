@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from cathand import as_command
+from handofcats import as_command
 
 
 @as_command
