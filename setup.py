@@ -29,7 +29,7 @@ testing_extras = tests_require + [
 ]
 
 setup(name='handofcats',
-      version='0.1.2',
+      version='0.1.3',
       description='python function to command translator',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
@@ -39,7 +39,7 @@ setup(name='handofcats',
       keywords='',
       author="",
       author_email="",
-      url="",
+      url="https://github.com/podhmo/handofcats",
       packages=find_packages(exclude=["handofcats.tests"]),
       include_package_data=True,
       zip_safe=False,
