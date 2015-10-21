@@ -3,6 +3,8 @@ import re
 import inspect
 import sys
 import argparse
+import logging
+logger = logging.getLogger(__name__)
 
 
 class CommandFromFunction(object):
@@ -65,7 +67,9 @@ class CommandFromFunction(object):
             args = [getattr(parsed, name) for name in self.positionals]
             kwargs = {name: getattr(parsed, name) for name, _ in self._iterate_optionals()}
             self.fn(*args, **kwargs)
-        except:
+        except Exception as e:
+            sys.stderr.write("{!r}\n".format(e))
+            logger.warning("error is occured", exc_info=True)
             sys.exit(-1)
 
 
