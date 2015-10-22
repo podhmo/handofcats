@@ -66,11 +66,11 @@ class CommandFromFunction(object):
             parsed = parser.parse_args(args)
             args = [getattr(parsed, name) for name in self.positionals]
             kwargs = {name: getattr(parsed, name) for name, _ in self._iterate_optionals()}
-            self.fn(*args, **kwargs)
         except Exception as e:
             sys.stderr.write("{!r}\n".format(e))
             logger.warning("error is occured", exc_info=True)
             sys.exit(-1)
+        self.fn(*args, **kwargs)
 
 
 def get_help_dict(doc):
