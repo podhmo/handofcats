@@ -7,18 +7,28 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class CommandFromFunction(object):
-    def __init__(self, fn, argspec, help_dict=None, description=None):
-        self.fn = fn
+class WrappedArgumentParser(object):
+    def __init__(self, parser, positionals, optionals):
+        self.parser = parser
+        self.positionals = positionals
+        self.optionals = optionals
+
+    def __getattr__(self, k):
+        return getattr(self.parser, k)
+
+
+class ParserCreator(object):
+    def __init__(self, argspec, help_dict=None, description=None):
         self.argspec = argspec
         self.len_of_opts = len(self.argspec.defaults or [])
-        self.positionals = []
-        self.name = self.fn.__name__
         self.help_dict = help_dict or {}
-        self.parser = self.create_parser(description)
+        self.description = description or ""
+        self._positionals = []
+        self._optionals = []
 
-    def _add_optional(self, parser, name, default):
+    def add_optional(self, parser, name, default):
         help = self.help_dict.get(name)
+        self._optionals.append(name)
         if default is True:
             parser.add_argument("--{}".format(name), action="store_false", help=help)
         elif default is False:
@@ -26,31 +36,40 @@ class CommandFromFunction(object):
         else:
             parser.add_argument("--{}".format(name), default=default, help=help)
 
-    def _add_positional(self, parser, name):
+    def add_positional(self, parser, name):
         help = self.help_dict.get(name)
-        self.positionals.append(name)
+        self._positionals.append(name)
         parser.add_argument(name, help=help)
 
-    def _iterate_positionals(self):
+    def iterate_positionals(self):
         if self.argspec.defaults is None:
             return self.argspec.args
         else:
             return self.argspec.args[:-self.len_of_opts]
 
-    def _iterate_optionals(self):
+    def iterate_optionals(self):
         if self.argspec.defaults is None:
             return []
         else:
             return zip(self.argspec.args[-self.len_of_opts:], self.argspec.defaults)
 
-    def create_parser(self, description):
-        parser = argparse.ArgumentParser(description=description)
-        for k, v in self._iterate_optionals():
-            self._add_optional(parser, k, v)
+    def create_parser(self):
+        parser = argparse.ArgumentParser(description=self.description)
+        for k, v in self.iterate_optionals():
+            self.add_optional(parser, k, v)
 
-        for arg in self._iterate_positionals():
-            self._add_positional(parser, arg)
-        return parser
+        for arg in self.iterate_positionals():
+            self.add_positional(parser, arg)
+        return WrappedArgumentParser(parser, self._positionals, self._optionals)
+    __call__ = create_parser
+
+
+class CommandFromFunction(object):
+    _ParserCreator = ParserCreator
+
+    def __init__(self, fn, argspec, help_dict=None, description=None):
+        self.fn = fn
+        self.parser_creator = self._ParserCreator(argspec, help_dict, description)
 
     def activate(self, level=1):
         frame = sys._getframe(level)
@@ -61,11 +80,11 @@ class CommandFromFunction(object):
             return self.fn
 
     def __call__(self, args):
-        parser = self.parser
+        parser = self.parser_creator()
         try:
             parsed = parser.parse_args(args)
-            args = [getattr(parsed, name) for name in self.positionals]
-            kwargs = {name: getattr(parsed, name) for name, _ in self._iterate_optionals()}
+            args = [getattr(parsed, name) for name in parser.positionals]
+            kwargs = {name: getattr(parsed, name) for name in parser.optionals}
         except Exception as e:
             sys.stderr.write("{!r}\n".format(e))
             logger.warning("error is occured", exc_info=True)
@@ -91,12 +110,16 @@ def get_description(doc):
     return "\n".join(r)
 
 
-def as_command(fn):
+def create_command_from_function(fn):
     argspec = inspect.getargspec(fn)
     doc = fn.__doc__ or ""
     help_dict = get_help_dict(doc)
     description = get_description(doc)
-    return CommandFromFunction(fn, argspec, help_dict, description).activate(level=2)
+    return CommandFromFunction(fn, argspec, help_dict, description)
+
+
+def as_command(fn):
+    return create_command_from_function(fn).activate(level=2)
 
 # alias
 handofcats = as_command
