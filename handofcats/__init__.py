@@ -3,6 +3,7 @@ import re
 import inspect
 import sys
 import argparse
+from cached_property import cached_property as reify
 import logging
 logger = logging.getLogger(__name__)
 
@@ -53,8 +54,8 @@ class ParserCreator(object):
         else:
             return zip(self.argspec.args[-self.len_of_opts:], self.argspec.defaults)
 
-    def create_parser(self):
-        parser = argparse.ArgumentParser(description=self.description)
+    def create_parser(self, prog=None):
+        parser = argparse.ArgumentParser(prog=prog, description=self.description)
         for k, v in self.iterate_optionals():
             self.add_optional(parser, k, v)
 
@@ -64,27 +65,100 @@ class ParserCreator(object):
     __call__ = create_parser
 
 
+class CommandManager(object):
+    def __init__(self):
+        self.managed_set = set()
+
+    def mark(self, target):
+        self.managed_set.add(target)
+        return target
+
+    def is_marked(self, target):
+        return target in self.managed_set
+
+    def collect(self):
+        return self.managed_set
+
+    def get_module_and_pathlist(self, module_or_path, importer):
+        if hasattr(module_or_path, "__path__"):
+            return module_or_path, module_or_path.__path__
+        else:
+            module = importer(module_or_path)
+            return module, module.__path__
+
+    def scan(self, root, exclude=None):
+        import glob
+        import os.path
+        from importlib import import_module
+
+        logging.info("scan: %s", root)
+        m, pathlist = self.get_module_and_pathlist(root, importer=import_module)
+        for path in pathlist:
+            logging.debug("scan path: %s", path)
+            for target in glob.glob(os.path.join(path, "*.py")):
+                if target.endswith("/__init__.py"):
+                    target = target.replace("/__init__.py", "")
+                if target == path:
+                    continue
+                if exclude and exclude(target):
+                    continue
+                logger.debug("scan target: %s", target)
+                if target.endswith(".py"):
+                    target = target[:-3]
+                command_module = target.replace(path, m.__package__).replace(os.sep, ".")
+                logger.info("scan command: %s", command_module)
+                import_module(command_module)
+        return self.collect()
+
+MANAGER = CommandManager()
+
+
 class CommandFromFunction(object):
     _ParserCreator = ParserCreator
+    _manager = MANAGER
 
     def __init__(self, fn, argspec, help_dict=None, description=None):
         self.fn = fn
         self.parser_creator = self._ParserCreator(argspec, help_dict, description)
+        self._manager.mark(self)
 
     def activate(self, level=1):
         frame = sys._getframe(level)
         name = frame.f_globals["__name__"]
         if name == "__main__":
-            return self(sys.argv[1:])
+            return self.run_as_command(sys.argv[1:])
         else:
-            return self.fn
+            return self
 
-    def __call__(self, args):
-        parser = self.parser_creator()
+    def __call__(self, *args, **kwargs):
+        return self.fn(*args, **kwargs)
+
+    @property
+    def name(self):
+        return self.parser.prog
+
+    @reify
+    def short_description(self):
+        doc = getattr(self.fn, "__doc__", None)
+        if doc is None:
+            return ""
+        return doc.lstrip().split("\n")[0]
+
+    @reify
+    def parser(self):
+        prog = self.fn.__module__
+        if prog == "__main__":
+            prog = None
+        return self.parser_creator(prog=prog)
+
+    def print_help(self, out=sys.stdout):
+        self.parser.print_help(out)
+
+    def run_as_command(self, args):
         try:
-            parsed = parser.parse_args(args)
-            args = [getattr(parsed, name) for name in parser.positionals]
-            kwargs = {name: getattr(parsed, name) for name in parser.optionals}
+            parsed = self.parser.parse_args(args)
+            args = [getattr(parsed, name) for name in self.parser.positionals]
+            kwargs = {name: getattr(parsed, name) for name in self.parser.optionals}
         except Exception as e:
             sys.stderr.write("{!r}\n".format(e))
             logger.warning("error is occured", exc_info=True)
@@ -110,16 +184,39 @@ def get_description(doc):
     return "\n".join(r)
 
 
-def create_command_from_function(fn):
+def as_command(fn):
     argspec = inspect.getargspec(fn)
     doc = fn.__doc__ or ""
     help_dict = get_help_dict(doc)
     description = get_description(doc)
-    return CommandFromFunction(fn, argspec, help_dict, description)
+    return CommandFromFunction(fn, argspec, help_dict, description).activate(level=2)
 
-
-def as_command(fn):
-    return create_command_from_function(fn).activate(level=2)
 
 # alias
 handofcats = as_command
+
+
+def describe(usage="command:\n", out=sys.stdout, package=None, name=None, level=1, scan=MANAGER.scan):
+    if name is None:
+        frame = sys._getframe(level)
+        name = frame.f_globals["__name__"]
+        package = frame.f_globals["__package__"]
+
+    if name == "__main__":
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-f", "--full", default=False, action="store_true", dest="full_description")
+        args = parser.parse_args(sys.argv[1:])
+        commands = list(sorted(scan(package), key=lambda x: x.name))
+
+        out.write("avaiable commands are here. (with --full option, showing full text)\n\n")
+        for command in commands:
+            if command.short_description:
+                out.write("- {} -- {}\n".format(command.name, command.short_description))
+            else:
+                out.write("- {}\n".format(command.name))
+
+        if args.full_description and commands:
+            out.write("\n")
+            for command in commands:
+                out.write("\n---{}-------------------------------------\n".format(command.name))
+                command.print_help(out)

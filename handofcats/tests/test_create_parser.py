@@ -44,7 +44,7 @@ class TestCreatParser(unittest.TestCase):
                 activate()
 
             target = self._makeOne(positionals, optionals, f)
-            target(["input-file"])
+            target.run_as_command(["input-file"])
 
     def test_it__positional_paramaters_are_not_enough(self):
         positionals = ["file"]
@@ -61,7 +61,7 @@ class TestCreatParser(unittest.TestCase):
             target = self._makeOne(positionals, optionals, f)
 
             with self.assertRaises(SystemExit):
-                target([])
+                target.run_as_command([])
 
     def test_it__with_paramater(self):
         positionals = ["file"]
@@ -76,7 +76,7 @@ class TestCreatParser(unittest.TestCase):
                 activate()
 
             target = self._makeOne(positionals, optionals, f)
-            target(["--x", "--y", "--foo=bar", "input-file"])
+            target.run_as_command(["--x", "--y", "--foo=bar", "input-file"])
 
     def test_it__with_paramater2(self):
         positionals = ["file"]
@@ -88,4 +88,4 @@ class TestCreatParser(unittest.TestCase):
                 activate()
 
             target = self._makeOne(positionals, optionals, f)
-            target(["--foo", "bar", "input-file"])
+            target.run_as_command(["--foo", "bar", "input-file"])
