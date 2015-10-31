@@ -4,8 +4,15 @@ handofcats
 A tiny Converter that making executable command script from python function.
 If the function has sphinx autodoc style docstring, it is also used.
 
+this module has two functions.
 
-tl;dr
+- as_command()
+- describe()
+
+If you just convert python function to executable command, then use `as_command()`.
+And, you want to show a list of managemented commands, `describe()` is helpful.
+
+as_command()
 ----------------------------------------
 
 .. code-block:: python
@@ -41,8 +48,8 @@ tl;dr
   $ python greeting.py --is_surprised --name=bar bye
   bar: bye!
 
-with docstring
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+with docstring (additional feature)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
@@ -75,3 +82,37 @@ with docstring
     -h, --help      show this help message and exit
     --is_surprised  surprised or not (default=False)
     --name NAME     name of actor
+
+describe()
+----------------------------------------
+
+.. code-block:: bash
+
+  $ tree foo/
+  foo/
+  ├── __init__.py
+  ├── __main__.py
+  ├── bye.py
+  └── hello.py
+
+  $ cat foo/__main__.py
+  from handofcats import describe
+  describe()
+
+  $ python -m foo
+  avaiable commands are here. (with --full option, showing full text)
+
+  - foo.bye
+  - foo.hello -- hello message
+
+  $ cat foo/hello.py
+  from handofcats import as_command
+
+
+  @as_command
+  def hello():
+      """
+      hello message
+      """
+      print("hello")
+
