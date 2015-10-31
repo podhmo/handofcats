@@ -5,6 +5,7 @@ import sys
 import argparse
 from cached_property import cached_property as reify
 import logging
+from handofcats.compat import text_, bytes_
 logger = logging.getLogger(__name__)
 
 
@@ -97,6 +98,7 @@ class CommandManager(object):
 
         logging.info("scan: %s", root)
         m, pathlist = self.get_module_and_pathlist(root, importer=import_module)
+        root_package = m.__package__ or m.__name__
         for path in pathlist:
             logging.debug("scan path: %s", path)
             for target in glob.glob(os.path.join(path, "*.py")):
@@ -109,7 +111,7 @@ class CommandManager(object):
                 logger.debug("scan target: %s", target)
                 if target.endswith(".py"):
                     target = target[:-3]
-                command_module = target.replace(path, m.__package__).replace(os.sep, ".")
+                command_module = target.replace(path, root_package).replace(os.sep, ".")
                 logger.info("scan command: %s", command_module)
                 import_module(command_module)
         return self.collect()
@@ -139,14 +141,14 @@ class CommandFromFunction(object):
 
     @property
     def name(self):
-        return self.parser.prog
+        return text_(self.parser.prog)
 
     @reify
     def short_description(self):
         doc = getattr(self.fn, "__doc__", None)
         if doc is None:
             return ""
-        return doc.lstrip().split("\n")[0]
+        return text_(doc.lstrip().split("\n")[0])
 
     @reify
     def parser(self):
@@ -206,21 +208,24 @@ def describe(usage="command:\n", out=sys.stdout, package=None, name=None, level=
         name = frame.f_globals["__name__"]
         package = frame.f_globals["__package__"]
 
+    def write(msg):
+        out.write(bytes_(text_(msg)))
+
     if name == "__main__":
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--full", default=False, action="store_true", dest="full_description")
         args = parser.parse_args(sys.argv[1:])
         commands = list(sorted(scan(package), key=lambda x: x.name))
 
-        out.write("avaiable commands are here. (with --full option, showing full text)\n\n")
+        write("avaiable commands are here. (with --full option, showing full text)\n\n")
         for command in commands:
             if command.short_description:
-                out.write("- {} -- {}\n".format(command.name, command.short_description))
+                write(u"- {} -- {}\n".format(command.name, command.short_description))
             else:
-                out.write("- {}\n".format(command.name))
+                write(u"- {}\n".format(command.name))
 
         if args.full_description and commands:
-            out.write("\n")
+            write(u"\n")
             for command in commands:
-                out.write("\n---{}-------------------------------------\n".format(command.name))
+                write(u"\n---{}-------------------------------------\n".format(command.name))
                 command.print_help(out)
