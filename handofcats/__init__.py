@@ -34,6 +34,10 @@ class ParserCreator(object):
             parser.add_argument("--{}".format(name), action="store_false", help=help)
         elif default is False:
             parser.add_argument("--{}".format(name), action="store_true", help=help)
+        elif isinstance(default, int):
+            parser.add_argument("--{}".format(name), type=int, default=default, help=help)
+        elif isinstance(default, float):
+            parser.add_argument("--{}".format(name), type=float, default=default, help=help)
         else:
             parser.add_argument("--{}".format(name), default=default, help=help)
 

@@ -80,12 +80,14 @@ class TestCreatParser(unittest.TestCase):
 
     def test_it__with_paramater2(self):
         positionals = ["file"]
-        optionals = [("x", False), ("y", True), ("foo", "foo")]
+        optionals = [("intnum", 0), ("floatnum", 0.1), ("foo", "foo")]
 
         with mustcall(self) as activate:
-            def f(file, x=False, y=True, foo="foo"):
+            def f(file, intnum=0, floatnum=0.1, foo="foo"):
                 self.assertEqual(foo, "bar")
+                self.assertEqual(intnum, 10)
+                self.assertEqual(floatnum, 0.1)
                 activate()
 
             target = self._makeOne(positionals, optionals, f)
-            target.run_as_command(["--foo", "bar", "input-file"])
+            target.run_as_command(["--foo", "bar", "--intnum", "10", "input-file"])
