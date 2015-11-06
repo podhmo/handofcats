@@ -28,19 +28,41 @@ class ParserCreator(object):
         self._positionals = []
         self._optionals = []
 
+    def get_option_format(self, name):
+        return name.strip("_").replace("_", "-")
+
     def add_optional(self, parser, name, default):
         help = self.help_dict.get(name)
         self._optionals.append(name)
         if default is True:
-            parser.add_argument("--{}".format(name), action="store_false", help=help)
+            parser.add_argument("--{}".format(self.get_option_format(name)),
+                                action="store_false",
+                                help=help,
+                                dest=name)
         elif default is False:
-            parser.add_argument("--{}".format(name), action="store_true", help=help)
-        elif isinstance(default, int):
-            parser.add_argument("--{}".format(name), type=int, default=default, help=help)
-        elif isinstance(default, float):
-            parser.add_argument("--{}".format(name), type=float, default=default, help=help)
+            parser.add_argument("--{}".format(self.get_option_format(name)),
+                                action="store_true",
+                                help=help,
+                                dest=name)
+        elif isinstance(default,
+                        int):
+            parser.add_argument("--{}".format(self.get_option_format(name)),
+                                type=int,
+                                default=default,
+                                help=help,
+                                dest=name)
+        elif isinstance(default,
+                        float):
+            parser.add_argument("--{}".format(self.get_option_format(name)),
+                                type=float,
+                                default=default,
+                                help=help,
+                                dest=name)
         else:
-            parser.add_argument("--{}".format(name), default=default, help=help)
+            parser.add_argument("--{}".format(self.get_option_format(name)),
+                                default=default,
+                                help=help,
+                                dest=name)
 
     def add_positional(self, parser, name):
         help = self.help_dict.get(name)

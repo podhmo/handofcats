@@ -91,3 +91,16 @@ class TestCreatParser(unittest.TestCase):
 
             target = self._makeOne(positionals, optionals, f)
             target.run_as_command(["--foo", "bar", "--intnum", "10", "input-file"])
+
+    def test_it_with_underscore(self):
+        positionals = ["file_name"]
+        optionals = [("int_num", 1), ("_float_num", 0.1)]
+
+        with mustcall(self) as activate:
+            def f(file, int_num=0, float_num=0.0):
+                self.assertEqual(int_num, 1)
+                self.assertEqual(float_num, 0.1)
+                activate()
+
+            target = self._makeOne(positionals, optionals, f)
+            target.run_as_command(["--int-num", "1", "--float-num", "0.1", "input-file"])
