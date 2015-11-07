@@ -230,22 +230,28 @@ def get_description(doc):
     return "\n".join(r)
 
 
-def as_command(fn, middlewares=m.DEFAULT_MIDDLEWARES):
-    argspec = inspect.getargspec(fn)
-    doc = fn.__doc__ or ""
-    help_dict = get_help_dict(doc)
-    description = get_description(doc)
+def as_command(fn=None, middlewares=None):
+    def call(fn, level=2):
+        argspec = inspect.getargspec(fn)
+        doc = fn.__doc__ or ""
+        help_dict = get_help_dict(doc)
+        description = get_description(doc)
 
-    if middlewares:
-        middleware_applicator = m.MiddlewareApplicator(middlewares)
+        if middlewares:
+            middleware_applicator = m.MiddlewareApplicator(middlewares)
+        else:
+            middleware_applicator = None
+
+        caller = CommandFromFunction(
+            fn, argspec, help_dict, description,
+            middleware_applicator=middleware_applicator
+        )
+        return caller.activate(level=level)
+
+    if fn is None:
+        return call
     else:
-        middleware_applicator = None
-
-    caller = CommandFromFunction(
-        fn, argspec, help_dict, description,
-        middleware_applicator=middleware_applicator
-    )
-    return caller.activate(level=2)
+        return call(fn, level=3)
 
 
 # alias
