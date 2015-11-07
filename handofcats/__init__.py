@@ -6,6 +6,7 @@ import argparse
 from cached_property import cached_property as reify
 import logging
 from handofcats.compat import text_, bytes_
+from handofcats import middlewares
 logger = logging.getLogger(__name__)
 
 
@@ -14,9 +15,19 @@ class WrappedArgumentParser(object):
         self.parser = parser
         self.positionals = positionals
         self.optionals = optionals
+        self.callbacks = []
+
+    def action(self, callback):
+        self.callbacks.append(callback)
 
     def __getattr__(self, k):
         return getattr(self.parser, k)
+
+    def parse_args(self, args):
+        args = self.parser.parse_args(args)
+        for callback in self.callbacks:
+            callback(args)
+        return args
 
 
 class ParserCreator(object):
@@ -145,10 +156,11 @@ class CommandFromFunction(object):
     _ParserCreator = ParserCreator
     _manager = MANAGER
 
-    def __init__(self, fn, argspec, help_dict=None, description=None):
+    def __init__(self, fn, argspec, help_dict=None, description=None, middleware_applicator=None):
         self.fn = fn
         self.parser_creator = self._ParserCreator(argspec, help_dict, description)
         self._manager.mark(self)
+        self.middleware_applicator = middleware_applicator
 
     def activate(self, level=1):
         frame = sys._getframe(level)
@@ -177,7 +189,11 @@ class CommandFromFunction(object):
         prog = self.fn.__module__
         if prog == "__main__":
             prog = None
-        return self.parser_creator(prog=prog)
+
+        if self.middleware_applicator is None:
+            return self.parser_creator(prog=prog)
+        else:
+            return self.middleware_applicator(self.parser_creator)(prog=prog)
 
     def print_help(self, out=sys.stdout):
         self.parser.print_help(out)
@@ -217,7 +233,13 @@ def as_command(fn):
     doc = fn.__doc__ or ""
     help_dict = get_help_dict(doc)
     description = get_description(doc)
-    return CommandFromFunction(fn, argspec, help_dict, description).activate(level=2)
+    middleware_applicator = middlewares.get_middleware_applicator()
+
+    caller = CommandFromFunction(
+        fn, argspec, help_dict, description,
+        middleware_applicator=middleware_applicator
+    )
+    return caller.activate(level=2)
 
 
 # alias
