@@ -30,7 +30,7 @@ testing_extras = tests_require + [
 ]
 
 setup(name='handofcats',
-      version='0.3.0',
+      version='0.3.1',
       description='python function to command translator',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
