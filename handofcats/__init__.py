@@ -26,7 +26,9 @@ class WrappedArgumentParser(object):
     def parse_args(self, args):
         args = self.parser.parse_args(args)
         for callback in self.callbacks:
-            callback(args)
+            result = callback(args)
+            if result is not None:
+                args = result
         return args
 
 
