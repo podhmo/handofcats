@@ -29,23 +29,23 @@ as_command()
 .. code-block:: bash
 
   $ python greeting.py
-  usage: greeting.py [-h] [--is_surprised] [--name NAME] message
+  usage: greeting.py [-h] [--is-surprised] [--name NAME] message
   greeting.py: error: too few arguments
   $ python greeting.py -h
-  usage: greeting.py [-h] [--is_surprised] [--name NAME] message
+  usage: greeting.py [-h] [--is-surprised] [--name NAME] message
 
   positional arguments:
     message
 
   optional arguments:
     -h, --help      show this help message and exit
-    --is_surprised
+    --is-surprised
     --name NAME
   $ python greeting.py hello
   foo: hello
-  $ python greeting.py --is_surprised hello
+  $ python greeting.py --is-surprised hello
   foo: hello!
-  $ python greeting.py --is_surprised --name=bar bye
+  $ python greeting.py --is-surprised --name=bar bye
   bar: bye!
 
 with docstring (additional feature)
@@ -71,7 +71,7 @@ with docstring (additional feature)
 .. code-block:: bash
 
   $ python greeting.py -h
-  usage: greeting.py [-h] [--is_surprised] [--name NAME] message
+  usage: greeting.py [-h] [--is-surprised] [--name NAME] message
 
   greeting message
 
@@ -80,7 +80,7 @@ with docstring (additional feature)
 
   optional arguments:
     -h, --help      show this help message and exit
-    --is_surprised  surprised or not (default=False)
+    --is-surprised  surprised or not (default=False)
     --name NAME     name of actor
 
 describe()
