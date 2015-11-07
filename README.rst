@@ -29,10 +29,10 @@ as_command()
 .. code-block:: bash
 
   $ python greeting.py
-  usage: greeting.py [-h] [--is-surprised] [--name NAME] message
+  usage: greeting.py [-h] [--is-surprised] [--name NAME] [-v] [-q] message
   greeting.py: error: too few arguments
   $ python greeting.py -h
-  usage: greeting.py [-h] [--is-surprised] [--name NAME] message
+  usage: greeting.py [-h] [--is-surprised] [--name NAME] [-v] [-q] message
 
   positional arguments:
     message
@@ -41,6 +41,8 @@ as_command()
     -h, --help      show this help message and exit
     --is-surprised
     --name NAME
+    -v, --verbose   (default option: increment logging level(default is WARNING))
+    -q, --quiet     (default option: decrement logging level(default is WARNING))
   $ python greeting.py hello
   foo: hello
   $ python greeting.py --is-surprised hello
@@ -71,7 +73,7 @@ with docstring (additional feature)
 .. code-block:: bash
 
   $ python greeting.py -h
-  usage: greeting.py [-h] [--is-surprised] [--name NAME] message
+  usage: greeting.py [-h] [--is-surprised] [--name NAME] [-v] [-q] message
 
   greeting message
 
@@ -82,6 +84,11 @@ with docstring (additional feature)
     -h, --help      show this help message and exit
     --is-surprised  surprised or not (default=False)
     --name NAME     name of actor
+    -v, --verbose   (default option: increment logging level(default is
+                    WARNING))
+    -q, --quiet     (default option: decrement logging level(default is
+                    WARNING))
+
 
 describe()
 ----------------------------------------
