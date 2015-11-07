@@ -5,7 +5,7 @@ import sys
 import argparse
 from cached_property import cached_property as reify
 import logging
-from handofcats.compat import text_, bytes_
+from handofcats.compat import text_, bytes_, PY3
 from handofcats import middlewares as m
 logger = logging.getLogger(__name__)
 
@@ -264,8 +264,10 @@ def describe(usage="command:\n", out=sys.stdout, package=None, name=None, level=
         name = frame.f_globals["__name__"]
         package = frame.f_globals["__package__"]
 
-    def write(msg):
-        out.write(bytes_(text_(msg)))
+    if PY3:
+        write = lambda msg: out.write(text_(msg))
+    else:
+        write = lambda msg: out.write(bytes_(text_(msg)))
 
     if name == "__main__":
         parser = argparse.ArgumentParser()
