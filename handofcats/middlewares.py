@@ -34,18 +34,6 @@ def middlewarefy(fn):
         return lambda context: fn(context, closure)
     return middleware
 
-default_applicator = None
-_applicator = default_applicator
-
-
-def get_middleware_applicator():
-    global _applicator
-    if _applicator is None:
-        set_middleware_applicator(MiddlewareApplicator([
-            middleware_verbosity_adjustment
-        ]))
-    return _applicator
-
 
 def middleware_verbosity_adjustment(context, create_parser):
     """logging level adjustment with -v and -q"""
@@ -68,6 +56,6 @@ def middleware_verbosity_adjustment(context, create_parser):
     return parser
 
 
-def set_middleware_applicator(applicator):
-    global _applicator
-    _applicator = applicator
+DEFAULT_MIDDLEWARES = [
+    middleware_verbosity_adjustment
+]

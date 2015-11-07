@@ -6,7 +6,7 @@ import argparse
 from cached_property import cached_property as reify
 import logging
 from handofcats.compat import text_, bytes_
-from handofcats import middlewares
+from handofcats import middlewares as m
 logger = logging.getLogger(__name__)
 
 
@@ -228,12 +228,16 @@ def get_description(doc):
     return "\n".join(r)
 
 
-def as_command(fn):
+def as_command(fn, middlewares=m.DEFAULT_MIDDLEWARES):
     argspec = inspect.getargspec(fn)
     doc = fn.__doc__ or ""
     help_dict = get_help_dict(doc)
     description = get_description(doc)
-    middleware_applicator = middlewares.get_middleware_applicator()
+
+    if middlewares:
+        middleware_applicator = m.MiddlewareApplicator(middlewares)
+    else:
+        middleware_applicator = None
 
     caller = CommandFromFunction(
         fn, argspec, help_dict, description,
