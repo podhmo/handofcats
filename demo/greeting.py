@@ -4,6 +4,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+# using --config (if not using --config, below sentences are unneccessary)
+from handofcats.middlewares import DEFAULT_MIDDLEWARES
+from handofcats.middlewares.configjson import middleware_config_json
+from functools import partial
+as_command = partial(as_command, middlewares=DEFAULT_MIDDLEWARES + [middleware_config_json])
+
+
 @as_command
 def greeting(message, is_surprised=False, name="foo"):
     """ greeting message

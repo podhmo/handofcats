@@ -34,9 +34,8 @@ def middlewarefy(fn):
         return lambda context: fn(context, closure)
     return middleware
 
-from .config_json import middleware_config_json
+
 from .verbosity_adjustment import middleware_verbosity_adjustment
 DEFAULT_MIDDLEWARES = [
     middleware_verbosity_adjustment,
-    middleware_config_json
 ]
