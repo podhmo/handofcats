@@ -4,7 +4,7 @@ import unittest
 
 class TestIterateFunction(unittest.TestCase):
     def _getTargetClass(self):
-        from handofcats import ParserCreator
+        from handofcats.parsercreator import ParserCreator
         return ParserCreator
 
     def _makeOne(self, fn):
