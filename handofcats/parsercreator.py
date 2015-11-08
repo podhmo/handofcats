@@ -26,7 +26,7 @@ class WrappedArgumentParser(object):
         return args
 
 
-class ParserCreator(object):
+class ArgumentParserCreator(object):
     def __init__(self, argspec, help_dict=None, description=None):
         self.argspec = argspec
         self.len_of_opts = len(self.argspec.defaults or [])

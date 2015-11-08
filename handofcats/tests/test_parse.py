@@ -4,8 +4,8 @@ import unittest
 
 class TestIterateFunction(unittest.TestCase):
     def _getTargetClass(self):
-        from handofcats.parsercreator import ParserCreator
-        return ParserCreator
+        from handofcats.parsercreator import ArgumentParserCreator
+        return ArgumentParserCreator
 
     def _makeOne(self, fn):
         import inspect

@@ -16,10 +16,10 @@ def mustcall(self, status=True):
 class TestCreatParser(unittest.TestCase):
     def _makeOne(self, positionals, optionals, fn):
         from handofcats.commandcreator import CommandFromFunction
-        from handofcats.parsercreator import ParserCreator
+        from handofcats.parsercreator import ArgumentParserCreator
         import inspect
 
-        class DummyParserCreator(ParserCreator):
+        class DummyArgumentParserCreator(ArgumentParserCreator):
             def iterate_positionals(self):
                 return positionals
 
@@ -27,7 +27,7 @@ class TestCreatParser(unittest.TestCase):
                 return optionals
 
         argspec = inspect.getargspec(fn)
-        return CommandFromFunction(fn, DummyParserCreator(argspec))
+        return CommandFromFunction(fn, DummyArgumentParserCreator(argspec))
 
     def test_it(self):
         positionals = ["file"]
