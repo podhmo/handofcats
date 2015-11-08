@@ -7,11 +7,9 @@ logger = logging.getLogger(__name__)
 
 
 class CommandFromFunction(object):
-    def __init__(self, fn, parser_creator, middleware_applicator=None, mark=None):
+    def __init__(self, fn, parser_creator, middleware_applicator=None):
         self.fn = fn
         self.parser_creator = parser_creator
-        if mark is not None:
-            mark(self)
         self.middleware_applicator = middleware_applicator
 
     def __call__(self, *args, **kwargs):

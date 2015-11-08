@@ -51,8 +51,10 @@ def as_command(fn=None, middlewares=None):
             fn,
             parser_creator=parser_creator,
             middleware_applicator=middleware_applicator,
-            mark=COLLECTOR.mark
         )
+        # marking for describe()
+        COLLECTOR.mark(cmd_creator)
+
         # dispatching from caller module
         frame = sys._getframe(level)
         name = frame.f_globals["__name__"]
