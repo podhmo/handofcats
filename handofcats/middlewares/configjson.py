@@ -1,6 +1,10 @@
 # -*- coding:utf-8 -*-
 import argparse
+import json
+import sys
 from cached_property import cached_property as reify
+from handofcats.compat import write
+
 
 _marker = object()
 
@@ -31,8 +35,6 @@ class ObjectLikeDict(dict):
 
 class LoadJSONConfigAction(argparse.Action):
     def __call__(self, parser, namespace, val, option_string=None):
-        import json
-
         if val.startswith("file://"):
             with open(val.lstrip("file://")) as rf:
                 data = json.load(rf, object_pairs_hook=ObjectLikeDict)
@@ -41,12 +43,54 @@ class LoadJSONConfigAction(argparse.Action):
         setattr(namespace, self.dest, data)
 
 
+class GenerateJSONConfigAction(argparse.Action):
+    def __init__(self,
+                 option_strings,
+                 dest,
+                 default=False,
+                 required=False,
+                 help=None,
+                 metavar=None):
+        super(GenerateJSONConfigAction, self).__init__(
+            option_strings=option_strings,
+            dest=dest,
+            nargs=0,
+            const=True,
+            default=default,
+            required=required,
+            help=help)
+
+    def __call__(self, parser, namespace, val, option_string=None):
+        json_data = json.dumps(self.generate_dict(parser), indent=2, sort_keys=True)
+        write(sys.stdout, json_data)
+        parser.exit()
+
+    DEFAULT_EXCLUDES = ("generate_cli_skeleton", "cli_input_json", "quiet", "verbose", "help")
+
+    def generate_dict(self, parser, excludes=set(DEFAULT_EXCLUDES)):
+        d = {}
+        for action in parser._actions:
+            name = action.dest
+            if name in excludes:
+                continue
+            if action.default == argparse.SUPPRESS:
+                d[name] = ""
+            else:
+                d[name] = action.default
+        return d
+
+
 def middleware_config_json(context, create_parser):
     parser = create_parser(context)
-    parser.add_argument("--config", action=LoadJSONConfigAction, help="(default option: configuration via json)")
+    parser.add_argument("--cli-input-json",
+                        action=LoadJSONConfigAction,
+                        help="(default option: configuration via json)")
+    parser.add_argument("--generate-cli-skeleton",
+                        action=GenerateJSONConfigAction,
+                        help="(default option: generate skeleton for config json)")
 
     def setup_closure(args):
-        if args.config is not None:
-            return MixedArgs(parser, args, args.config)
+        if args.cli_input_json is not None:
+            return MixedArgs(parser, args, args.cli_input_json)
     parser.action(setup_closure)
     return parser
