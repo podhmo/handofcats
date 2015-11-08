@@ -5,6 +5,7 @@ import logging
 import sys
 import argparse
 from handofcats.compat import write
+from handofcats.parsercreator import ParserCreator
 from handofcats.commandcreator import CommandFromFunction
 from handofcats.middlewares import MiddlewareApplicator
 from handofcats.commandcollector import CommandCollector
@@ -44,8 +45,11 @@ def as_command(fn=None, middlewares=None):
         else:
             middleware_applicator = None
 
+        parser_creator = ParserCreator(argspec, help_dict, description)
+
         caller = CommandFromFunction(
-            fn, argspec, help_dict, description,
+            fn,
+            parser_creator=parser_creator,
             middleware_applicator=middleware_applicator,
             mark=COLLECTOR.mark
         )

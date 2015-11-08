@@ -3,16 +3,13 @@ import sys
 import logging
 from cached_property import cached_property as reify
 from .compat import text_
-from .parsercreator import ParserCreator
 logger = logging.getLogger(__name__)
 
 
 class CommandFromFunction(object):
-    _ParserCreator = ParserCreator
-
-    def __init__(self, fn, argspec, help_dict=None, description=None, middleware_applicator=None, mark=None):
+    def __init__(self, fn, parser_creator, middleware_applicator=None, mark=None):
         self.fn = fn
-        self.parser_creator = self._ParserCreator(argspec, help_dict, description)
+        self.parser_creator = parser_creator
         if mark is not None:
             mark(self)
         self.middleware_applicator = middleware_applicator
