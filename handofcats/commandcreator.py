@@ -14,14 +14,6 @@ class CommandFromFunction(object):
             mark(self)
         self.middleware_applicator = middleware_applicator
 
-    def activate(self, level=1):
-        frame = sys._getframe(level)
-        name = frame.f_globals["__name__"]
-        if name == "__main__":
-            return self.run_as_command(sys.argv[1:])
-        else:
-            return self
-
     def __call__(self, *args, **kwargs):
         return self.fn(*args, **kwargs)
 

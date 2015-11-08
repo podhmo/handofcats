@@ -34,7 +34,7 @@ def get_description(doc):
 
 
 def as_command(fn=None, middlewares=None):
-    def call(fn, level=2):
+    def call(fn, level=1):
         argspec = inspect.getargspec(fn)
         doc = fn.__doc__ or ""
         help_dict = get_help_dict(doc)
@@ -47,18 +47,24 @@ def as_command(fn=None, middlewares=None):
 
         parser_creator = ArgumentParserCreator(argspec, help_dict, description)
 
-        caller = CommandFromFunction(
+        cmd_creator = CommandFromFunction(
             fn,
             parser_creator=parser_creator,
             middleware_applicator=middleware_applicator,
             mark=COLLECTOR.mark
         )
-        return caller.activate(level=level)
+        # dispatching from caller module
+        frame = sys._getframe(level)
+        name = frame.f_globals["__name__"]
+        if name == "__main__":
+            return cmd_creator.run_as_command(sys.argv[1:])
+        else:
+            return cmd_creator
 
     if fn is None:
         return call
     else:
-        return call(fn, level=3)
+        return call(fn, level=2)
 
 
 def describe(usage="command:\n", out=sys.stdout, package=None, name=None, level=1, scan=COLLECTOR.scan):
