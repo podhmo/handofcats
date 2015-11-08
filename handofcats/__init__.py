@@ -5,7 +5,7 @@ import sys
 import argparse
 from cached_property import cached_property as reify
 import logging
-from handofcats.compat import text_, bytes_, PY3
+from handofcats.compat import text_, bytes_, PY3, write
 from handofcats import middlewares as m
 logger = logging.getLogger(__name__)
 
@@ -264,26 +264,21 @@ def describe(usage="command:\n", out=sys.stdout, package=None, name=None, level=
         name = frame.f_globals["__name__"]
         package = frame.f_globals["__package__"]
 
-    if PY3:
-        write = lambda msg: out.write(text_(msg))
-    else:
-        write = lambda msg: out.write(bytes_(text_(msg)))
-
     if name == "__main__":
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--full", default=False, action="store_true", dest="full_description")
         args = parser.parse_args(sys.argv[1:])
         commands = list(sorted(scan(package), key=lambda x: x.name))
 
-        write("avaiable commands are here. (with --full option, showing full text)\n\n")
+        write(out, "avaiable commands are here. (with --full option, showing full text)\n\n")
         for command in commands:
             if command.short_description:
-                write(u"- {} -- {}\n".format(command.name, command.short_description))
+                write(out, u"- {} -- {}\n".format(command.name, command.short_description))
             else:
-                write(u"- {}\n".format(command.name))
+                write(out, u"- {}\n".format(command.name))
 
         if args.full_description and commands:
-            write(u"\n")
+            write(out, u"\n")
             for command in commands:
-                write(u"\n---{}-------------------------------------\n".format(command.name))
+                write(out, u"\n---{}-------------------------------------\n".format(command.name))
                 command.print_help(out)

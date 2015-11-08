@@ -40,5 +40,18 @@ def bytes_(s, encoding='utf-8', errors='strict'):
         return s.encode(encoding, errors)
     return s
 
+
+def write_bytes(out, v):
+    out.write(bytes_(text_(v)))
+
+
+def write_text(out, v):
+    out.write(text_(v))
+
+if PY3:
+    write = write_text
+else:
+    write = write_bytes
+
 if not PY3:
     input = raw_input
