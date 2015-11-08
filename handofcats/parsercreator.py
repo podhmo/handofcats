@@ -11,7 +11,7 @@ class WrappedArgumentParser(object):
         self.optionals = optionals
         self.callbacks = []
 
-    def action(self, callback):
+    def add_callback(self, callback):
         self.callbacks.append(callback)
 
     def __getattr__(self, k):

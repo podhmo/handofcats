@@ -92,5 +92,5 @@ def middleware_config_json(context, create_parser):
     def setup_closure(args):
         if args.cli_input_json is not None:
             return MixedArgs(parser, args, args.cli_input_json)
-    parser.action(setup_closure)
+    parser.add_callback(setup_closure)
     return parser

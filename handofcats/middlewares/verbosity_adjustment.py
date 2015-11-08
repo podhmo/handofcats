@@ -19,5 +19,5 @@ def middleware_verbosity_adjustment(context, create_parser):
         logging.basicConfig(level=logging_level)
         return args
 
-    parser.action(setup_closure)
+    parser.add_callback(setup_closure)
     return parser
