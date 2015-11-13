@@ -7,7 +7,7 @@ import argparse
 from handofcats.compat import write
 from handofcats.parsercreator import ArgumentParserCreator
 from handofcats.commandcreator import CommandFromFunction
-from handofcats.middlewares import MiddlewareApplicator
+from handofcats.middlewares import MiddlewareApplicator, DEFAULT_MIDDLEWARES
 from handofcats.commandcollector import CommandCollector
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ def get_description(doc):
     return "\n".join(r)
 
 
-def as_command(fn=None, middlewares=None):
+def as_command(fn=None, middlewares=DEFAULT_MIDDLEWARES):
     def call(fn, level=1):
         argspec = inspect.getargspec(fn)
         doc = fn.__doc__ or ""
