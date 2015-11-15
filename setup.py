@@ -19,6 +19,11 @@ install_requires = [
     "cached_property"
 ]
 
+# True if we are running on Python 3.
+PY3 = sys.version_info[0] == 3
+if not PY3:
+    install_requires.append("importlib2")
+
 
 docs_extras = [
 ]

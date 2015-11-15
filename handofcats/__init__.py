@@ -35,23 +35,26 @@ def get_description(doc):
 
 def as_command(fn=None, middlewares=DEFAULT_MIDDLEWARES, argv=None, level=2):
     def call(fn, level=1, argv=argv):
-        argspec = inspect.getargspec(fn)
-        doc = fn.__doc__ or ""
-        help_dict = get_help_dict(doc)
-        description = get_description(doc)
-
-        if middlewares:
-            middleware_applicator = MiddlewareApplicator(middlewares)
+        if isinstance(fn, CommandFromFunction):
+            cmd_creator = fn
         else:
-            middleware_applicator = None
+            argspec = inspect.getargspec(fn)
+            doc = fn.__doc__ or ""
+            help_dict = get_help_dict(doc)
+            description = get_description(doc)
 
-        parser_creator = ArgumentParserCreator(argspec, help_dict, description)
+            if middlewares:
+                middleware_applicator = MiddlewareApplicator(middlewares)
+            else:
+                middleware_applicator = None
 
-        cmd_creator = CommandFromFunction(
-            fn,
-            parser_creator=parser_creator,
-            middleware_applicator=middleware_applicator,
-        )
+            parser_creator = ArgumentParserCreator(argspec, help_dict, description)
+
+            cmd_creator = CommandFromFunction(
+                fn,
+                parser_creator=parser_creator,
+                middleware_applicator=middleware_applicator,
+            )
         # marking for describe()
         COLLECTOR.mark(cmd_creator)
 
