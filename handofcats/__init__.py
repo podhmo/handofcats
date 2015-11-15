@@ -33,8 +33,8 @@ def get_description(doc):
     return "\n".join(r)
 
 
-def as_command(fn=None, middlewares=DEFAULT_MIDDLEWARES):
-    def call(fn, level=1):
+def as_command(fn=None, middlewares=DEFAULT_MIDDLEWARES, argv=None, level=2):
+    def call(fn, level=1, argv=argv):
         argspec = inspect.getargspec(fn)
         doc = fn.__doc__ or ""
         help_dict = get_help_dict(doc)
@@ -59,14 +59,16 @@ def as_command(fn=None, middlewares=DEFAULT_MIDDLEWARES):
         frame = sys._getframe(level)
         name = frame.f_globals["__name__"]
         if name == "__main__":
-            return cmd_creator.run_as_command(sys.argv[1:])
+            if argv is None:
+                argv = sys.argv[1:]
+            return cmd_creator.run_as_command(argv)
         else:
             return cmd_creator
 
     if fn is None:
         return call
     else:
-        return call(fn, level=2)
+        return call(fn, level=level, argv=argv)
 
 
 def describe(usage="command:\n", out=sys.stdout, package=None, name=None, level=1, scan=COLLECTOR.scan):

@@ -53,4 +53,6 @@ setup(name='handofcats',
       license="mit",
       test_suite="handofcats.tests",
       entry_points="""
+[console_scripts]
+handofcats=handofcats.cli:main
 """)
