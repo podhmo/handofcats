@@ -26,7 +26,11 @@ class MixedArgs(object):
             # settings by command line option
             return value
         else:
-            return getattr(self.defaults, k) or default_value
+            value = self.defaults.get(k, _marker)
+            if value is _marker:
+                return default_value
+            else:
+                return value
 
 
 class ObjectLikeDict(dict):
