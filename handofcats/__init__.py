@@ -62,8 +62,6 @@ def as_command(fn=None, middlewares=DEFAULT_MIDDLEWARES, argv=None, level=2):
         frame = sys._getframe(level)
         name = frame.f_globals["__name__"]
         if name == "__main__":
-            if argv is None:
-                argv = sys.argv[1:]
             return cmd_creator.run_as_command(argv)
         else:
             return cmd_creator
@@ -83,7 +81,7 @@ def describe(usage="command:\n", out=sys.stdout, package=None, name=None, level=
     if name == "__main__":
         parser = argparse.ArgumentParser()
         parser.add_argument("-f", "--full", default=False, action="store_true", dest="full_description")
-        args = parser.parse_args(sys.argv[1:])
+        args = parser.parse_args()
         commands = list(sorted(scan(package), key=lambda x: x.name))
 
         write(out, "avaiable commands are here. (with --full option, showing full text)\n\n")

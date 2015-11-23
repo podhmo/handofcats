@@ -40,7 +40,7 @@ class CommandFromFunction(object):
     def print_help(self, out=sys.stdout):
         self.parser.print_help(out)
 
-    def run_as_command(self, args):
+    def run_as_command(self, args=None):
         try:
             parsed = self.parser.parse_args(args)
             args = [getattr(parsed, name) for name in self.parser.positionals]
