@@ -45,6 +45,39 @@ class TestIterateFunction(unittest.TestCase):
         self.assertEqual([("z", None), ("flag", False)], result)
 
 
+class TestCreateParser(unittest.TestCase):
+    def _getTargetClass(self):
+        from handofcats.parsercreator import ArgumentParserCreator
+        return ArgumentParserCreator
+
+    def _createOne(self, fn):
+        import inspect
+        argspec = inspect.getargspec(fn)
+        return self._getTargetClass()(argspec)
+
+    def test_create_parser(self):
+        def f(config, x, y=None):
+            pass
+
+        target = self._createOne(f)
+        parser = target.create_parser()
+
+        actual = list(sorted([ac.dest for ac in parser._actions]))
+        expected = list(sorted(["config", "x", "y", "help"]))
+        self.assertEqual(actual, expected)
+
+    def test_create_parser_skip_options(self):
+        def f(config, x, y=None):
+            pass
+
+        target = self._createOne(f)
+        parser = target.create_parser(skip_options=["config"])
+
+        actual = list(sorted([ac.dest for ac in parser._actions]))
+        expected = list(sorted(["x", "y", "help"]))
+        self.assertEqual(actual, expected)
+
+
 class TestGetHelpDict(unittest.TestCase):
     def _callFUT(self, doc):
         from handofcats import get_help_dict

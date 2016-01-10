@@ -88,12 +88,15 @@ class ArgumentParserCreator(object):
         else:
             return zip(self.argspec.args[-self.len_of_opts:], self.argspec.defaults)
 
-    def create_parser(self, prog=None):
+    def create_parser(self, prog=None, skip_options=None):
+        skip_options = skip_options or []
         parser = argparse.ArgumentParser(prog=prog, description=self.description)
         for k, v in self.iterate_optionals():
-            self.add_optional(parser, k, v)
+            if k not in skip_options:
+                self.add_optional(parser, k, v)
 
         for arg in self.iterate_positionals():
-            self.add_positional(parser, arg)
+            if arg not in skip_options:
+                self.add_positional(parser, arg)
         return WrappedArgumentParser(parser, self._positionals, self._optionals)
     __call__ = create_parser
