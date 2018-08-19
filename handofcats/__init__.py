@@ -3,8 +3,6 @@ import re
 import inspect
 import logging
 import sys
-import argparse
-from handofcats.compat import write
 from handofcats.parsercreator import ArgumentParserCreator
 from handofcats.commandcreator import CommandFromFunction
 from handofcats.middlewares import MiddlewareApplicator, DEFAULT_MIDDLEWARES
@@ -71,31 +69,6 @@ def as_command(fn=None, middlewares=DEFAULT_MIDDLEWARES, argv=None, level=2):
     else:
         return call(fn, level=level, argv=argv)
 
-
-def describe(usage="command:\n", out=sys.stdout, package=None, name=None, level=1, scan=COLLECTOR.scan):
-    if name is None:
-        frame = sys._getframe(level)
-        name = frame.f_globals["__name__"]
-        package = frame.f_globals["__package__"]
-
-    if name == "__main__":
-        parser = argparse.ArgumentParser()
-        parser.add_argument("-f", "--full", default=False, action="store_true", dest="full_description")
-        args = parser.parse_args()
-        commands = list(sorted(scan(package), key=lambda x: x.name))
-
-        write(out, "avaiable commands are here. (with --full option, showing full text)\n\n")
-        for command in commands:
-            if command.short_description:
-                write(out, u"- {} -- {}\n".format(command.name, command.short_description))
-            else:
-                write(out, u"- {}\n".format(command.name))
-
-        if args.full_description and commands:
-            write(out, u"\n")
-            for command in commands:
-                write(out, u"\n---{}-------------------------------------\n".format(command.name))
-                command.print_help(out)
 
 # alias
 handofcats = as_command
