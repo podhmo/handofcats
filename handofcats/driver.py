@@ -30,16 +30,27 @@ class Driver:
                 option = f"-{option_name(k)}"
             else:
                 option = f"--{option_name(k)}"
-
             typ = argspec.annotations.get(k)
             if typ is str:
-                parser.add_argument(option, required=True)
-            elif typ is int:
-                parser.add_argument(option, required=True, type=int)
-            elif typ is float:
-                parser.add_argument(option, required=True, type=float)
+                kwargs = {}
+                if argspec.kwonlydefaults and argspec.kwonlydefaults.get(k):
+                    kwargs["default"] = argspec.kwonlydefaults.get(k)
+                parser.add_argument(option, **kwargs, required=True)
+            elif typ is bool:
+                kwargs = {"action": "store_true"}
+                if argspec.kwonlydefaults and argspec.kwonlydefaults.get(k) is True:
+                    kwargs["action"] = "store_false"
+                parser.add_argument(option, **kwargs)
+            elif typ in (int, float):
+                kwargs = {"type": typ}
+                if argspec.kwonlydefaults and argspec.kwonlydefaults.get(k):
+                    kwargs["default"] = argspec.kwonlydefaults.get(k)
+                parser.add_argument(option, **kwargs, required=True)
             else:
-                parser.add_argument(option, required=True)
+                kwargs = {}
+                if argspec.kwonlydefaults and argspec.kwonlydefaults.get(k):
+                    kwargs["default"] = argspec.kwonlydefaults.get(k)
+                parser.add_argument(option, **kwargs, required=True)
 
         args = parser.parse_args(argv)
         params = vars(args).copy()

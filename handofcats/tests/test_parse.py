@@ -25,6 +25,9 @@ class Tests(unittest.TestCase):
         from collections import namedtuple
 
         C = namedtuple("C", "msg, fn, expected")
+        _DEFAULT_INT = 100
+        _DEFAULT_FLOAT = 0.12345
+        _DEFAULT_STR = "*default*"
 
         def f_str(*, name: str) -> None:
             pass
@@ -32,10 +35,25 @@ class Tests(unittest.TestCase):
         def f_str__short(*, x: str) -> None:
             pass
 
+        def f_str__default_value(*, name: str = _DEFAULT_STR) -> None:
+            pass
+
         def f_int(*, val: int) -> None:
             pass
 
+        def f_int__default_value(*, val: int = _DEFAULT_INT) -> None:
+            pass
+
         def f_float(*, val: float) -> None:
+            pass
+
+        def f_float__default_value(*, val: float = _DEFAULT_FLOAT) -> None:
+            pass
+
+        def f_bool(*, verbose: bool) -> None:
+            pass
+
+        def f_bool__default_is_true(*, verbose: bool = True) -> None:
             pass
 
         # yapf: disable
@@ -55,6 +73,13 @@ class Tests(unittest.TestCase):
                 ],
             ),
             C(
+                msg="(name:str=<default nameue>)",
+                fn=f_str__default_value,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--name',), 'kwargs': {'required': True, "default": _DEFAULT_STR}}, # noqa
+                ],
+            ),
+            C(
                 msg="(val:int)",
                 fn=f_int,
                 expected=[
@@ -62,10 +87,38 @@ class Tests(unittest.TestCase):
                 ],
             ),
             C(
+                msg="(val:int=<default value>)",
+                fn=f_int__default_value,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': True, 'type': "<class 'int'>", "default": _DEFAULT_INT}}, # noqa
+                ],
+            ),
+            C(
                 msg="(val:float)",
                 fn=f_float,
                 expected=[
                     {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': True, 'type': "<class 'float'>"}}, # noqa
+                ],
+            ),
+            C(
+                msg="(val:float=<default value>)",
+                fn=f_float__default_value,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': True, 'type': "<class 'float'>", "default": _DEFAULT_FLOAT}}, # noqa
+                ],
+            ),
+            C(
+                msg="(verbose:bool), must be store_true",
+                fn=f_bool,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--verbose',), 'kwargs': {'action': "store_true"}}, # noqa
+                ],
+            ),
+            C(
+                msg="(verbose:bool=True), must be store_false",
+                fn=f_bool__default_is_true,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--verbose',), 'kwargs': {'action': "store_false"}}, # noqa
                 ],
             ),
         ]
