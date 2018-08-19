@@ -1,6 +1,10 @@
 handofcats
 ========================================
 
+.. image:: https://travis-ci.org/podhmo/handofcats.svg
+  :target: https://travis-ci.org/podhmo/handofcats.svg
+
+
 A tiny Converter that making executable command script from python function.
 If the function is type annotated, it is also used.
 
