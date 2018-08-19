@@ -52,7 +52,8 @@ greeting.py
 
 (TODO: detail description)
 
-## `--expose`
+`--expose`
+----------------------------------------
 
 calling with `--expose` option, generationg the code that dropping dependencies of handofcats module.
 
@@ -78,7 +79,8 @@ calling with `--expose` option, generationg the code that dropping dependencies 
   if __name__ == '__main__':
       main()
 
-## `handofcats` command
+`handofcats` command
+----------------------------------------
 
 sum.py
 
