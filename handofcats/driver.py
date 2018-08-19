@@ -74,7 +74,9 @@ class Driver:
                 kwargs["default"] = opt.default
             if opt.type and opt.type != str:
                 self._setup_type(opt, kwargs)
-
+            if kwargs.get("action") == "append" and not opt.option_name.startswith("-"):
+                kwargs["nargs"] = "*"
+                kwargs.pop("action")
             logger.debug("add_argument %s %r", opt.option_name, kwargs)
             parser.add_argument(opt.option_name, **kwargs)
 

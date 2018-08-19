@@ -24,7 +24,7 @@ def print_argparse_code(fn, history):
         name = history["name"]
         if name == "__init__":
             name = default
-        kwargs = {k: repr(v) for k, v in history["kwargs"].items()}
+        kwargs = {k: (repr(v) if k != "type" else v.__name__) for k, v in history["kwargs"].items()}
         args = [repr(v) for v in history["args"]]
         return f"{name}({LazyArgumentsAndKeywords(args, kwargs)})"
 
