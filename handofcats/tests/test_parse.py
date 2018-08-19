@@ -29,13 +29,23 @@ class Tests(unittest.TestCase):
         def f0(*, name: str) -> None:
             pass
 
+        def f1(*, x: str) -> None:
+            pass
+
         # yapf: disable
         candidates = [
             C(
-                msg="(name:str)",
+                msg="(name:str), must be --name",
                 fn=f0,
                 expected=[
                     {'name': 'add_argument', 'args': ('--name',), 'kwargs': {'required': True}},
+                ],
+            ),
+            C(
+                msg="(x:str), oneline, must be -x",
+                fn=f1,
+                expected=[
+                    {'name': 'add_argument', 'args': ('-x',), 'kwargs': {'required': True}},
                 ],
             ),
         ]

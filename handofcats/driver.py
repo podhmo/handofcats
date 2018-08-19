@@ -21,8 +21,10 @@ class Driver:
         fn = self.fn
         parser = self.parser_factory(fn, description=fn.__doc__)
         argspec = inspect.getfullargspec(fn)
+
         for k in argspec.kwonlyargs:
             parser.add_argument(f'{"-" if len(k) <= 1 else "--"}{option_name(k)}', required=True)
+
         args = parser.parse_args(argv)
         params = vars(args).copy()
         return fn(**params)
