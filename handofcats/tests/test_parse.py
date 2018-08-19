@@ -18,7 +18,7 @@ class Tests(unittest.TestCase):
         class MyDriver(Driver):
             create_parser = testing.create_parser
 
-        return target_function(fn=fn, argv=argv, force=True, driver=MyDriver)
+        return target_function(fn=fn, argv=argv, _force=True, driver=MyDriver)
 
     def test_it(self):
         from handofcats.parsers.testing import ParseArgsCalled

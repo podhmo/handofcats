@@ -8,11 +8,11 @@ def import_symbol_maybe(ob_or_path, sep=":"):
     return import_symbol_maybe(ob_or_path, sep=sep)
 
 
-def as_command(fn=None, argv=None, driver=Driver, level=2, force=False):
+def as_command(fn=None, argv=None, driver=Driver, level=2, _force=False):
     create_driver = import_symbol_maybe(driver)
 
     def call(fn, level=1, argv=argv):
-        if not force:
+        if not _force:
             # caller module extraction, if it is __main__, calling as command
             frame = sys._getframe(level)
             name = frame.f_globals["__name__"]
