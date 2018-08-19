@@ -23,11 +23,7 @@ def _import_symbol_from_filepath(path, name, module_id=None, logger=logger):
 def import_symbol(path, sep=":", logger=logger):
     try:
         module, name = path.rsplit(sep, 1)
-        return _import_symbol_from_filepath(module, name, logger=logger)
-    except ValueError as e:
-        logger.info(str(e), exc_info=True)
-        import argparse  # xxx
-        raise argparse.ArgumentTypeError("must be in 'module:attrs' format")
+        return _import_symbol_from_module(module, name, logger=logger)
     except ImportError:
         sys.path.append(".")
         return _import_symbol_from_filepath(module, name, logger=logger)

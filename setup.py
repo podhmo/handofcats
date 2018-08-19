@@ -59,5 +59,5 @@ setup(name='handofcats',
       test_suite="handofcats.tests",
       entry_points="""
 [console_scripts]
-handofcats=handofcats.cli:main
+handofcats=handofcats.__main__:main
 """)
