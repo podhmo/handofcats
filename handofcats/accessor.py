@@ -32,7 +32,7 @@ class Accessor:
         r = []
         for name in self.resolver.argspec.args:
             if self.resolver.resolve_default(name) is not None:
-                r.append(self.create_option(name), required=False)
+                r.append(self.create_flag(name, required=False))
         for name in self.resolver.argspec.kwonlyargs:
             required = self.resolver.resolve_default(name) is None
             r.append(self.create_flag(name, required=required))
@@ -64,7 +64,11 @@ class Resolver:
 
     @reify
     def _defaults(self) -> t.Dict[str, t.Any]:
-        return self.argspec.defaults or {}
+        d = {}
+        for i, v in enumerate(self.argspec.defaults or []):
+            k = self.argspec.args[-(i + 1)]  # 0 -> -1
+            d[k] = v
+        return d
 
     @reify
     def _kwonlydefaults(self) -> t.Dict[str, t.Any]:

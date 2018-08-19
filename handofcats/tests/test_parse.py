@@ -56,6 +56,9 @@ class Tests(unittest.TestCase):
         def f_bool__default_is_true(*, verbose: bool = True) -> None:
             pass
 
+        def f_positionals(x: str, y: int, z: bool = False) -> None:
+            pass
+
         # yapf: disable
         candidates = [
             C(
@@ -119,6 +122,16 @@ class Tests(unittest.TestCase):
                 fn=f_bool__default_is_true,
                 expected=[
                     {'name': 'add_argument', 'args': ('--verbose',), 'kwargs': {'action': "store_false"}}, # noqa
+                ],
+            ),
+            # positional arguments
+            C(
+                msg="positionals",
+                fn=f_positionals,
+                expected=[
+                    {'name': 'add_argument', 'args': ('x',), 'kwargs': {}}, # noqa
+                    {'name': 'add_argument', 'args': ('y',), 'kwargs': {'type': "<class 'int'>"}}, # noqa
+                    {'name': 'add_argument', 'args': ('-z',), 'kwargs': {'action': "store_true"}}, # noqa
                 ],
             ),
         ]
