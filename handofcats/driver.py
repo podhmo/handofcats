@@ -1,3 +1,4 @@
+import typing as t
 import itertools
 from logging import getLogger as get_logger
 from .util import reify
@@ -23,6 +24,44 @@ class Driver:
             parser.add_argument("--expose", action="store_true")  # xxx (for ./expose.py)
         return parser
 
+    def _setup_type(self, opt, kwargs):
+        if opt.type == bool:
+            action = "store_true"
+            if opt.default is True:
+                action = "store_false"
+            kwargs.pop("required", None)
+            kwargs.pop("default", None)
+            kwargs["action"] = action
+        elif opt.type in (int, float):
+            kwargs["type"] = opt.type
+        else:
+            from collections.abc import Sequence
+            if hasattr(opt.type, "__origin__") and hasattr(opt.type, "__args__"):
+                try:
+                    # for Optional
+                    nonetype = type(None)
+                    if opt.type.__origin__ == t.Union and nonetype in opt.type.__args__ and len(
+                        opt.type.__args__
+                    ) == 2:
+                        item_type = opt._replace(
+                            type=[t for t in opt.type.__args__ if t is not nonetype][0]
+                        )
+                        self._setup_type(item_type, kwargs)
+
+                    # for sequence (e.g. t.List[int], t.Tuple[str])
+                    elif issubclass(opt.type.__origin__, Sequence):
+                        kwargs["action"] = "append"
+                        item_type = opt._replace(type=opt.type.__args__[0])
+                        self._setup_type(item_type, kwargs)
+                except:
+                    logger.info(
+                        "unexpected generic type is found (type=%s)", opt.type, exc_info=True
+                    )
+            elif issubclass(opt.type, (list, tuple)):
+                kwargs["action"] = "append"
+            else:
+                logger.info("unexpected type is found (type=%s)", opt.type)
+
     def setup_parser(self, parser):
         arguments = [(opt, None) for opt in self.accessor.arguments]
         flags = [(opt, opt.required) for opt in self.accessor.flags]
@@ -34,15 +73,7 @@ class Driver:
             if opt.default is not None:
                 kwargs["default"] = opt.default
             if opt.type and opt.type != str:
-                if opt.type != bool:
-                    kwargs["type"] = opt.type
-                else:
-                    action = "store_true"
-                    if opt.default is True:
-                        action = "store_false"
-                    kwargs.pop("required", None)
-                    kwargs.pop("default", None)
-                    kwargs["action"] = action
+                self._setup_type(opt, kwargs)
 
             logger.debug("add_argument %s %r", opt.option_name, kwargs)
             parser.add_argument(opt.option_name, **kwargs)

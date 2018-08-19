@@ -1,3 +1,4 @@
+import typing as t
 import unittest
 import json
 
@@ -38,10 +39,16 @@ class Tests(unittest.TestCase):
         def f_str__default_value(*, name: str = _DEFAULT_STR) -> None:
             pass
 
+        def f_str__default_none(*, name: str = None) -> None:
+            pass
+
         def f_int(*, val: int) -> None:
             pass
 
         def f_int__default_value(*, val: int = _DEFAULT_INT) -> None:
+            pass
+
+        def f_int__default_none__optional(*, name: t.Optional[int] = None) -> None:
             pass
 
         def f_float(*, val: float) -> None:
@@ -57,6 +64,19 @@ class Tests(unittest.TestCase):
             pass
 
         def f_positionals(x: str, y: int, z: bool = False) -> None:
+            pass
+
+        # t.Sequence
+        def f_list(*, xs: t.List[int]) -> None:
+            pass
+
+        def f_list__any(*, xs: list = None) -> None:
+            pass
+
+        def f_list__any2(*, xs: list = []) -> None:
+            pass
+
+        def f_tuple(*, xs: t.Tuple[int]) -> None:
             pass
 
         # yapf: disable
@@ -76,10 +96,17 @@ class Tests(unittest.TestCase):
                 ],
             ),
             C(
-                msg="(name:str=<default nameue>)",
+                msg="(name:str=<default value>)",
                 fn=f_str__default_value,
                 expected=[
                     {'name': 'add_argument', 'args': ('--name',), 'kwargs': {'required': False, "default": _DEFAULT_STR}}, # noqa
+                ],
+            ),
+            C(
+                msg="(name:str=None",
+                fn=f_str__default_none,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--name',), 'kwargs': {'required': False}}, # noqa
                 ],
             ),
             C(
@@ -94,6 +121,13 @@ class Tests(unittest.TestCase):
                 fn=f_int__default_value,
                 expected=[
                     {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': False, 'type': "<class 'int'>", "default": _DEFAULT_INT}}, # noqa
+                ],
+            ),
+            C(
+                msg="(name:t.Optiona[int]=None",
+                fn=f_int__default_none__optional,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--name',), 'kwargs': {'required': False, "type": "<class 'int'>"}}, # noqa
                 ],
             ),
             C(
@@ -132,6 +166,35 @@ class Tests(unittest.TestCase):
                     {'name': 'add_argument', 'args': ('x',), 'kwargs': {}}, # noqa
                     {'name': 'add_argument', 'args': ('y',), 'kwargs': {'type': "<class 'int'>"}}, # noqa
                     {'name': 'add_argument', 'args': ('-z',), 'kwargs': {'action': "store_true"}}, # noqa
+                ],
+            ),
+            # t.Sequence
+            C(
+                msg="(xs:t.List[int]), must be append",
+                fn=f_list,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--xs',), 'kwargs': {'action': "append", "required": True, "type": "<class 'int'>"}}, # noqa
+                ],
+            ),
+            C(
+                msg="(xs:list=None), must be append",
+                fn=f_list__any,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--xs',), 'kwargs': {'action': "append", "required": False}}, # noqa
+                ],
+            ),
+            C(
+                msg="(xs:list=[]), must be append",
+                fn=f_list__any2,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--xs',), 'kwargs': {'action': "append", "required": False}}, # noqa
+                ],
+            ),
+            C(
+                msg="(xs:t.Tuple[int]), must be append",
+                fn=f_tuple,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--xs',), 'kwargs': {'action': "append", "required": True, "type": "<class 'int'>"}}, # noqa
                 ],
             ),
         ]

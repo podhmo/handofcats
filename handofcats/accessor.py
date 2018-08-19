@@ -23,7 +23,7 @@ class Accessor:
     def arguments(self) -> t.Sequence[Option]:
         r = []
         for name in self.resolver.argspec.args:
-            if self.resolver.resolve_default(name) is None:
+            if not self.resolver.has_default(name):
                 r.append(self.create_positional(name))
         return r
 
@@ -31,10 +31,10 @@ class Accessor:
     def flags(self) -> t.Sequence[Option]:
         r = []
         for name in self.resolver.argspec.args:
-            if self.resolver.resolve_default(name) is not None:
+            if self.resolver.has_default(name):
                 r.append(self.create_flag(name, required=False))
         for name in self.resolver.argspec.kwonlyargs:
-            required = self.resolver.resolve_default(name) is None
+            required = not self.resolver.has_default(name)
             r.append(self.create_flag(name, required=required))
         return r
 
@@ -76,6 +76,9 @@ class Resolver:
     @reify
     def _kwonlydefaults(self) -> t.Dict[str, t.Any]:
         return self.argspec.kwonlydefaults or {}
+
+    def has_default(self, name: str) -> bool:
+        return name in self._kwonlydefaults or name in self._defaults
 
     def resolve_default(self, name: str) -> t.Optional[t.Any]:
         return self._kwonlydefaults.get(name) or self._defaults.get(name)
