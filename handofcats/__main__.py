@@ -15,7 +15,7 @@ def import_symbol(path, sep=":", logger=logger):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(add_help=False)
     help_text = "target EntryPoint. (must be in 'module:attrs' format)"
     parser.add_argument("entry_point", type=import_symbol, help=help_text)
 
