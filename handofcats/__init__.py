@@ -1,21 +1,24 @@
-import logging
 import sys
-logger = logging.getLogger(__name__)
+from .driver import Driver
 
 
-def as_command(fn=None, argv=None, level=2):
+def import_symbol_maybe(ob_or_path, sep=":"):
+    if not isinstance(ob_or_path, str):
+        return ob_or_path
+    return import_symbol_maybe(ob_or_path, sep=sep)
+
+
+def as_command(fn=None, argv=None, driver=Driver, level=2):
+    create_driver = import_symbol_maybe(driver)
+
     def call(fn, level=1, argv=argv):
         # caller module extraction, if it is __main__, calling as command
         frame = sys._getframe(level)
         name = frame.f_globals["__name__"]
         if name != "__main__":
             return fn
-
-        from handofcats.parsers import commandline
-        parser = commandline.create_parser(fn, description=fn.__doc__)
-        args = parser.parse_args()
-        params = vars(args).copy()
-        return fn(**params)
+        driver = create_driver(fn)
+        return driver.run()
 
     if fn is None:
         return call

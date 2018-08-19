@@ -7,6 +7,25 @@ from importlib import (
 logger = get_logger(__name__)
 
 
+# stolen from pyramid
+class reify(object):
+    """cached property"""
+
+    def __init__(self, wrapped):
+        self.wrapped = wrapped
+        try:
+            self.__doc__ = wrapped.__doc__
+        except:
+            pass
+
+    def __get__(self, inst, objtype=None):
+        if inst is None:
+            return self
+        val = self.wrapped(inst)
+        setattr(inst, self.wrapped.__name__, val)
+        return val
+
+
 def _import_symbol_from_module(module, name, logger=logger):
     logger.debug("import module=%s, name=%s", module, name)
     module = import_module(module)
