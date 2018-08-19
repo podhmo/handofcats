@@ -13,10 +13,15 @@ class Driver:
         from .accessor import Accessor
         return Accessor(self.fn)
 
-    @reify
-    def create_parser(self):
-        from .parsers import commandline
-        return commandline.create_parser
+    def create_parser(self, fn, *, argv=None, description=None):
+        if "--expose" in (argv or []):
+            from .parsers import expose
+            parser = expose.create_parser(fn, description=description or fn.__doc__)
+        else:
+            from .parsers import commandline
+            parser = commandline.create_parser(fn, description=description or fn.__doc__)
+            parser.add_argument("--expose", action="store_true")  # xxx (for ./expose.py)
+        return parser
 
     def setup_parser(self, parser):
         arguments = [(opt, None) for opt in self.accessor.arguments]
@@ -44,8 +49,9 @@ class Driver:
 
     def run(self, argv=None):
         fn = self.fn
-        parser = self.create_parser(fn, description=fn.__doc__)
+        parser = self.create_parser(fn, argv=argv, description=fn.__doc__)
         self.setup_parser(parser)
         args = parser.parse_args(argv)
         params = vars(args).copy()
+        params.pop("expose", None)  # xxx: for ./parsers/expose.py
         return fn(**params)
