@@ -41,7 +41,10 @@ class Accessor:
     def create_flag(self, name, *, required: bool = False) -> Option:
         return Option(
             name=name,
-            option_name=f"{'-' if len(name) <= 1 else '--'}{option_name(name)}",
+            option_name="{prefix}{name}".format(
+                prefix='-' if len(name) <= 1 else '--',
+                name=option_name(name),
+            ),
             required=required,
             type=self.resolver.resolve_type(name),
             default=self.resolver.resolve_default(name),
