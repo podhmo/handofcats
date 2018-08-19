@@ -4,7 +4,7 @@ help:
 .PHONY: help
 
 run:
-	python greeting.py --is-surprised --name=foo
+	python greeting.py --is-surprised hello
 run-full:
-	python greeting.py --is-surprised=1 --message hello --name=foo
+	python greeting.py --is-surprised --name=foo hello
 .PHONY: run
