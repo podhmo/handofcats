@@ -1,137 +1,163 @@
-# -*- coding:utf-8 -*-
 import unittest
+import json
 
 
-class TestIterateFunction(unittest.TestCase):
-    def _getTargetClass(self):
-        from handofcats.parsercreator import ArgumentParserCreator
-        return ArgumentParserCreator
+class Tests(unittest.TestCase):
+    maxDiff = None
 
-    def _makeOne(self, fn):
-        import inspect
-        argspec = inspect.getargspec(fn)
-        return self._getTargetClass()(argspec)
+    def _getTargetFunction(self):
+        from handofcats import as_command
+        return as_command
 
-    def testiterate_positionals(self):
-        def f(x, y, z):
-            pass
+    def _callFUT(self, fn, *, argv):
+        target_function = self._getTargetFunction()
 
-        target = self._makeOne(f)
-        result = list(target.iterate_positionals())
-        self.assertEqual(["x", "y", "z"], result)
+        from handofcats.driver import Driver
+        from handofcats.parsers import testing
 
-    def testiterate_positionals2(self):
-        def f(x, y, z=None, flag=False, **kwargs):
-            pass
+        class MyDriver(Driver):
+            create_parser = testing.create_parser
 
-        target = self._makeOne(f)
-        result = list(target.iterate_positionals())
-        self.assertEqual(["x", "y"], result)
-
-    def testiterate_optionals(self):
-        def f(a=True, b=None, c=False, **kwargs):
-            pass
-
-        target = self._makeOne(f)
-        result = list(target.iterate_optionals())
-        self.assertEqual([("a", True), ("b", None), ("c", False)], result)
-
-    def testiterate_optionals2(self):
-        def f(x, y, z=None, flag=False, **kwargs):
-            pass
-
-        target = self._makeOne(f)
-        result = list(target.iterate_optionals())
-        self.assertEqual([("z", None), ("flag", False)], result)
-
-
-class TestCreateParser(unittest.TestCase):
-    def _getTargetClass(self):
-        from handofcats.parsercreator import ArgumentParserCreator
-        return ArgumentParserCreator
-
-    def _createOne(self, fn):
-        import inspect
-        argspec = inspect.getargspec(fn)
-        return self._getTargetClass()(argspec)
-
-    def test_create_parser(self):
-        def f(config, x, y=None):
-            pass
-
-        target = self._createOne(f)
-        parser = target.create_parser()
-
-        actual = list(sorted([ac.dest for ac in parser._actions]))
-        expected = list(sorted(["config", "x", "y", "help"]))
-        self.assertEqual(actual, expected)
-
-    def test_create_parser_skip_options(self):
-        def f(config, x, y=None):
-            pass
-
-        target = self._createOne(f)
-        parser = target.create_parser(skip_options=["config"])
-
-        actual = list(sorted([ac.dest for ac in parser._actions]))
-        expected = list(sorted(["x", "y", "help"]))
-        self.assertEqual(actual, expected)
-
-
-class TestGetHelpDict(unittest.TestCase):
-    def _callFUT(self, doc):
-        from handofcats import get_help_dict
-        return get_help_dict(doc)
+        return target_function(fn=fn, argv=argv, _force=True, driver=MyDriver)
 
     def test_it(self):
-        doc = """
-        this is description message
-        hello hello hello
+        from handofcats.parsers.testing import ParseArgsCalled
+        from collections import namedtuple
 
-        :param x: x of args
-        :param y: y of args
-        :rtype: int
-        """
-        result = self._callFUT(doc)
-        expected = {"x": "x of args", "y": "y of args"}
-        self.assertEqual(expected, result)
+        C = namedtuple("C", "msg, fn, expected")
+        _DEFAULT_INT = 100
+        _DEFAULT_FLOAT = 0.12345
+        _DEFAULT_STR = "*default*"
 
-    def test_it_with_type(self):
-        doc = """
-        this is description message
-        :param int x: x of args
-        :param str y: y of args
-        :rtype: int
-        """
-        result = self._callFUT(doc)
-        expected = {"x": "x of args", "y": "y of args"}
-        self.assertEqual(expected, result)
+        def f_str(*, name: str) -> None:
+            pass
+
+        def f_str__short(*, x: str) -> None:
+            pass
+
+        def f_str__default_value(*, name: str = _DEFAULT_STR) -> None:
+            pass
+
+        def f_int(*, val: int) -> None:
+            pass
+
+        def f_int__default_value(*, val: int = _DEFAULT_INT) -> None:
+            pass
+
+        def f_float(*, val: float) -> None:
+            pass
+
+        def f_float__default_value(*, val: float = _DEFAULT_FLOAT) -> None:
+            pass
+
+        def f_bool(*, verbose: bool) -> None:
+            pass
+
+        def f_bool__default_is_true(*, verbose: bool = True) -> None:
+            pass
+
+        def f_positionals(x: str, y: int, z: bool = False) -> None:
+            pass
+
+        # yapf: disable
+        candidates = [
+            C(
+                msg="(name:str), must be --name",
+                fn=f_str,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--name',), 'kwargs': {'required': True}},
+                ],
+            ),
+            C(
+                msg="(x:str), short option, must be -x",
+                fn=f_str__short,
+                expected=[
+                    {'name': 'add_argument', 'args': ('-x',), 'kwargs': {'required': True}},
+                ],
+            ),
+            C(
+                msg="(name:str=<default nameue>)",
+                fn=f_str__default_value,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--name',), 'kwargs': {'required': False, "default": _DEFAULT_STR}}, # noqa
+                ],
+            ),
+            C(
+                msg="(val:int)",
+                fn=f_int,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': True, 'type': "<class 'int'>"}}, # noqa
+                ],
+            ),
+            C(
+                msg="(val:int=<default value>)",
+                fn=f_int__default_value,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': False, 'type': "<class 'int'>", "default": _DEFAULT_INT}}, # noqa
+                ],
+            ),
+            C(
+                msg="(val:float)",
+                fn=f_float,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': True, 'type': "<class 'float'>"}}, # noqa
+                ],
+            ),
+            C(
+                msg="(val:float=<default value>)",
+                fn=f_float__default_value,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': False, 'type': "<class 'float'>", "default": _DEFAULT_FLOAT}}, # noqa
+                ],
+            ),
+            C(
+                msg="(verbose:bool), must be store_true",
+                fn=f_bool,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--verbose',), 'kwargs': {'action': "store_true"}}, # noqa
+                ],
+            ),
+            C(
+                msg="(verbose:bool=True), must be store_false",
+                fn=f_bool__default_is_true,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--verbose',), 'kwargs': {'action': "store_false"}}, # noqa
+                ],
+            ),
+            # positional arguments
+            C(
+                msg="positionals",
+                fn=f_positionals,
+                expected=[
+                    {'name': 'add_argument', 'args': ('x',), 'kwargs': {}}, # noqa
+                    {'name': 'add_argument', 'args': ('y',), 'kwargs': {'type': "<class 'int'>"}}, # noqa
+                    {'name': 'add_argument', 'args': ('-z',), 'kwargs': {'action': "store_true"}}, # noqa
+                ],
+            ),
+        ]
+        # yapf: enable
+        for c in candidates:
+            with self.subTest(msg=c.msg):
+                try:
+                    self._callFUT(c.fn, argv=[])
+                except ParseArgsCalled as e:
+                    got = e.history[1:-1]
+                else:
+                    raise self.fail("something wrong")
+
+                got_str = json.dumps(got, indent=2, ensure_ascii=False, sort_keys=True, default=str)
+                expected_str = json.dumps(
+                    c.expected, indent=2, ensure_ascii=False, sort_keys=True, default=str
+                )
+
+                debug_print("got is", got_str)
+                debug_print("expected is", expected_str)
+
+                self.assertEqual(got_str, expected_str, "- is got, + is expected")
 
 
-class TestGetDescription(unittest.TestCase):
-    def _callFUT(self, doc):
-        from handofcats import get_description
-        return get_description(doc)
-
-    def test_it(self):
-        doc = """
-        this is description message
-        :param int x: x of args
-        :param str y: y of args
-        :rtype: int
-        """
-        result = self._callFUT(doc)
-        expected = "this is description message"
-        self.assertEqual(expected, result)
-
-    def test_it__long(self):
-        doc = """
-        this is description message
-        hello hello hello
-        :param int x: x of args
-        :param str y: y of args
-        :rtype: int
-        """
-        result = self._callFUT(doc)
-        expected = """this is description message\nhello hello hello"""
-        self.assertEqual(expected, result)
+def debug_print(prefix, x):
+    import sys
+    import os
+    if os.environ.get("DEBUG"):
+        print(prefix, x, file=sys.stderr)
