@@ -26,44 +26,44 @@ class Tests(unittest.TestCase):
 
         C = namedtuple("C", "msg, fn, expected")
 
-        def f0(*, name: str) -> None:
+        def f_str(*, name: str) -> None:
             pass
 
-        def f1(*, x: str) -> None:
+        def f_str__short(*, x: str) -> None:
             pass
 
-        def f2(*, val: int) -> None:
+        def f_int(*, val: int) -> None:
             pass
 
-        def f3(*, val: float) -> None:
+        def f_float(*, val: float) -> None:
             pass
 
         # yapf: disable
         candidates = [
             C(
                 msg="(name:str), must be --name",
-                fn=f0,
+                fn=f_str,
                 expected=[
                     {'name': 'add_argument', 'args': ('--name',), 'kwargs': {'required': True}},
                 ],
             ),
             C(
                 msg="(x:str), short option, must be -x",
-                fn=f1,
+                fn=f_str__short,
                 expected=[
                     {'name': 'add_argument', 'args': ('-x',), 'kwargs': {'required': True}},
                 ],
             ),
             C(
                 msg="(val:int)",
-                fn=f2,
+                fn=f_int,
                 expected=[
                     {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': True, 'type': "<class 'int'>"}}, # noqa
                 ],
             ),
             C(
                 msg="(val:float)",
-                fn=f3,
+                fn=f_float,
                 expected=[
                     {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': True, 'type': "<class 'float'>"}}, # noqa
                 ],
