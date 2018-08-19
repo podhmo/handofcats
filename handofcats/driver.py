@@ -1,11 +1,7 @@
-import inspect
+import itertools
 from logging import getLogger as get_logger
 from .util import reify
 logger = get_logger(__name__)
-
-
-def option_name(name):
-    return name.strip("_").replace("_", "-")
 
 
 class Driver:
@@ -13,45 +9,43 @@ class Driver:
         self.fn = fn
 
     @reify
-    def parser_factory(self):
+    def accessor(self):
+        from .accessor import Accessor
+        return Accessor(self.fn)
+
+    @reify
+    def create_parser(self):
         from .parsers import commandline
         return commandline.create_parser
 
+    def setup_parser(self, parser):
+        arguments = [(opt, None) for opt in self.accessor.arguments]
+        flags = [(opt, opt.required) for opt in self.accessor.flags]
+
+        for opt, required in itertools.chain(arguments, flags):
+            kwargs = {}
+            if required is not None:
+                kwargs["required"] = required
+            if opt.default is not None:
+                kwargs["default"] = opt.default
+            if opt.type and opt.type != str:
+                if opt.type != bool:
+                    kwargs["type"] = opt.type
+                else:
+                    action = "store_true"
+                    if opt.default is True:
+                        action = "store_false"
+                    kwargs.pop("required", None)
+                    kwargs.pop("default", None)
+                    kwargs["action"] = action
+
+            logger.debug("add_argument %s %r", opt.option_name, kwargs)
+            parser.add_argument(opt.option_name, **kwargs)
+
     def run(self, argv=None):
         fn = self.fn
-        parser = self.parser_factory(fn, description=fn.__doc__)
-        argspec = inspect.getfullargspec(fn)
-
-        # TODO: type
-        # TODO: default value
-        # TODO: positional argument
-        for k in argspec.kwonlyargs:
-            if len(k) <= 1:
-                option = f"-{option_name(k)}"
-            else:
-                option = f"--{option_name(k)}"
-            typ = argspec.annotations.get(k)
-            if typ is str:
-                kwargs = {}
-                if argspec.kwonlydefaults and argspec.kwonlydefaults.get(k):
-                    kwargs["default"] = argspec.kwonlydefaults.get(k)
-                parser.add_argument(option, **kwargs, required=True)
-            elif typ is bool:
-                kwargs = {"action": "store_true"}
-                if argspec.kwonlydefaults and argspec.kwonlydefaults.get(k) is True:
-                    kwargs["action"] = "store_false"
-                parser.add_argument(option, **kwargs)
-            elif typ in (int, float):
-                kwargs = {"type": typ}
-                if argspec.kwonlydefaults and argspec.kwonlydefaults.get(k):
-                    kwargs["default"] = argspec.kwonlydefaults.get(k)
-                parser.add_argument(option, **kwargs, required=True)
-            else:
-                kwargs = {}
-                if argspec.kwonlydefaults and argspec.kwonlydefaults.get(k):
-                    kwargs["default"] = argspec.kwonlydefaults.get(k)
-                parser.add_argument(option, **kwargs, required=True)
-
+        parser = self.create_parser(fn, description=fn.__doc__)
+        self.setup_parser(parser)
         args = parser.parse_args(argv)
         params = vars(args).copy()
         return fn(**params)
