@@ -7,10 +7,9 @@ logger = logging.getLogger(__name__)
 
 
 class CommandFromFunction(object):
-    def __init__(self, fn, parser_creator, middleware_applicator=None):
+    def __init__(self, fn, parser_creator):
         self.fn = fn
         self.parser_creator = parser_creator
-        self.middleware_applicator = middleware_applicator
 
     def __call__(self, *args, **kwargs):
         return self.fn(*args, **kwargs)
@@ -31,11 +30,7 @@ class CommandFromFunction(object):
         prog = self.fn.__module__
         if prog == "__main__":
             prog = None
-
-        if self.middleware_applicator is None:
-            return self.parser_creator(prog=prog)
-        else:
-            return self.middleware_applicator(self.parser_creator)(prog=prog)
+        return self.parser_creator(prog=prog)
 
     def print_help(self, out=sys.stdout):
         self.parser.print_help(out)

@@ -5,7 +5,6 @@ import logging
 import sys
 from handofcats.parsercreator import ArgumentParserCreator
 from handofcats.commandcreator import CommandFromFunction
-from handofcats.middlewares import MiddlewareApplicator, DEFAULT_MIDDLEWARES
 from handofcats.commandcollector import CommandCollector
 logger = logging.getLogger(__name__)
 
@@ -31,7 +30,7 @@ def get_description(doc):
     return "\n".join(r)
 
 
-def as_command(fn=None, middlewares=DEFAULT_MIDDLEWARES, argv=None, level=2):
+def as_command(fn=None, argv=None, level=2):
     def call(fn, level=1, argv=argv):
         if isinstance(fn, CommandFromFunction):
             cmd_creator = fn
@@ -41,17 +40,11 @@ def as_command(fn=None, middlewares=DEFAULT_MIDDLEWARES, argv=None, level=2):
             help_dict = get_help_dict(doc)
             description = get_description(doc)
 
-            if middlewares:
-                middleware_applicator = MiddlewareApplicator(middlewares)
-            else:
-                middleware_applicator = None
-
             parser_creator = ArgumentParserCreator(argspec, help_dict, description)
 
             cmd_creator = CommandFromFunction(
                 fn,
                 parser_creator=parser_creator,
-                middleware_applicator=middleware_applicator,
             )
         # marking for describe()
         COLLECTOR.mark(cmd_creator)
