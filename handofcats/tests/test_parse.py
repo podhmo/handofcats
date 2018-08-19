@@ -32,6 +32,12 @@ class Tests(unittest.TestCase):
         def f1(*, x: str) -> None:
             pass
 
+        def f2(*, val: int) -> None:
+            pass
+
+        def f3(*, val: float) -> None:
+            pass
+
         # yapf: disable
         candidates = [
             C(
@@ -42,10 +48,24 @@ class Tests(unittest.TestCase):
                 ],
             ),
             C(
-                msg="(x:str), oneline, must be -x",
+                msg="(x:str), short option, must be -x",
                 fn=f1,
                 expected=[
                     {'name': 'add_argument', 'args': ('-x',), 'kwargs': {'required': True}},
+                ],
+            ),
+            C(
+                msg="(val:int)",
+                fn=f2,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': True, 'type': "<class 'int'>"}}, # noqa
+                ],
+            ),
+            C(
+                msg="(val:float)",
+                fn=f3,
+                expected=[
+                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': True, 'type': "<class 'float'>"}}, # noqa
                 ],
             ),
         ]
@@ -59,8 +79,10 @@ class Tests(unittest.TestCase):
                 else:
                     raise self.fail("something wrong")
 
-                got_str = json.dumps(got, indent=2, ensure_ascii=False, sort_keys=True)
-                expected_str = json.dumps(c.expected, indent=2, ensure_ascii=False, sort_keys=True)
+                got_str = json.dumps(got, indent=2, ensure_ascii=False, sort_keys=True, default=str)
+                expected_str = json.dumps(
+                    c.expected, indent=2, ensure_ascii=False, sort_keys=True, default=str
+                )
 
                 debug_print("got is", got_str)
                 debug_print("expected is", expected_str)

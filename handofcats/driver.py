@@ -22,8 +22,24 @@ class Driver:
         parser = self.parser_factory(fn, description=fn.__doc__)
         argspec = inspect.getfullargspec(fn)
 
+        # TODO: type
+        # TODO: default value
+        # TODO: positional argument
         for k in argspec.kwonlyargs:
-            parser.add_argument(f'{"-" if len(k) <= 1 else "--"}{option_name(k)}', required=True)
+            if len(k) <= 1:
+                option = f"-{option_name(k)}"
+            else:
+                option = f"--{option_name(k)}"
+
+            typ = argspec.annotations.get(k)
+            if typ is str:
+                parser.add_argument(option, required=True)
+            elif typ is int:
+                parser.add_argument(option, required=True, type=int)
+            elif typ is float:
+                parser.add_argument(option, required=True, type=float)
+            else:
+                parser.add_argument(option, required=True)
 
         args = parser.parse_args(argv)
         params = vars(args).copy()
