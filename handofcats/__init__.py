@@ -1,15 +1,10 @@
-# -*- coding:utf-8 -*-
 import re
 import inspect
 import logging
 import sys
 from handofcats.parsercreator import ArgumentParserCreator
 from handofcats.commandcreator import CommandFromFunction
-from handofcats.commandcollector import CommandCollector
 logger = logging.getLogger(__name__)
-
-# default collector
-COLLECTOR = CommandCollector()
 
 
 def get_help_dict(doc):
@@ -46,8 +41,6 @@ def as_command(fn=None, argv=None, level=2):
                 fn,
                 parser_creator=parser_creator,
             )
-        # marking for describe()
-        COLLECTOR.mark(cmd_creator)
 
         # dispatching from caller module
         frame = sys._getframe(level)
