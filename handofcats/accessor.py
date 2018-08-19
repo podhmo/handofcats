@@ -65,7 +65,7 @@ class Resolver:
     @reify
     def _defaults(self) -> t.Dict[str, t.Any]:
         d = {}
-        for i, v in enumerate(self.argspec.defaults or []):
+        for i, v in enumerate(reversed(self.argspec.defaults or [])):
             k = self.argspec.args[-(i + 1)]  # 0 -> -1
             d[k] = v
         return d
