@@ -2,14 +2,10 @@ handofcats
 ========================================
 
 A tiny Converter that making executable command script from python function.
-If the function has sphinx autodoc style docstring, it is also used.
+If the function is type annotated, it is also used.
 
-this module has two functions.
+Please using `as_command()` decorator.
 
-- as_command()
-
-If you just convert python function to executable command, then use `as_command()`.
-And, you want to show a list of managemented commands, `describe()` is helpful.
 
 as_command()
 ----------------------------------------
