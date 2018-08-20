@@ -16,11 +16,22 @@ def import_symbol(path, sep=":", logger=logger):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(add_help=False)
-    help_text = "target EntryPoint. (must be in 'module:attrs' format)"
-    parser.add_argument("entry_point", type=import_symbol, help=help_text)
+    parser.print_usage = parser.print_help
+
+    parser.add_argument(
+        "entry_point",
+        type=import_symbol,
+        help="target EntryPoint. (must be in 'module:attrs' format)",
+    )
+    parser.add_argument(
+        "--driver",
+        type=import_symbol,
+        default="handofcats.driver:Driver",
+        help="driver class, this is experimental (default=handofcats.driver:Driver)",
+    )
 
     args, rest_argv = parser.parse_known_args(argv)
-    as_command(args.entry_point, argv=rest_argv, level=3)
+    as_command(args.entry_point, argv=rest_argv, level=3, driver=args.driver)
 
 
 if __name__ == "__main__":
