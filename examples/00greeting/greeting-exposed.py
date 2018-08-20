@@ -11,7 +11,7 @@ def main(argv=None):
     parser.print_usage = parser.print_help
     parser.add_argument('message')
     parser.add_argument('--is-surprised', action='store_true')
-    parser.add_argument('--name', default='foo', required=False)
+    parser.add_argument('--name', default='foo', help="(default: 'foo')", required=False)
     args = parser.parse_args(argv)
     greeting(**vars(args))
 

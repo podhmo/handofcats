@@ -6,7 +6,6 @@ default:
 	$(MAKE) readme TARGET=02list
 
 readme:
-	rm -f output*
 	@$(MAKE) -C ${TARGET} help >> output.help  2>/dev/stdout
 	@$(MAKE) -C ${TARGET}  default >> output.default  2>/dev/stdout
 	@$(MAKE) -C ${TARGET}  expose >> output.expose  2>/dev/stdout

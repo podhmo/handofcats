@@ -41,7 +41,7 @@ greeting.py
     -h, --help      show this help message and exit
     --expose
     --is-surprised
-    --name NAME
+    --name NAME     (default: 'foo')
 
   $ python greeting.py hello
   foo: hello
