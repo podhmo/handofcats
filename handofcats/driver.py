@@ -77,6 +77,10 @@ class Driver:
             if kwargs.get("action") == "append" and not opt.option_name.startswith("-"):
                 kwargs["nargs"] = "*"
                 kwargs.pop("action")
+
+            if "default" in kwargs:
+                kwargs["help"] = "(default: {!r})".format(kwargs["default"])
+
             logger.debug("add_argument %s %r", opt.option_name, kwargs)
             parser.add_argument(opt.option_name, **kwargs)
 

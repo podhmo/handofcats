@@ -27,7 +27,7 @@ def main(argv=None):
         "--driver",
         type=import_symbol,
         default="handofcats.driver:Driver",
-        help="driver class, this is experimental (default=handofcats.driver:Driver)",
+        help="driver class, this is experimental (default: handofcats.driver:Driver)",
     )
 
     args, rest_argv = parser.parse_known_args(argv)

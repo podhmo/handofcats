@@ -99,7 +99,7 @@ class Tests(unittest.TestCase):
                 msg="(name:str=<default value>)",
                 fn=f_str__default_value,
                 expected=[
-                    {'name': 'add_argument', 'args': ('--name',), 'kwargs': {'required': False, "default": _DEFAULT_STR}}, # noqa
+                    {'name': 'add_argument', 'args': ('--name',), 'kwargs': {'required': False, "default": _DEFAULT_STR, "help": "(default: {!r})".format(_DEFAULT_STR)}}, # noqa
                 ],
             ),
             C(
@@ -120,7 +120,7 @@ class Tests(unittest.TestCase):
                 msg="(val:int=<default value>)",
                 fn=f_int__default_value,
                 expected=[
-                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': False, 'type': "<class 'int'>", "default": _DEFAULT_INT}}, # noqa
+                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': False, 'type': "<class 'int'>", "default": _DEFAULT_INT, "help": "(default: {!r})".format(_DEFAULT_INT)}}, # noqa
                 ],
             ),
             C(
@@ -141,7 +141,7 @@ class Tests(unittest.TestCase):
                 msg="(val:float=<default value>)",
                 fn=f_float__default_value,
                 expected=[
-                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': False, 'type': "<class 'float'>", "default": _DEFAULT_FLOAT}}, # noqa
+                    {'name': 'add_argument', 'args': ('--val',), 'kwargs': {'required': False, 'type': "<class 'float'>", "default": _DEFAULT_FLOAT, "help": "(default: {!r})".format(_DEFAULT_FLOAT)}}, # noqa
                 ],
             ),
             C(
