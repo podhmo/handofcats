@@ -57,6 +57,12 @@ class Driver:
                     logger.info(
                         "unexpected generic type is found (type=%s)", opt.type, exc_info=True
                     )
+            elif hasattr(opt.type, "__supertype__"):  # for NewType
+                # choices support (tentative)
+                if hasattr(opt.type, "choices"):
+                    kwargs["choices"] = opt.type.choices
+                origin_type = opt._replace(type=opt.type.__supertype__)
+                self._setup_type(origin_type, kwargs)
             elif issubclass(opt.type, (list, tuple)):
                 kwargs["action"] = "append"
             else:
