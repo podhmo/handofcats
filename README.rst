@@ -132,7 +132,7 @@ choices
   from typing import NewType
 
   DumpFormat = NewType("DumpFormat", str)
-  DumpFormat.choices = ["json", "csv"]
+  DumpFormat.choices = ["json", "csv"]   # this: (experimental)
 
 
   def run(*, format: DumpFormat = "json"):
