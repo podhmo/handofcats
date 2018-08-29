@@ -116,9 +116,9 @@ sequences
 
 .. code-block:: python
 
-  from typing import List
+  from typing import List, Optional
 
-  def psum(xs: List[int], *, ys: List[int] = None):
+  def psum(xs: List[int], *, ys: Optional[List[int]] = None):
       # treated as
       # parser.add_argument('xs', nargs='*', type=int)
       # parser.add_argument('--ys', action='append', required=False, type=int)
