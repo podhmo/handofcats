@@ -107,3 +107,35 @@ It is also ok, calling the function that not decorated via handofcats command.
   optional arguments:
     -h, --help  show this help message and exit
     --expose
+
+experimental
+----------------------------------------
+
+sequences
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+  from typing import List
+
+  def psum(xs: List[int], *, ys: List[int] = None):
+      # treated as
+      # parser.add_argument('xs', nargs='*', type=int)
+      # parser.add_argument('--ys', action='append', required=False, type=int)
+      ..
+
+choices
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+  from typing import NewType
+
+  DumpFormat = NewType("DumpFormat", str)
+  DumpFormat.choices = ["json", "csv"]
+
+
+  def run(*, format: DumpFormat = "json"):
+      # treated as
+      # parser.add_argument("--format", defaul="json", choices=("json", "csv"), required=False)
+      ...
