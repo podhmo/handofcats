@@ -10,7 +10,8 @@ def import_symbol_maybe(ob_or_path, sep=":"):
 
 def as_command(fn=None, argv=None, driver=Driver, level=2, _force=False):
     create_driver = import_symbol_maybe(driver)
-    argv = argv or sys.argv[1:]
+    if argv is None:
+        argv = sys.argv[1:]
 
     def call(fn, level=1, argv=argv):
         if not _force:
