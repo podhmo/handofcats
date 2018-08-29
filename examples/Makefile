@@ -4,6 +4,7 @@ default:
 	$(MAKE) readme TARGET=00greeting
 	$(MAKE) readme TARGET=01sum
 	$(MAKE) readme TARGET=02list
+	$(MAKE) readme TARGET=03choices
 
 readme:
 	@$(MAKE) -C ${TARGET} help >> output.help  2>/dev/stdout
