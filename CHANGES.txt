@@ -1,1 +1,4 @@
+2.1.0
 
+- `choices` function
+- fix bug that it is not working, importing with physical filepath

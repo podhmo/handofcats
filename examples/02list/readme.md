@@ -25,7 +25,7 @@ handofcats sum.py:psum --expose | tee sum-exposed.py
 import typing as t
 
 
-def psum(xs: t.List[int], *, ys: t.List[int] = None):
+def psum(xs: t.List[int], *, ys: t.Optional[t.List[int]] = None):
     print(f"Σ {xs} = {sum(xs)}")
     if ys:
         print(f"Σ {xs} + Σ {ys} = {sum(xs) + sum(ys)}")
@@ -34,8 +34,8 @@ def main(argv=None):
     import argparse
     parser = argparse.ArgumentParser(description=None)
     parser.print_usage = parser.print_help
-    parser.add_argument('xs', nargs='*', type=int)
-    parser.add_argument('--ys', action='append', required=False, type=int)
+    parser.add_argument('xs', type=int, nargs='*')
+    parser.add_argument('--ys', required=False, action='append', type=int)
     args = parser.parse_args(argv)
     psum(**vars(args))
 
