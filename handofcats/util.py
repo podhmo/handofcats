@@ -34,7 +34,9 @@ def _import_symbol_from_module(module, name, logger=logger):
 
 def _import_symbol_from_filepath(path, name, module_id=None, logger=logger):
     logger.debug("import path=%s, name=%s", path, name)
-    module_id = module_id or path.replace("/", "_").rstrip(".py")
+    module_id = module_id or path.replace("/", "_")
+    if module_id.endswith(".py"):
+        module_id = module_id[:-3]
     module = machinery.SourceFileLoader(module_id, path).load_module()
     return getattr(module, name)
 
