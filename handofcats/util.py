@@ -43,6 +43,6 @@ def import_symbol(path, sep=":", logger=logger):
     try:
         module, name = path.rsplit(sep, 1)
         return _import_symbol_from_module(module, name, logger=logger)
-    except ImportError:
+    except (ImportError, TypeError):
         sys.path.append(".")
         return _import_symbol_from_filepath(module, name, logger=logger)
