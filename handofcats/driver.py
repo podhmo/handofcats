@@ -17,11 +17,14 @@ class Driver:
     def create_parser(self, fn, *, argv=None, description=None):
         if "--expose" in (argv or []):
             from .parsers import expose
-            parser = expose.create_parser(fn, description=description or fn.__doc__)
+            inplace = "--inplace" in (argv or [])
+            description = description or fn.__doc__
+            parser = expose.create_parser(fn, description=description, inplace=inplace)
         else:
             from .parsers import commandline
             parser = commandline.create_parser(fn, description=description or fn.__doc__)
             parser.add_argument("--expose", action="store_true")  # xxx (for ./expose.py)
+            parser.add_argument("--inplace", action="store_true")  # xxx (for ./expose.py)
         return parser
 
     def _setup_type(self, opt, kwargs):
