@@ -79,6 +79,12 @@ calling with `--expose` option, generationg the code that dropping dependencies 
   if __name__ == '__main__':
       main()
 
+
+`--inplace`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+With `inplace` option, when `--expose`, overwrite target source.
+
 `handofcats` command
 ----------------------------------------
 
