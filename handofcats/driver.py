@@ -100,4 +100,5 @@ class Driver:
         args = parser.parse_args(argv)
         params = vars(args).copy()
         params.pop("expose", None)  # xxx: for ./parsers/expose.py
+        params.pop("inplace", None)  # xxx: for ./parsers/expose.py
         return fn(**params)
