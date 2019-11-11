@@ -42,8 +42,7 @@ class Accessor:
         return Option(
             name=name,
             option_name="{prefix}{name}".format(
-                prefix='-' if len(name) <= 1 else '--',
-                name=option_name(name),
+                prefix="-" if len(name) <= 1 else "--", name=option_name(name)
             ),
             required=required,
             type=self.resolver.resolve_type(name),
@@ -60,10 +59,23 @@ class Accessor:
         )
 
 
+def _getfullargspec(fn):
+    argspec = inspect.getfullargspec(fn)
+    if argspec.annotations is None:
+        return argspec
+
+    # XXX: for `from __future__ import annotations`
+    annotations = t.get_type_hints(fn)
+    assert len(argspec.annotations) == len(annotations)
+    argspec.annotations.update(annotations)
+
+    return argspec
+
+
 class Resolver:
-    def __init__(self, fn):
+    def __init__(self, fn, *, argspec=None):
         self.fn = fn
-        self.argspec = inspect.getfullargspec(fn)
+        self.argspec = argspec or _getfullargspec(fn)
 
     @reify
     def _defaults(self) -> t.Dict[str, t.Any]:
