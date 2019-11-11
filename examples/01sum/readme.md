@@ -1,7 +1,7 @@
 help
 ```console
 handofcats sum.py:sum -h
-usage: handofcats [-h] [--expose] x y
+usage: handofcats [-h] [--expose] [--inplace] x y
 
 positional arguments:
   x
@@ -10,6 +10,7 @@ positional arguments:
 optional arguments:
   -h, --help  show this help message and exit
   --expose
+  --inplace
 ```
 run
 ```console
