@@ -14,7 +14,7 @@ install_requires = ["prestring", "typing_extensions"]
 
 docs_extras = []
 tests_require = []
-dev_extras = ["flake8"]
+dev_extras = ["flake8", "black"]
 testing_extras = tests_require + dev_extras
 
 setup(
