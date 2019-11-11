@@ -14,7 +14,7 @@ def main(argv=None):
     parser.print_usage = parser.print_help
     parser.add_argument('filename')
     parser.add_argument('--mode', required=False, default='r', choices=['a', 'w', 'r'], help="(default: 'r')")
-    parser.add_argument('--value', required=True, choices=[0, 1, -1])
+    parser.add_argument('--value', required=True, choices=[0, 1, -1], type=int)
     args = parser.parse_args(argv)
     run(**vars(args))
 
