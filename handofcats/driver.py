@@ -74,7 +74,7 @@ class Driver:
                         if hasattr(opt.type, "choices"):
                             kwargs["choices"] = opt.type.choices
                         else:
-                            kwargs["choices"] = {str(x): x for x in opt.type.__args__}
+                            kwargs["choices"] = list(opt.type.__args__)
                             opt.type = type(opt.type.__args__[0])
                             self._setup_type(item_type, kwargs)
                     # for sequence (e.g. t.List[int], t.Tuple[str])
