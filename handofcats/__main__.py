@@ -2,6 +2,7 @@ import argparse
 from logging import getLogger as get_logger
 from . import as_command
 from . import util
+
 logger = get_logger(__name__)
 
 
@@ -11,6 +12,7 @@ def import_symbol(path, sep=":", logger=logger):
     except ValueError as e:
         logger.info(str(e), exc_info=True)
         import argparse  # xxx
+
         raise argparse.ArgumentTypeError("must be in 'module:attrs' format")
 
 

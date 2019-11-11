@@ -4,6 +4,7 @@ import unittest
 class Tests(unittest.TestCase):
     def _makeOne(self, fn):
         from handofcats.accessor import Accessor
+
         return Accessor(fn)
 
     def test_args(self):

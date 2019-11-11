@@ -8,6 +8,7 @@ class Tests(unittest.TestCase):
 
     def _getTargetFunction(self):
         from handofcats import as_command
+
         return as_command
 
     def _callFUT(self, fn, *, argv):
@@ -208,9 +209,15 @@ class Tests(unittest.TestCase):
                 else:
                     raise self.fail("something wrong")
 
-                got_str = json.dumps(got, indent=2, ensure_ascii=False, sort_keys=True, default=str)
+                got_str = json.dumps(
+                    got, indent=2, ensure_ascii=False, sort_keys=True, default=str
+                )
                 expected_str = json.dumps(
-                    c.expected, indent=2, ensure_ascii=False, sort_keys=True, default=str
+                    c.expected,
+                    indent=2,
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    default=str,
                 )
 
                 debug_print("got is", got_str)
@@ -222,5 +229,6 @@ class Tests(unittest.TestCase):
 def debug_print(prefix, x):
     import sys
     import os
+
     if os.environ.get("DEBUG"):
         print(prefix, x, file=sys.stderr)

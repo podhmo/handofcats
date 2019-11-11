@@ -21,6 +21,7 @@ mustnotcall = partial(check_status, status=False)
 class Tests(unittest.TestCase):
     def _callFUT(self, fn, *, argv):
         from handofcats import as_command as target_function
+
         return target_function(fn=fn, argv=argv, _force=True)
 
     def test_it(self):
