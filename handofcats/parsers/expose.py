@@ -24,11 +24,25 @@ def print_argparse_code(fn, history, *, outname="main"):
         return f"{name}({LazyArgumentsAndKeywords(args, kwargs)})"
 
     # xxx: is inplace?
+    inplace = False
     if "inplace" in history[0]["kwargs"]:
         inplace = history[0]["kwargs"].pop("inplace")
+    # xxx: is typed?
+    typed = False
+    if "typed" in history[0]["kwargs"]:
+        typed = history[0]["kwargs"].pop("typed")
 
     m = Module()
-    with m.def_(outname, "argv=None"):
+
+    if typed:
+        m.sep()
+        m.from_("typing").import_("Optional, List  # noqa: E402")
+        m.sep()
+        mdef = m.def_(outname, "argv: Optional[List[str]] = None", return_type="None")
+    else:
+        mdef = m.def_(outname, "argv=None")
+
+    with mdef:
         m.import_("argparse")
         m.stmt(f"parser = argparse.ArgumentParser{_make_args(history[0])}")
         m.stmt("parser.print_usage = parser.print_help")
