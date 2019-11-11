@@ -1,10 +1,30 @@
 import typing as t
 import typing_extensions as tx
+import sys
 import itertools
 from logging import getLogger as get_logger
 from .util import reify
 
 logger = get_logger(__name__)
+
+if sys.version_info[:2] <= (3, 6):
+
+    def _has_origin(typ) -> bool:
+        return (hasattr(typ, "__origin__") and hasattr(typ, "__args__")) or _is_literal(
+            typ
+        )
+
+    def _is_literal(typ) -> bool:
+        return str(type(typ)) == "typing_extensions.Literal"
+
+
+else:
+
+    def _has_origin(typ) -> bool:
+        return hasattr(typ, "__origin__") and hasattr(typ, "__args__")
+
+    def _is_literal(typ) -> bool:
+        return getattr(typ, "__origin__", None) == tx.Literal
 
 
 class Driver:
@@ -55,7 +75,7 @@ class Driver:
         else:
             from collections.abc import Sequence
 
-            if hasattr(opt.type, "__origin__") and hasattr(opt.type, "__args__"):
+            if _has_origin(opt.type):
                 try:
                     # for Optional
                     if (
@@ -70,7 +90,7 @@ class Driver:
                         self._setup_type(item_type, kwargs)
 
                     # for Literal type (e.g. tx.Literal["r", "g", "b"])
-                    if getattr(opt.type, "__origin__", None) == tx.Literal:
+                    if _is_literal(opt.type):
                         kwargs["choices"] = list(opt.type.__args__)
                         opt.type = type(opt.type.__args__[0])
                         self._setup_type(opt, kwargs)
