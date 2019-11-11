@@ -13,10 +13,9 @@ except IOError:
 install_requires = ["prestring", "typing_extensions"]
 
 docs_extras = []
-
 tests_require = []
-
-testing_extras = tests_require + []
+dev_extras = ["flake8"]
+testing_extras = tests_require + dev_extras
 
 setup(
     name="handofcats",
@@ -39,7 +38,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
-    extras_require={"testing": testing_extras, "docs": docs_extras},
+    extras_require={"testing": testing_extras, "docs": docs_extras, "dev": dev_extras},
     tests_require=tests_require,
     license="mit",
     test_suite="handofcats.tests",
