@@ -49,6 +49,7 @@ class Driver:
                         item_type = opt._replace(
                             type=[t for t in opt.type.__args__ if t is not _nonetype][0]
                         )
+                        kwargs["required"] = False
                         self._setup_type(item_type, kwargs)
 
                     # for Literal type (e.g. tx.Literal["r", "g", "b"])
