@@ -2,12 +2,16 @@ import sys
 import re
 import inspect
 import functools
+from prestring.naming import titleize
 from prestring.utils import LazyArgumentsAndKeywords, UnRepr
 from prestring.python import Module
 from ._callback import CallbackArgumentParser
 
 
-def print_argparse_code(fn, history):
+def print_argparse_code(fn, history, *, outname="main"):
+    if fn.__name__ == outname:
+        outname = titleize(outname)  # main -> Main
+
     def _make_args(history, default=""):
         name = history["name"]
         if name == "__init__":
@@ -24,7 +28,7 @@ def print_argparse_code(fn, history):
         inplace = history[0]["kwargs"].pop("inplace")
 
     m = Module()
-    with m.def_("main", "argv=None"):
+    with m.def_(outname, "argv=None"):
         m.import_("argparse")
         m.stmt(f"parser = argparse.ArgumentParser{_make_args(history[0])}")
         m.stmt("parser.print_usage = parser.print_help")
@@ -41,7 +45,7 @@ def print_argparse_code(fn, history):
         m.stmt(f"{fn.__name__}(**vars(args))")
 
     with m.if_("__name__ == '__main__'"):
-        m.stmt("main()")
+        m.stmt("{}()", outname)
 
     target_file = inspect.getsourcefile(fn)
     with open(target_file) as rf:
