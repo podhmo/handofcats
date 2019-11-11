@@ -1,4 +1,4 @@
-default: 00 01 02 03
+default: 00 01 02 03 04
 
 # positional arguments
 00:
@@ -14,4 +14,8 @@ default: 00 01 02 03
 
 # with literal type
 03:
+	python $@*/main.py --expose | tee $$(echo $@*)/_exposed.py
+
+# use main()
+04:
 	python $@*/main.py --expose | tee $$(echo $@*)/_exposed.py
