@@ -36,7 +36,7 @@ def main(argv=None):
     import argparse
     parser = argparse.ArgumentParser(description=None)
     parser.print_usage = parser.print_help
-    parser.add_argument('--format', required=False, default='json', choices={'json': 'json', 'csv': 'csv'}, help="(default: 'json')")
+    parser.add_argument('--format', required=False, default='json', choices=['json', 'csv'], help="(default: 'json')")
     args = parser.parse_args(argv)
     run(**vars(args))
 

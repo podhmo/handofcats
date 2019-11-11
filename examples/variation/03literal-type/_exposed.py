@@ -13,8 +13,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=None)
     parser.print_usage = parser.print_help
     parser.add_argument('filename')
-    parser.add_argument('--mode', required=False, choices={'a': 'a', 'w': 'w', 'r': 'r'})
-    parser.add_argument('--value', required=True, choices={'0': 0, '1': 1, '-1': -1})
+    parser.add_argument('--mode', required=False, choices=['a', 'w', 'r'])
+    parser.add_argument('--value', required=True, choices=[0, 1, -1])
     args = parser.parse_args(argv)
     run(**vars(args))
 
