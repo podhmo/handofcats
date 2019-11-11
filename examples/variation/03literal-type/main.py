@@ -7,5 +7,5 @@ Value = Literal[0, 1, -1]
 
 
 @as_command
-def run(filename: str, *, mode: t.Optional[Mode], value: Value) -> None:
+def run(filename: str, *, mode: t.Optional[Mode] = "r", value: Value) -> None:
     pass
