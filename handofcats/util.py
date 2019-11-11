@@ -1,10 +1,8 @@
 import sys
 from logging import getLogger as get_logger
 from functools import update_wrapper
-from importlib import (
-    import_module,
-    machinery,
-)
+from importlib import import_module, machinery
+
 logger = get_logger(__name__)
 
 

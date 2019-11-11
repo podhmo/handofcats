@@ -3,6 +3,7 @@ import typing_extensions as tx
 import itertools
 from logging import getLogger as get_logger
 from .util import reify
+
 logger = get_logger(__name__)
 
 
@@ -13,19 +14,28 @@ class Driver:
     @reify
     def accessor(self):
         from .accessor import Accessor
+
         return Accessor(self.fn)
 
     def create_parser(self, fn, *, argv=None, description=None):
         if "--expose" in (argv or []):
             from .parsers import expose
+
             inplace = "--inplace" in (argv or [])
             description = description or fn.__doc__
             parser = expose.create_parser(fn, description=description, inplace=inplace)
         else:
             from .parsers import commandline
-            parser = commandline.create_parser(fn, description=description or fn.__doc__)
-            parser.add_argument("--expose", action="store_true")  # xxx (for ./expose.py)
-            parser.add_argument("--inplace", action="store_true")  # xxx (for ./expose.py)
+
+            parser = commandline.create_parser(
+                fn, description=description or fn.__doc__
+            )
+            parser.add_argument(
+                "--expose", action="store_true"
+            )  # xxx (for ./expose.py)
+            parser.add_argument(
+                "--inplace", action="store_true"
+            )  # xxx (for ./expose.py)
         return parser
 
     def _setup_type(self, opt, kwargs, *, _nonetype=type(None)):
@@ -40,12 +50,15 @@ class Driver:
             kwargs["type"] = opt.type
         else:
             from collections.abc import Sequence
+
             if hasattr(opt.type, "__origin__") and hasattr(opt.type, "__args__"):
                 try:
                     # for Optional
-                    if opt.type.__origin__ == t.Union and _nonetype in opt.type.__args__ and len(
-                        opt.type.__args__
-                    ) == 2:
+                    if (
+                        opt.type.__origin__ == t.Union
+                        and _nonetype in opt.type.__args__
+                        and len(opt.type.__args__) == 2
+                    ):
                         item_type = opt._replace(
                             type=[t for t in opt.type.__args__ if t is not _nonetype][0]
                         )
@@ -67,7 +80,9 @@ class Driver:
                         self._setup_type(item_type, kwargs)
                 except Exception:  # TODO: remove this
                     logger.info(
-                        "unexpected generic type is found (type=%s)", opt.type, exc_info=True
+                        "unexpected generic type is found (type=%s)",
+                        opt.type,
+                        exc_info=True,
                     )
             elif hasattr(opt.type, "__supertype__"):  # for NewType
                 # choices support (tentative)

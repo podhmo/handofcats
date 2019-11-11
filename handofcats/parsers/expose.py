@@ -2,10 +2,7 @@ import sys
 import re
 import inspect
 import functools
-from prestring.python import (
-    Module,
-    LazyArgumentsAndKeywords,
-)
+from prestring.python import Module, LazyArgumentsAndKeywords
 from ._callback import CallbackArgumentParser
 
 
@@ -24,7 +21,10 @@ def print_argparse_code(fn, history):
         name = history["name"]
         if name == "__init__":
             name = default
-        kwargs = {k: (repr(v) if k != "type" else v.__name__) for k, v in history["kwargs"].items()}
+        kwargs = {
+            k: (repr(v) if k != "type" else v.__name__)
+            for k, v in history["kwargs"].items()
+        }
         args = [repr(v) for v in history["args"]]
         return f"{name}({LazyArgumentsAndKeywords(args, kwargs)})"
 
@@ -42,7 +42,7 @@ def print_argparse_code(fn, history):
 
         history[-1] = {
             "name": history[-1]["name"],
-            "args": (_UnRepr("argv"), ),
+            "args": (_UnRepr("argv"),),
             "kwargs": {},
         }  # xxx
 
@@ -55,7 +55,9 @@ def print_argparse_code(fn, history):
     target_file = inspect.getsourcefile(fn)
     with open(target_file) as rf:
         source = rf.read()
-    rx = re.compile(r"(?:^@([\S]+\.)?as_command.*|^.*import as_command.*)\n", re.MULTILINE)
+    rx = re.compile(
+        r"(?:^@([\S]+\.)?as_command.*|^.*import as_command.*)\n", re.MULTILINE
+    )
     exposed = rx.sub("", "".join(source))
 
     def _dump(out):
@@ -68,6 +70,7 @@ def print_argparse_code(fn, history):
     else:
         import tempfile
         import os.path
+
         outpath = None
         try:
             with tempfile.NamedTemporaryFile("w", dir=".", delete=False) as wf:
