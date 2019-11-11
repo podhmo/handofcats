@@ -1,3 +1,11 @@
+2.3.0
+
+- support Literal types
+- fix, error is occured, running with `from __future__ import annotations`
+- fix, generated code is invalid when positional arguments with "_"
+- fix, unable to use the function named "main"
+- `--typed` option, with `--expose`
+
 2.2.0
 
 - `--inplace` option, with `--expose`

@@ -19,7 +19,7 @@ testing_extras = tests_require + dev_extras
 
 setup(
     name="handofcats",
-    version="2.2.0",
+    version=open(os.path.join(here, "VERSION")).read().strip(),
     description="python function to command translator",
     long_description=README + "\n\n" + CHANGES,
     # https://pypi.org/pypi?%3Aaction=list_classifiers
