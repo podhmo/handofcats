@@ -2,5 +2,5 @@ from handofcats import as_command
 
 
 @as_command
-def run(filename: str) -> None:
+def run(file_name: str) -> None:
     pass

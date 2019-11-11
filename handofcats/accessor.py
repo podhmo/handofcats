@@ -52,7 +52,7 @@ class Accessor:
     def create_positional(self, name) -> Option:
         return Option(
             name=name,
-            option_name=option_name(name),
+            option_name=option_name(name).replace("-", "_"),
             required=True,
             type=self.resolver.resolve_type(name),
             default=self.resolver.resolve_default(name),

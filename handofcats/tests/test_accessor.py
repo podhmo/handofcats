@@ -16,7 +16,7 @@ class Tests(unittest.TestCase):
             self.assertEqual(len(got), 1)
 
             with self.subTest("option_name"):
-                self.assertEqual(got[0].option_name, "user-name")
+                self.assertEqual(got[0].option_name, "user_name")
             with self.subTest("required"):
                 self.assertEqual(got[0].required, True)
             with self.subTest("default"):
