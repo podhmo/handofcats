@@ -1,7 +1,13 @@
 test:
 	python setup.py test
 ci:
-	$(MAKE) lint test
+	$(MAKE) lint test examples
+	git diff
+
+examples:
+	$(MAKE) -C examples/readme
+	$(MAKE) -C examples/variation
+.PHONY: examples
 
 format:
 #	pip install -e .[dev]
@@ -14,9 +20,6 @@ lint:
 # typing:
 # #	pip install -e .[dev]
 # 	mypy --strict --strict-equality --ignore-missing-imports handofcats
-
-examples:
-	$(MAKE) -C examples/openapi
 
 build:
 #	pip install wheel
