@@ -1,39 +1,6 @@
-help
-```console
-python -W ignore -m handofcats dump.py:run -h
-usage: __main__.py [-h] [--expose] [--inplace] [--typed] [--format {json,csv}]
-
-optional arguments:
-  -h, --help           show this help message and exit
-  --expose
-  --inplace
-  --typed
-  --format {json,csv}  (default: 'json')
-```
-run
-```console
-python -W ignore -m handofcats dump.py:run
-[
-  {
-    "name": "foo",
-    "age": 20
-  },
-  {
-    "name": "bar",
-    "age": 21
-  }
-]
-python -W ignore -m handofcats dump.py:run --format=csv
-name,age
-foo,20
-bar,21
-```
---expose
-```console
-python -W ignore -m handofcats dump.py:run --expose | tee dump-exposed.py
 import sys
 import typing as t
-
+import typing_extensions as tx
 
 def csv_dump(rows: t.Sequence[dict]) -> None:
     import csv
@@ -48,8 +15,7 @@ def json_dump(rows: t.Sequence[dict]) -> None:
     sys.stdout.write("\n")
 
 
-DumpFormat = t.NewType("DumpFormat", str)
-DumpFormat.choices = ["json", "csv"]
+DumpFormat = tx.Literal["json", "csv"]
 
 
 def run(*, format: DumpFormat = "json"):
@@ -77,4 +43,3 @@ def main(argv=None):
 
 if __name__ == '__main__':
     main()
-```

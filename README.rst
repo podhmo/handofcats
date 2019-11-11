@@ -135,10 +135,10 @@ choices
 
 .. code-block:: python
 
-  from typing import NewType
+  from typing_extensions import Literal
 
-  DumpFormat = NewType("DumpFormat", str)
-  DumpFormat.choices = ["json", "csv"]   # this: (experimental)
+
+  DumpFormat = Literal["json", "csv"]   # this: (experimental)
 
 
   def run(*, format: DumpFormat = "json"):
