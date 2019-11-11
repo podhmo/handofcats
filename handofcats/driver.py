@@ -51,6 +51,15 @@ class Driver:
                         )
                         self._setup_type(item_type, kwargs)
 
+                    # for Literal type (e.g. tx.Literal["r", "g", "b"])
+                    elif getattr(opt.type, "__origin__", None) == tx.Literal:
+                        if hasattr(opt.type, "choices"):
+                            kwargs["choices"] = opt.type.choices
+                        else:
+                            labels = getattr(opt.type, "labels", None) or {}
+                            kwargs["choices"] = {labels.get(str(x)) or str(x): x for x in opt.type.__args__}
+                            opt.type = type(opt.type.__args__[0])
+                            self._setup_type(item_type, kwargs)
                     # for sequence (e.g. t.List[int], t.Tuple[str])
                     elif issubclass(opt.type.__origin__, Sequence):
                         kwargs["action"] = "append"
