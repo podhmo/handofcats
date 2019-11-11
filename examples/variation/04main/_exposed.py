@@ -3,7 +3,7 @@
 def main(name: str) -> None:
     pass
 
-def main(argv=None):
+def Main(argv=None):
     import argparse
     parser = argparse.ArgumentParser(description=None)
     parser.print_usage = parser.print_help
@@ -13,4 +13,4 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
-    main()
+    Main()
