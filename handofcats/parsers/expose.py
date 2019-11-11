@@ -2,18 +2,9 @@ import sys
 import re
 import inspect
 import functools
-from prestring.python import Module, LazyArgumentsAndKeywords
+from prestring.utils import LazyArgumentsAndKeywords, UnRepr
+from prestring.python import Module
 from ._callback import CallbackArgumentParser
-
-
-class _UnRepr:
-    def __init__(self, val):
-        self.val = val
-
-    def __repr__(self):
-        return str(self.val)
-
-    __str__ = __repr__
 
 
 def print_argparse_code(fn, history):
@@ -42,7 +33,7 @@ def print_argparse_code(fn, history):
 
         history[-1] = {
             "name": history[-1]["name"],
-            "args": (_UnRepr("argv"),),
+            "args": (UnRepr("argv"),),
             "kwargs": {},
         }  # xxx
 
