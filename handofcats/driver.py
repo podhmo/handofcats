@@ -22,8 +22,11 @@ class Driver:
             from .parsers import expose
 
             inplace = "--inplace" in (argv or [])
+            typed = "--typed" in (argv or [])
             description = description or fn.__doc__
-            parser = expose.create_parser(fn, description=description, inplace=inplace)
+            parser = expose.create_parser(
+                fn, description=description, inplace=inplace, typed=typed
+            )
         else:
             from .parsers import commandline
 
@@ -36,6 +39,7 @@ class Driver:
             parser.add_argument(
                 "--inplace", action="store_true"
             )  # xxx (for ./expose.py)
+            parser.add_argument("--typed", action="store_true")  # xxx (for ./expose.py)
         return parser
 
     def _setup_type(self, opt, kwargs, *, _nonetype=type(None)):
@@ -125,4 +129,5 @@ class Driver:
         params = vars(args).copy()
         params.pop("expose", None)  # xxx: for ./parsers/expose.py
         params.pop("inplace", None)  # xxx: for ./parsers/expose.py
+        params.pop("typed", None)  # xxx: for ./parsers/expose.py
         return fn(**params)
