@@ -65,7 +65,7 @@ class Driver:
                         kwargs["action"] = "append"
                         item_type = opt._replace(type=opt.type.__args__[0])
                         self._setup_type(item_type, kwargs)
-                except: # TODO: remove this
+                except Exception:  # TODO: remove this
                     logger.info(
                         "unexpected generic type is found (type=%s)", opt.type, exc_info=True
                     )
