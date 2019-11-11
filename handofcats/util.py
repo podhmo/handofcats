@@ -1,5 +1,6 @@
 import sys
 from logging import getLogger as get_logger
+from functools import update_wrapper
 from importlib import (
     import_module,
     machinery,
@@ -13,10 +14,7 @@ class reify(object):
 
     def __init__(self, wrapped):
         self.wrapped = wrapped
-        try:
-            self.__doc__ = wrapped.__doc__
-        except:
-            pass
+        update_wrapper(self, wrapped)
 
     def __get__(self, inst, objtype=None):
         if inst is None:

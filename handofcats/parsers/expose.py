@@ -55,7 +55,7 @@ def print_argparse_code(fn, history):
     target_file = inspect.getsourcefile(fn)
     with open(target_file) as rf:
         source = rf.read()
-    rx = re.compile("(?:^@([\S]+\.)?as_command.*|^.*import as_command.*)\n", re.MULTILINE)
+    rx = re.compile(r"(?:^@([\S]+\.)?as_command.*|^.*import as_command.*)\n", re.MULTILINE)
     exposed = rx.sub("", "".join(source))
 
     def _dump(out):
