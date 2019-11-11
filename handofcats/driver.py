@@ -1,4 +1,5 @@
 import typing as t
+import typing_extensions as tx
 import itertools
 from logging import getLogger as get_logger
 from .util import reify
@@ -27,7 +28,7 @@ class Driver:
             parser.add_argument("--inplace", action="store_true")  # xxx (for ./expose.py)
         return parser
 
-    def _setup_type(self, opt, kwargs):
+    def _setup_type(self, opt, kwargs, *, _nonetype=type(None)):
         if opt.type == bool:
             action = "store_true"
             if opt.default is True:
@@ -42,12 +43,11 @@ class Driver:
             if hasattr(opt.type, "__origin__") and hasattr(opt.type, "__args__"):
                 try:
                     # for Optional
-                    nonetype = type(None)
-                    if opt.type.__origin__ == t.Union and nonetype in opt.type.__args__ and len(
+                    if opt.type.__origin__ == t.Union and _nonetype in opt.type.__args__ and len(
                         opt.type.__args__
                     ) == 2:
                         item_type = opt._replace(
-                            type=[t for t in opt.type.__args__ if t is not nonetype][0]
+                            type=[t for t in opt.type.__args__ if t is not _nonetype][0]
                         )
                         self._setup_type(item_type, kwargs)
 
