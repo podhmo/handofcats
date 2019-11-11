@@ -1,6 +1,7 @@
 import typing as t
 import typing_extensions as tx
 import sys
+import warnings
 import itertools
 from logging import getLogger as get_logger
 from .util import reify
@@ -108,6 +109,9 @@ class Driver:
             elif hasattr(opt.type, "__supertype__"):  # for NewType
                 # choices support (tentative)
                 if hasattr(opt.type, "choices"):
+                    warnings.warn(
+                        "choices is deprecated, use typing_extensions.Literal instead of this"
+                    )
                     kwargs["choices"] = opt.type.choices
                 origin_type = opt._replace(type=opt.type.__supertype__)
                 self._setup_type(origin_type, kwargs)

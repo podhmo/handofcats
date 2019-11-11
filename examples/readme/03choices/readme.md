@@ -1,7 +1,7 @@
 help
 ```console
-handofcats dump.py:run -h
-usage: handofcats [-h] [--expose] [--inplace] [--typed] [--format {json,csv}]
+python -W ignore -m handofcats dump.py:run -h
+usage: __main__.py [-h] [--expose] [--inplace] [--typed] [--format {json,csv}]
 
 optional arguments:
   -h, --help           show this help message and exit
@@ -12,7 +12,7 @@ optional arguments:
 ```
 run
 ```console
-handofcats dump.py:run
+python -W ignore -m handofcats dump.py:run
 [
   {
     "name": "foo",
@@ -23,14 +23,14 @@ handofcats dump.py:run
     "age": 21
   }
 ]
-handofcats dump.py:run --format=csv
+python -W ignore -m handofcats dump.py:run --format=csv
 name,age
 foo,20
 bar,21
 ```
 --expose
 ```console
-handofcats dump.py:run --expose | tee dump-exposed.py
+python -W ignore -m handofcats dump.py:run --expose | tee dump-exposed.py
 import sys
 import typing as t
 

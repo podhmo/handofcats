@@ -1,8 +1,8 @@
 default:
-	handofcats dump.py:run
-	handofcats dump.py:run --format=csv
+	python -W ignore -m handofcats dump.py:run
+	python -W ignore -m handofcats dump.py:run --format=csv
 help:
-	handofcats dump.py:run -h
+	python -W ignore -m handofcats dump.py:run -h
 expose:
-	handofcats dump.py:run --expose | tee dump-exposed.py
+	python -W ignore -m handofcats dump.py:run --expose | tee dump-exposed.py
 .PHONY: help expose
