@@ -1,4 +1,4 @@
-default: 00 01 02
+default: 00 01 02 03
 
 # positional arguments
 00:
@@ -10,4 +10,8 @@ default: 00 01 02
 
 # use `__future__ import annotations`
 02:
+	python $@*/main.py --expose | tee $$(echo $@*)/_exposed.py
+
+# with literal type
+03:
 	python $@*/main.py --expose | tee $$(echo $@*)/_exposed.py
