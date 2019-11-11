@@ -93,8 +93,8 @@ class Driver:
                     # for Literal type (e.g. tx.Literal["r", "g", "b"])
                     if _is_literal(opt.type):
                         kwargs["choices"] = list(opt.type.__args__)
-                        opt.type = type(opt.type.__args__[0])
-                        self._setup_type(opt, kwargs)
+                        item_type = opt._replace(type=type(opt.type.__args__[0]))
+                        self._setup_type(item_type, kwargs)
                     # for sequence (e.g. t.List[int], t.Tuple[str])
                     elif issubclass(opt.type.__origin__, Sequence):
                         kwargs["action"] = "append"
