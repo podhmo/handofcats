@@ -1,3 +1,7 @@
+2.3.1
+
+- fix, choices's type is list, not dict
+
 2.3.0
 
 - support Literal types
