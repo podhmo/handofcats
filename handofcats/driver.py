@@ -71,12 +71,9 @@ class Driver:
 
                     # for Literal type (e.g. tx.Literal["r", "g", "b"])
                     if getattr(opt.type, "__origin__", None) == tx.Literal:
-                        if hasattr(opt.type, "choices"):
-                            kwargs["choices"] = opt.type.choices
-                        else:
-                            kwargs["choices"] = list(opt.type.__args__)
-                            opt.type = type(opt.type.__args__[0])
-                            self._setup_type(item_type, kwargs)
+                        kwargs["choices"] = list(opt.type.__args__)
+                        opt.type = type(opt.type.__args__[0])
+                        self._setup_type(opt, kwargs)
                     # for sequence (e.g. t.List[int], t.Tuple[str])
                     elif issubclass(opt.type.__origin__, Sequence):
                         kwargs["action"] = "append"
