@@ -1,10 +1,17 @@
 TARGET ?=
 
-default:
-	$(MAKE) readme TARGET=00greeting
-	$(MAKE) readme TARGET=01sum
-	$(MAKE) readme TARGET=02list
-	$(MAKE) readme TARGET=03choices
+default: 00 01 02 03 04
+
+00:
+	$(MAKE) readme TARGET=$$(echo $@*)
+01:
+	$(MAKE) readme TARGET=$$(echo $@*)
+02:
+	$(MAKE) readme TARGET=$$(echo $@*)
+03:
+	$(MAKE) readme TARGET=$$(echo $@*)
+04:
+	$(MAKE) readme TARGET=$$(echo $@*)
 
 readme:
 	@$(MAKE) -C ${TARGET} help >> output.help  2>/dev/stdout
