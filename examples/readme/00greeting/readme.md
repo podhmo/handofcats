@@ -1,7 +1,8 @@
 help
 ```console
 python greeting.py -h
-usage: greeting.py [-h] [--expose] [--inplace] [--is-surprised] [--name NAME]
+usage: greeting.py [-h] [--expose] [--inplace] [--typed] [--is-surprised]
+                   [--name NAME]
                    message
 
 greeting message
@@ -13,6 +14,7 @@ optional arguments:
   -h, --help      show this help message and exit
   --expose
   --inplace
+  --typed
   --is-surprised
   --name NAME     (default: 'foo')
 ```

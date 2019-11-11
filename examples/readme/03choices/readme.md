@@ -1,12 +1,13 @@
 help
 ```console
 handofcats dump.py:run -h
-usage: handofcats [-h] [--expose] [--inplace] [--format {json,csv}]
+usage: handofcats [-h] [--expose] [--inplace] [--typed] [--format {json,csv}]
 
 optional arguments:
   -h, --help           show this help message and exit
   --expose
   --inplace
+  --typed
   --format {json,csv}  (default: 'json')
 ```
 run
