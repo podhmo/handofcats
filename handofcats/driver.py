@@ -4,7 +4,7 @@ import sys
 import warnings
 import itertools
 from logging import getLogger as get_logger
-from .util import reify
+
 
 logger = get_logger(__name__)
 
@@ -29,14 +29,10 @@ else:
 
 
 class Driver:
-    def __init__(self, fn):
-        self.fn = fn
-
-    @reify
-    def accessor(self):
+    def _create_accessor(self, fn):
         from .accessor import Accessor
 
-        return Accessor(self.fn)
+        return Accessor(fn)
 
     def create_parser(self, fn, *, argv=None, description=None):
         if "--expose" in (argv or []):
@@ -120,9 +116,10 @@ class Driver:
             else:
                 logger.info("unexpected type is found (type=%s)", opt.type)
 
-    def setup_parser(self, parser):
-        arguments = [(opt, None) for opt in self.accessor.arguments]
-        flags = [(opt, opt.required) for opt in self.accessor.flags]
+    def setup_parser(self, parser, fn):
+        accessor = self._create_accessor(fn)
+        arguments = [(opt, None) for opt in accessor.arguments]
+        flags = [(opt, opt.required) for opt in accessor.flags]
 
         for opt, required in itertools.chain(arguments, flags):
             kwargs = {}
@@ -142,10 +139,9 @@ class Driver:
             logger.debug("add_argument %s %r", opt.option_name, kwargs)
             parser.add_argument(opt.option_name, **kwargs)
 
-    def run(self, argv=None):
-        fn = self.fn
+    def run(self, fn, argv=None):
         parser = self.create_parser(fn, argv=argv, description=fn.__doc__)
-        self.setup_parser(parser)
+        self.setup_parser(parser, fn)
         args = parser.parse_args(argv)
         params = vars(args).copy()
         params.pop("expose", None)  # xxx: for ./parsers/expose.py
