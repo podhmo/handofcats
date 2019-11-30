@@ -10,7 +10,7 @@ try:
 except IOError:
     README = CHANGES = ""
 
-install_requires = ["prestring", "typing_extensions"]
+install_requires = ["prestring", "typing_extensions", "magicalimport"]
 
 docs_extras = []
 tests_require = []
