@@ -1,3 +1,4 @@
+import typing as t
 import sys
 import re
 import inspect
@@ -7,33 +8,29 @@ from prestring.utils import LazyArgumentsAndKeywords, UnRepr
 from prestring.python import Module
 from ._callback import CallbackArgumentParser
 
+History = t.List[t.Dict[str, t.Any]]
 
-def print_argparse_code(fn, history, *, outname="main"):
-    if fn.__name__ == outname:
-        outname = titleize(outname)  # main -> Main
 
-    def _make_args(history, default=""):
-        name = history["name"]
-        if name == "__init__":
-            name = default
-        kwargs = {
-            k: (repr(v) if k != "type" else v.__name__)
-            for k, v in history["kwargs"].items()
-        }
-        args = [repr(v) for v in history["args"]]
-        return f"{name}({LazyArgumentsAndKeywords(args, kwargs)})"
+def _make_args(history: History, *, default: str = ""):
+    name = history["name"]
+    if name == "__init__":
+        name = default
+    kwargs = {
+        k: (repr(v) if k != "type" else v.__name__)
+        for k, v in history["kwargs"].items()
+    }
+    args = [repr(v) for v in history["args"]]
+    return f"{name}({LazyArgumentsAndKeywords(args, kwargs)})"
 
-    # xxx: is inplace?
-    inplace = False
-    if "inplace" in history[0]["kwargs"]:
-        inplace = history[0]["kwargs"].pop("inplace")
-    # xxx: is typed?
-    typed = False
-    if "typed" in history[0]["kwargs"]:
-        typed = history[0]["kwargs"].pop("typed")
 
-    m = Module()
-
+def emit_main(
+    m: Module,
+    fn: t.Callable,
+    history: History,
+    *,
+    outname: str = "main",
+    typed: bool = False,
+):
     if typed:
         m.sep()
         m.from_("typing").import_("Optional, List  # noqa: E402")
@@ -60,6 +57,23 @@ def print_argparse_code(fn, history, *, outname="main"):
 
     with m.if_("__name__ == '__main__'"):
         m.stmt("{}()", outname)
+
+
+def print_argparse_code(fn: t.Callable, history: History, *, outname: str = "main"):
+    if fn.__name__ == outname:
+        outname = titleize(outname)  # main -> Main
+
+    # xxx: is inplace?
+    inplace = False
+    if "inplace" in history[0]["kwargs"]:
+        inplace = history[0]["kwargs"].pop("inplace")
+    # xxx: is typed?
+    typed = False
+    if "typed" in history[0]["kwargs"]:
+        typed = history[0]["kwargs"].pop("typed")
+
+    m = Module()
+    emit_main(m, fn, history, outname=outname, typed=typed)
 
     target_file = inspect.getsourcefile(fn)
     with open(target_file) as rf:
