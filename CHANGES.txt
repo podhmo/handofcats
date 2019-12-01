@@ -1,3 +1,9 @@
+2.4.0
+
+- some refactoring
+- use magicalimport for reducing code
+- use fastentrypoint for fast bootstrap time editable installed
+
 2.3.2
 
 - fix, with Literal Types, detect type is failed
