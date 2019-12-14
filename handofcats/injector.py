@@ -96,9 +96,15 @@ class Injector:
             else:
                 logger.info("unexpected type is found (type=%s)", opt.type)
 
-    def inject(self, parser):
+    def inject(
+        self, parser, *, ignore_arguments: bool = False, ignore_flags: bool = False
+    ):
         arguments = [(opt, None) for opt in self.accessor.arguments]
         flags = [(opt, opt.required) for opt in self.accessor.flags]
+        if ignore_arguments:
+            arguments = []
+        if ignore_flags:
+            flags = []
 
         for opt, required in itertools.chain(arguments, flags):
             kwargs = {}
