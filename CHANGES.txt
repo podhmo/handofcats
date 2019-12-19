@@ -1,3 +1,7 @@
+2.4.2
+
+- Injector with callback option
+
 2.4.1
 
 - Injector support ignore_arguments and ignore_flags
