@@ -1,3 +1,7 @@
+2.4.3
+
+- catch up magicalimport 0.8.1
+
 2.4.2
 
 - Injector with callback option
