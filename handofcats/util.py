@@ -1,5 +1,7 @@
-from functools import update_wrapper
-from magicalimport import import_symbol  # noqa F401
+from functools import update_wrapper, partial
+import magicalimport
+
+import_symbol = partial(magicalimport.import_symbol, cwd=True)
 
 
 # stolen from pyramid
