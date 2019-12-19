@@ -97,7 +97,12 @@ class Injector:
                 logger.info("unexpected type is found (type=%s)", opt.type)
 
     def inject(
-        self, parser, *, ignore_arguments: bool = False, ignore_flags: bool = False
+        self,
+        parser,
+        *,
+        ignore_arguments: bool = False,
+        ignore_flags: bool = False,
+        callback: t.Callable[[t.Any], t.Any] = id,
     ):
         arguments = [(opt, None) for opt in self.accessor.arguments]
         flags = [(opt, opt.required) for opt in self.accessor.flags]
@@ -122,4 +127,4 @@ class Injector:
                 kwargs["help"] = "(default: {!r})".format(kwargs["default"])
 
             logger.debug("add_argument %s %r", opt.option_name, kwargs)
-            parser.add_argument(opt.option_name, **kwargs)
+            callback(parser.add_argument(opt.option_name, **kwargs))
