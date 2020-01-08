@@ -1,4 +1,4 @@
-INFO:__main__:info message
-WARNING:__main__:warning message
-ERROR:__main__:error message
-CRITICAL:__main__:critical message
+level:INFO	name:__main__	where:run.py:10	message:info message
+level:WARNING	name:__main__	where:run.py:11	message:warning message
+level:ERROR	name:__main__	where:run.py:12	message:error message
+level:CRITICAL	name:__main__	where:run.py:13	message:critical message

@@ -1,0 +1,4 @@
+level:INFO	name:def	where:def.py:8	message:info message
+level:WARNING	name:def	where:def.py:9	message:warning message
+level:ERROR	name:def	where:def.py:10	message:error message
+level:CRITICAL	name:def	where:def.py:11	message:critical message
