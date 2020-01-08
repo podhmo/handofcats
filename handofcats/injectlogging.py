@@ -4,11 +4,16 @@ import os
 
 def setup(parser):
     logging_levels = list(logging._nameToLevel.keys())
-    parser.add_argument("--logging", choices=logging_levels, default="INFO", help="(default: INFO)")
+    parser.add_argument(
+        "--logging", choices=logging_levels, default="INFO", help="(default: INFO)"
+    )
 
 
 def activate(params, *, logging_level=None, logging_format=None):
-    logging_format = logging.BASIC_FORMAT
+    logging_format = (
+        logging_format
+        or "level:%(levelname)s	name:%(name)s	where:%(filename)s:%(lineno)s	message:%(message)s"
+    )
 
     if os.environ.get("DEBUG"):
         logging_level = logging.DEBUG
