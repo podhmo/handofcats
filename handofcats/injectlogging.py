@@ -6,7 +6,7 @@ import sys
 def setup(parser):
     logging_levels = list(logging._nameToLevel.keys())
     parser.add_argument(
-        "--logging", choices=logging_levels, default="INFO", help="(default: INFO)"
+        "--logging", choices=logging_levels, default=None
     )
 
 
