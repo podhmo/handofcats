@@ -31,17 +31,19 @@ class Driver:
             parser.add_argument("--typed", action="store_true")  # xxx (for ./expose.py)
         return parser
 
-    def run(self, fn, argv=None):
+    def run(self, fn, argv=None, *, ignore_logging=False):
         parser = self.create_parser(fn, argv=argv, description=fn.__doc__)
 
         injector = self.create_injector(fn)
         injector.inject(parser)
-        injectlogging.setup(parser)
+        if not ignore_logging:
+            injectlogging.setup(parser)
 
         args = parser.parse_args(argv)
         params = vars(args).copy()
 
-        injectlogging.activate(params)
+        if not ignore_logging:
+            injectlogging.activate(params)
 
         params.pop("expose", None)  # xxx: for ./parsers/expose.py
         params.pop("inplace", None)  # xxx: for ./parsers/expose.py
