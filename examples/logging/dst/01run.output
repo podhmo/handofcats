@@ -1,0 +1,4 @@
+INFO:__main__:info message
+WARNING:__main__:warning message
+ERROR:__main__:error message
+CRITICAL:__main__:critical message
