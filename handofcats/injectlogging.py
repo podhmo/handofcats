@@ -18,6 +18,8 @@ def activate(params, *, logging_level=None, logging_format=None, logging_stream=
 
     if os.environ.get("DEBUG"):
         logging_level = logging.DEBUG
+        print("** {where}: DEBUG=1, activate logging **".format(where=__name__))
+
     if os.environ.get("LOGGING_LEVEL"):
         logging_level = logging._nameToLevel.get(os.environ["LOGGING_LEVEL"])
     if os.environ.get("LOGGING_FORMAT"):
