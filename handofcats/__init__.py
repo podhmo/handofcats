@@ -9,7 +9,7 @@ def import_symbol_maybe(ob_or_path, sep=":"):
     return import_symbol(ob_or_path, sep=sep)
 
 
-def as_command(fn=None, argv=None, driver=Driver, level=2, _force=False):
+def as_command(fn=None, *, argv=None, driver=Driver, level=2, _force=False, ignore_logging=False):
     create_driver = import_symbol_maybe(driver)
     if argv is None:
         argv = sys.argv[1:]
@@ -22,7 +22,7 @@ def as_command(fn=None, argv=None, driver=Driver, level=2, _force=False):
             if name != "__main__":
                 return fn
         driver = create_driver()
-        return driver.run(fn, argv)
+        return driver.run(fn, argv, ignore_logging=ignore_logging)
 
     if fn is None:
         return call

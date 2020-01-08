@@ -1,0 +1,12 @@
+level:DEBUG	name:def	where:def.py:7	relative:26.09419822692871	message:"debug" logger's message
+level:INFO	name:def	where:def.py:8	relative:26.311159133911133	message:"info" logger's message
+level:WARNING	name:def	where:def.py:9	relative:26.42822265625	message:"warning" logger's message
+level:ERROR	name:def	where:def.py:10	relative:26.506900787353516	message:"error" logger's message
+level:CRITICAL	name:def	where:def.py:11	relative:26.61919593811035	message:"critical" logger's message
+level:INFO	name:def	where:def.py:13	relative:26.7331600189209	message:
+MULTILINE MESSAGE
+
+- hello
+- byebye
+
+** handofcats.injectlogging: DEBUG=1, activate logging **
