@@ -1,4 +1,5 @@
 from .injector import Injector
+from . import injectlogging
 
 
 class Driver:
@@ -35,9 +36,13 @@ class Driver:
 
         injector = self.create_injector(fn)
         injector.inject(parser)
+        injectlogging.setup(parser)
 
         args = parser.parse_args(argv)
         params = vars(args).copy()
+
+        injectlogging.activate(params)
+
         params.pop("expose", None)  # xxx: for ./parsers/expose.py
         params.pop("inplace", None)  # xxx: for ./parsers/expose.py
         params.pop("typed", None)  # xxx: for ./parsers/expose.py
