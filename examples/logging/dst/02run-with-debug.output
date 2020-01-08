@@ -1,4 +1,6 @@
-level:INFO	name:__main__	where:run.py:10	message:info message
-level:WARNING	name:__main__	where:run.py:11	message:warning message
-level:ERROR	name:__main__	where:run.py:12	message:error message
-level:CRITICAL	name:__main__	where:run.py:13	message:critical message
+level:DEBUG	time:1578487102.390882	name:__main__	where:run.py:9	message:debug message
+level:INFO	time:1578487102.391095	name:__main__	where:run.py:10	message:info message
+level:WARNING	time:1578487102.3912802	name:__main__	where:run.py:11	message:warning message
+level:ERROR	time:1578487102.391422	name:__main__	where:run.py:12	message:error message
+level:CRITICAL	time:1578487102.391637	name:__main__	where:run.py:13	message:critical message
+** handofcats.injectlogging: DEBUG=1, activate logging **

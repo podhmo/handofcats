@@ -1,4 +1,12 @@
-level:INFO	name:def	where:def.py:8	message:info message
-level:WARNING	name:def	where:def.py:9	message:warning message
-level:ERROR	name:def	where:def.py:10	message:error message
-level:CRITICAL	name:def	where:def.py:11	message:critical message
+level:DEBUG	time:1578487102.6017878	name:def	where:def.py:7	message:"debug" logger's message
+level:INFO	time:1578487102.6019359	name:def	where:def.py:8	message:"info" logger's message
+level:WARNING	time:1578487102.6019998	name:def	where:def.py:9	message:"warning" logger's message
+level:ERROR	time:1578487102.6020591	name:def	where:def.py:10	message:"error" logger's message
+level:CRITICAL	time:1578487102.6021152	name:def	where:def.py:11	message:"critical" logger's message
+level:INFO	time:1578487102.602176	name:def	where:def.py:13	message:
+MULTILINE MESSAGE
+
+- hello
+- byebye
+
+** handofcats.injectlogging: DEBUG=1, activate logging **

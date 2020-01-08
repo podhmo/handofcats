@@ -10,4 +10,3 @@ optional arguments:
   --inplace
   --typed
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
-                        (default: INFO)
