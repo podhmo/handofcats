@@ -13,7 +13,7 @@ def setup(parser):
 def activate(params, *, logging_level=None, logging_format=None, logging_stream=None):
     logging_format = (
         logging_format
-        or "level:%(levelname)s	time:%(created)s	name:%(name)s	where:%(filename)s:%(lineno)s	message:%(message)s"
+        or "level:%(levelname)s	name:%(name)s	where:%(filename)s:%(lineno)s	relative:%(relativeCreated)s	message:%(message)s"
     )
 
     if os.environ.get("DEBUG"):
