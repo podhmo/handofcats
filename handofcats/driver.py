@@ -1,8 +1,7 @@
 import typing as t
 from .injector import Injector
+from .actions import TargetFunction
 from . import injectlogging
-
-TargetFunction = t.Callable[..., t.Any]
 
 
 class Driver:
@@ -22,21 +21,23 @@ class Driver:
     def _run_command_line(
         self, executor: "Executor", argv: t.Optional[str] = None
     ) -> t.Any:
-        from .parsers import commandline
+        from .actions import commandline
 
         fn = executor.fn
-        parser = commandline.create_parser(
-            prog=fn.__name__, description=self.description or fn.__doc__
+        parser, cont = commandline.setup(
+            fn, prog=fn.__name__, description=self.description or fn.__doc__
         )
         parser.add_argument("--expose", action="store_true")  # xxx (for ./expose.py)
         parser.add_argument("--inplace", action="store_true")  # xxx (for ./expose.py)
         parser.add_argument("--typed", action="store_true")  # xxx (for ./expose.py)
-        return executor.execute(parser, argv, ignore_logging=self.ignore_logging)
+        return executor.execute(
+            parser, argv, ignore_logging=self.ignore_logging, cont=cont
+        )
 
     def _run_expose_action(
         self, executor: "Executor", argv: t.Optional[str] = None,
     ) -> t.Any:
-        from .parsers import expose
+        from .actions import expose
 
         fn = executor.fn
 
@@ -45,11 +46,13 @@ class Driver:
         description = self.description or fn.__doc__
 
         # fix:
-        parser = expose.create_parser(
-            fn, description=description, inplace=inplace, typed=typed
+        parser, cont = expose.setup(
+            fn, prog=fn.__name__, description=description, inplace=inplace, typed=typed
         )
         # TODO: use mock function
-        return executor.execute(parser, argv, ignore_logging=self.ignore_logging)
+        return executor.execute(
+            parser, argv, ignore_logging=self.ignore_logging, cont=cont
+        )
 
 
 class Executor:

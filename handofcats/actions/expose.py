@@ -2,10 +2,11 @@ import typing as t
 import sys
 import re
 import inspect
-import functools
+
 from prestring.naming import titleize
 from prestring.utils import LazyArgumentsAndKeywords, UnRepr
 from prestring.python import Module
+from . import TargetFunction, ContFunction, ArgumentParser
 from ._callback import CallbackArgumentParser
 
 History = t.List[t.Dict[str, t.Any]]
@@ -113,4 +114,13 @@ def print_argparse_code(fn: t.Callable, history: History, *, outname: str = "mai
         sys.exit(1)
 
 
-create_parser = functools.partial(CallbackArgumentParser, print_argparse_code)
+def setup(
+    fn: TargetFunction,
+    *,
+    prog: t.Optional[str],
+    description: t.Optional[str] = None,
+    inplace: bool,
+    typed: bool,
+) -> (ArgumentParser, ContFunction):
+    # TODO:  use cont
+    return CallbackArgumentParser(print_argparse_code, fn), fn
