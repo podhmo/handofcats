@@ -24,14 +24,14 @@ class Driver:
         from .actions import commandline
 
         fn = executor.fn
-        parser, cont = commandline.setup(
+        m, parser, cont = commandline.setup(
             fn, prog=fn.__name__, description=self.description or fn.__doc__
         )
         parser.add_argument("--expose", action="store_true")  # xxx (for ./expose.py)
         parser.add_argument("--inplace", action="store_true")  # xxx (for ./expose.py)
         parser.add_argument("--typed", action="store_true")  # xxx (for ./expose.py)
         return executor.execute(
-            parser, argv, ignore_logging=self.ignore_logging, cont=cont
+            m, parser, argv, ignore_logging=self.ignore_logging, cont=cont
         )
 
     def _run_expose_action(
@@ -46,12 +46,12 @@ class Driver:
         description = self.description or fn.__doc__
 
         # fix:
-        parser, cont = codegen.setup(
+        m, parser, cont = codegen.setup(
             fn, prog=fn.__name__, description=description, inplace=inplace, typed=typed
         )
         # TODO: use mock function
         return executor.execute(
-            parser, argv, ignore_logging=self.ignore_logging, cont=cont
+            m, parser, argv, ignore_logging=self.ignore_logging, cont=cont
         )
 
 
@@ -64,6 +64,7 @@ class Executor:
 
     def execute(
         self,
+        m,
         parser,
         argv=None,
         *,
@@ -73,7 +74,7 @@ class Executor:
         cont = cont or self.fn
 
         injector = self.create_injector()
-        injector.inject(parser)
+        injector.inject(parser, callback=m.stmt)
 
         if not ignore_logging:
             injectlogging.setup(parser)
