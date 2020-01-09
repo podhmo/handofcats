@@ -37,7 +37,7 @@ class Driver:
     def _run_expose_action(
         self, executor: "Executor", argv: t.Optional[str] = None,
     ) -> t.Any:
-        from .actions import expose
+        from .actions import codegen
 
         fn = executor.fn
 
@@ -46,7 +46,7 @@ class Driver:
         description = self.description or fn.__doc__
 
         # fix:
-        parser, cont = expose.setup(
+        parser, cont = codegen.setup(
             fn, prog=fn.__name__, description=description, inplace=inplace, typed=typed
         )
         # TODO: use mock function
