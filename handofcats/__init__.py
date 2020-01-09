@@ -21,8 +21,8 @@ def as_command(fn=None, *, argv=None, driver=Driver, level=2, _force=False, igno
             name = frame.f_globals["__name__"]
             if name != "__main__":
                 return fn
-        driver = create_driver()
-        return driver.run(fn, argv, ignore_logging=ignore_logging)
+        driver = create_driver(ignore_logging=ignore_logging)
+        return driver.run(fn, argv)
 
     if fn is None:
         return call
