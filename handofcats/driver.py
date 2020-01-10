@@ -2,7 +2,7 @@ import typing as t
 import sys
 from .injector import Injector
 from .actions import TargetFunction, ContFunction
-from . import injectlogging
+from . import customize
 
 
 class Driver:
@@ -57,13 +57,13 @@ class Driver:
 
         # TODO: include generated code, emitted by `--expose`
         if not ignore_logging:
-            injectlogging.setup(parser)
+            customize.logging_setup(parser)
 
         args = parser.parse_args(argv)
         params = vars(args).copy()
 
         if not ignore_logging:
-            injectlogging.activate(params)
+            customize.logging_activate(params)
 
         return cont(params=params)
 
@@ -121,7 +121,7 @@ class MultiDriver:
     ):
         # TODO: include generated code, emitted by `--expose`
         if not ignore_logging:
-            injectlogging.setup(parser)
+            customize.logging_setup(parser)
 
         subparsers = m.let(
             "subparsers", parser.add_subparsers(title="subcommands", dest="subcommand")
@@ -145,6 +145,6 @@ class MultiDriver:
         params = m.let("params", m.symbol(vars)(args).copy())
 
         if not ignore_logging:
-            injectlogging.activate(params)
+            customize.logging_activate(params)
 
         return cont(params=params)

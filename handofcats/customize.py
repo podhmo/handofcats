@@ -3,14 +3,14 @@ import os
 import sys
 
 
-def setup(parser):
+def logging_setup(parser):
     logging_levels = list(logging._nameToLevel.keys())
-    parser.add_argument(
-        "--logging", choices=logging_levels, default=None
-    )
+    parser.add_argument("--logging", choices=logging_levels, default=None)
 
 
-def activate(params, *, logging_level=None, logging_format=None, logging_stream=None):
+def logging_activate(
+    params, *, logging_level=None, logging_format=None, logging_stream=None
+):
     logging_format = (
         logging_format
         or "level:%(levelname)s	name:%(name)s	where:%(filename)s:%(lineno)s	relative:%(relativeCreated)s	message:%(message)s"
