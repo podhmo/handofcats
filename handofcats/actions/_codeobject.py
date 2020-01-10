@@ -11,6 +11,7 @@ from prestring.utils import LazyArgumentsAndKeywords, UnRepr
 # TODO: typed prestring module
 class Module(_Module):  # type: ignore
     def import_(self, module: str, as_: t.Optional[str] = None) -> Symbol:
+        """like `import <name>`"""
         sym = Symbol(as_ or module)
         super().import_(module, as_=as_)
         return sym
@@ -18,6 +19,7 @@ class Module(_Module):  # type: ignore
     def stmt(
         self, fmt_or_emittable: t.Union[t.Any, Emittable], *args: t.Any, **kwargs: t.Any
     ) -> Module:
+        """capture code"""
         if getattr(fmt_or_emittable, "emit", None) is not None:  # Emittable
             assert not args
             assert not kwargs
@@ -25,17 +27,21 @@ class Module(_Module):  # type: ignore
         return super().stmt(str(fmt_or_emittable), *args, **kwargs)  # type: ignore
 
     def let(self, name: str, val: Emittable) -> Emittable:
+        """like `<name> = ob`"""
         assigned = let(name, val)
         assigned.emit(m=self)
         return assigned
 
     def setattr(self, co: Emittable, name: str, val: t.Any):
+        """like `<ob>.<name> = <val>`"""
         self.stmt("{}.{} = {}", co, name, as_string(val))
 
     def getattr(self, ob: t.Any, name: str) -> t.Optional[str]:
+        """like `<ob>.<name>`"""
         return Attr(name, co=ob)
 
     def symbol(self, ob: t.Union[str, t.Any]) -> Symbol:
+        """like `<ob>`"""
         if isinstance(ob, str):
             return Symbol(ob)
         return Symbol(ob.__name__)

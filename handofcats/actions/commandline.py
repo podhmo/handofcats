@@ -19,10 +19,12 @@ def setup(fn: TargetFunction,) -> t.Tuple["M", ArgumentParser, ContFunction]:
         params.pop("typed", None)  # xxx: for ./expose.py
         return fn(**params)
 
-    return M(), parser, cont
+    return _FakeModule(), parser, cont
 
 
-class M:
+class _FakeModule:
+    """fake _codeobject.Module. no effect"""
+
     def import_(self, name) -> ModuleType:
         return import_module(name)
 
@@ -33,7 +35,7 @@ class M:
         return ob
 
     def sep(self):
-        return None
+        pass
 
     def return_(self, ob: t.Any) -> t.Any:
         return ob
