@@ -35,7 +35,9 @@ class Module(_Module):  # type: ignore
     def getattr(self, ob: t.Any, name: str) -> t.Optional[str]:
         return Attr(name, co=ob)
 
-    def symbol(self, ob: t.Any) -> Symbol:
+    def symbol(self, ob: t.Union[str, t.Any]) -> Symbol:
+        if isinstance(ob, str):
+            return Symbol(ob)
         return Symbol(ob.__name__)
 
 
