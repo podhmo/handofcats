@@ -8,12 +8,16 @@ def psum(xs: t.List[int], *, ys: t.Optional[t.List[int]] = None):
 
 def main(argv=None):
     import argparse
-    parser = argparse.ArgumentParser(description=None)
+
+    parser = argparse.ArgumentParser(prog=psum.__name__, description=psum.__doc__)
     parser.print_usage = parser.print_help
+
     parser.add_argument('xs', type=int, nargs='*')
     parser.add_argument('--ys', required=False, action='append', type=int)
+
     args = parser.parse_args(argv)
-    psum(**vars(args))
+    params = vars(args).copy()
+    return psum(**params)
 
 
 if __name__ == '__main__':

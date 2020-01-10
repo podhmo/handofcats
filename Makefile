@@ -7,6 +7,7 @@ ci:
 examples:
 	$(MAKE) -C examples/readme
 	$(MAKE) -C examples/variation
+	$(MAKE) -C examples/logging
 .PHONY: examples
 
 format:
