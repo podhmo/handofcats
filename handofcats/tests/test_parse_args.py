@@ -15,7 +15,6 @@ class Tests(unittest.TestCase):
         return parser
 
     def test_it(self):
-        from handofcats.actions.testing import ParseArgsCalled
         from collections import namedtuple
 
         C = namedtuple("C", "msg, fn, expected")
@@ -194,13 +193,8 @@ class Tests(unittest.TestCase):
         # yapf: enable
         for c in candidates:
             with self.subTest(msg=c.msg):
-                try:
-                    parser = self._makeOne(c.fn)
-                    parser.parse_args()
-                except ParseArgsCalled as e:
-                    got = e.history[1:-1]
-                else:
-                    raise self.fail("something wrong")
+                parser = self._makeOne(c.fn)
+                got = parser.parse_args()
 
                 got_str = json.dumps(
                     got, indent=2, ensure_ascii=False, sort_keys=True, default=str
