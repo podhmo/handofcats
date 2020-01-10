@@ -3,16 +3,33 @@ import unittest
 import json
 
 
+class _FakeArgumentParser:
+    def __init__(self, *args, **kwargs):
+        self.history = []
+
+    def __getattr__(self, name):
+        self.history.append({"name": name})
+        return self
+
+    def __call__(self, *args, **kwargs):
+        latest = self.history[-1]
+        assert "args" not in latest
+        latest["args"] = args
+        latest["kwargs"] = kwargs
+
+    def parse_args(self, *args, **kwargs):
+        return self.history
+
+
 class Tests(unittest.TestCase):
     maxDiff = None
 
-    def _makeOne(self, fn):
-        from handofcats.actions import testing
+    def _callFUT(self, fn):
         from handofcats.injector import Injector
 
-        parser = testing.CatchParseArgsArgumentParser()
+        parser = _FakeArgumentParser()
         Injector(fn).inject(parser)
-        return parser
+        return parser.parse_args()
 
     def test_it(self):
         from collections import namedtuple
@@ -193,8 +210,7 @@ class Tests(unittest.TestCase):
         # yapf: enable
         for c in candidates:
             with self.subTest(msg=c.msg):
-                parser = self._makeOne(c.fn)
-                got = parser.parse_args()
+                got = self._callFUT(c.fn)
 
                 got_str = json.dumps(
                     got, indent=2, ensure_ascii=False, sort_keys=True, default=str
