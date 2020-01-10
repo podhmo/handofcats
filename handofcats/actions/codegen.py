@@ -48,76 +48,58 @@ def emit(
     sys.exit(1)
 
 
+def main_code(
+    m: Module, fn: t.Callable, *, outname: str = "main", typed: bool = False,
+) -> t.Tuple[Module, ArgumentParser]:
+
+    if fn.__name__ == outname:
+        outname = titleize(outname)  # main -> Main
+
+    if typed:
+        m.sep()
+        m.from_("typing").import_("Optional, List  # noqa: E402")
+        m.sep()
+        mdef = m.def_(outname, "argv: Optional[List[str]] = None", return_type="None")
+    else:
+        mdef = m.def_(outname, "argv=None")
+
+    with mdef:
+        argparse = m.import_("argparse")
+        m.sep()
+        parser = m.let(
+            "parser",
+            argparse.ArgumentParser(
+                prog=m.getattr(m.symbol(fn), "__name__"),
+                description=m.getattr(m.symbol(fn), "__doc__"),
+            ),
+        )
+        m.setattr(parser, "print_usage", parser.print_help)
+
+        m.sep()
+        sm = m.submodule()
+        m.sep()
+
+        args = m.let("args", parser.parse_args(m.symbol("argv")))
+        _ = m.let("params", m.symbol("vars")(args).copy())
+        m.return_(f"{fn.__name__}(**params)")
+
+    with m.if_("__name__ == '__main__'"):
+        m.stmt(f"{outname}()")
+    return sm, parser
+
+
+def setup_module() -> Module:
+    m = Module()
+    m.toplevel = m.submodule()
+    return m
+
+
 def setup(
     fn: TargetFunction, *, inplace: bool, typed: bool, outname: str = "main",
 ) -> t.Tuple[Module, ArgumentParser, ContFunction]:
-    def _main_code(
-        m: Module, fn: t.Callable, *, outname: str = "main", typed: bool = False,
-    ) -> t.Tuple[Module, ArgumentParser]:
-        """ generate main() code
-
-        something like
-
-        ```
-        def main(argv=None):
-            import argparse
-
-            parser = argparse.ArgumentParser(prog=hello.__name__, description=hello.__doc__)
-            parser.print_usage = parser.print_help
-
-            # do_something by handofcats.driver.Executer.execute(). e.g.
-            # parser.add_argument('--name', required=False, default='world', help="(default: 'world')")
-            # parser.add_argument('--debug', action="store_true")
-
-            args = parser.parse_args(argv)
-            params = vars(args).copy()
-            return hello(**params)
-
-        if __name__ == "__main__":
-            main()
-        ```
-        """
-
-        if fn.__name__ == outname:
-            outname = titleize(outname)  # main -> Main
-
-        if typed:
-            m.sep()
-            m.from_("typing").import_("Optional, List  # noqa: E402")
-            m.sep()
-            mdef = m.def_(
-                outname, "argv: Optional[List[str]] = None", return_type="None"
-            )
-        else:
-            mdef = m.def_(outname, "argv=None")
-
-        with mdef:
-            argparse = m.import_("argparse")
-            m.sep()
-            parser = m.let(
-                "parser",
-                argparse.ArgumentParser(
-                    prog=m.getattr(m.symbol(fn), "__name__"),
-                    description=m.getattr(m.symbol(fn), "__doc__"),
-                ),
-            )
-            m.setattr(parser, "print_usage", parser.print_help)
-
-            m.sep()
-            sm = m.submodule()
-            m.sep()
-
-            args = m.let("args", parser.parse_args(m.symbol("argv")))
-            _ = m.let("params", m.symbol("vars")(args).copy())
-            m.return_(f"{fn.__name__}(**params)")
-
-        with m.if_("__name__ == '__main__'"):
-            m.stmt(f"{outname}()")
-        return sm, parser
-
     m = Module()
     m.toplevel = m.submodule()
-    sm, parser = _main_code(m, fn, outname=outname, typed=typed)
+    sm, parser = main_code(m, fn, outname=outname, typed=typed)
 
     def cont(*, params: t.Dict[str, t.Any]) -> t.Any:
         return emit(m, fn, inplace=inplace)

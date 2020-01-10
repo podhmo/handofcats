@@ -1,11 +1,30 @@
+import typing as t
 import logging
 import os
 import sys
+from .actions import ArgumentParser
+
+ActivateFunction = t.Callable[[t.Dict[str, t.Any]], None]
+SetupFunction = t.Callable[[ArgumentParser], ActivateFunction]
+
+
+def first_parser_setup(parser):
+    parser.add_argument("--expose", action="store_true")  # xxx (./actions/codegen.py)
+    parser.add_argument("--inplace", action="store_true")  # xxx (./actions/codegen.py)
+    parser.add_argument("--typed", action="store_true")  # xxx (./actions/codegen.py)
+    return first_parser_activate
+
+
+def first_parser_activate(params):
+    params.pop("expose", None)  # xxx: ./actions/codegen.py
+    params.pop("inplace", None)  # xxx: ./actions/codegen.py
+    params.pop("typed", None)  # xxx: ./actions/codegen.py
 
 
 def logging_setup(parser):
     logging_levels = list(logging._nameToLevel.keys())
     parser.add_argument("--logging", choices=logging_levels, default=None)
+    return logging_activate
 
 
 def logging_activate(
