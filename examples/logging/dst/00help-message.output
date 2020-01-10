@@ -1,5 +1,5 @@
-usage: run.py [-h] [--expose] [--inplace] [--typed]
-              [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
+usage: run [-h] [--expose] [--inplace] [--typed]
+           [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
 
 positional arguments:
   ok

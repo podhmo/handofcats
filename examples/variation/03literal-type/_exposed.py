@@ -10,13 +10,17 @@ def run(filename: str, *, mode: t.Optional[Mode] = "r", value: Value) -> None:
 
 def main(argv=None):
     import argparse
-    parser = argparse.ArgumentParser(description=None)
+
+    parser = argparse.ArgumentParser(prog=run.__name__, description=run.__doc__)
     parser.print_usage = parser.print_help
+
     parser.add_argument('filename')
-    parser.add_argument('--mode', required=False, default='r', choices=['a', 'w', 'r'], help="(default: 'r')")
-    parser.add_argument('--value', required=True, choices=[0, 1, -1], type=int)
+    parser.add_argument('--mode', required=False, default='r', choices=["'a'", "'w'", "'r'"], help="(default: 'r')")
+    parser.add_argument('--value', required=True, choices=['0', '1', '-1'], type=int)
+
     args = parser.parse_args(argv)
-    run(**vars(args))
+    params = vars(args).copy()
+    return run(**params)
 
 
 if __name__ == '__main__':

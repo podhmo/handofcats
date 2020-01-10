@@ -5,9 +5,8 @@ from . import injectlogging
 
 
 class Driver:
-    def __init__(self, *, ignore_logging=False, description: t.Optional[str] = None):
+    def __init__(self, *, ignore_logging=False):
         self.ignore_logging = ignore_logging
-        self.description = description
 
     def run(
         self, fn: TargetFunction, argv=None,
@@ -24,46 +23,37 @@ class Driver:
         from .actions import commandline
 
         fn = executor.fn
-        parser, cont = commandline.setup(
-            fn, prog=fn.__name__, description=self.description or fn.__doc__
-        )
-        parser.add_argument("--expose", action="store_true")  # xxx (for ./expose.py)
-        parser.add_argument("--inplace", action="store_true")  # xxx (for ./expose.py)
-        parser.add_argument("--typed", action="store_true")  # xxx (for ./expose.py)
+        m, parser, cont = commandline.setup(fn)
         return executor.execute(
-            parser, argv, ignore_logging=self.ignore_logging, cont=cont
+            m, parser, argv, ignore_logging=self.ignore_logging, cont=cont
         )
 
     def _run_expose_action(
         self, executor: "Executor", argv: t.Optional[str] = None,
     ) -> t.Any:
-        from .actions import expose
+        from .actions import codegen
 
         fn = executor.fn
 
         inplace = "--inplace" in (argv or [])
         typed = "--typed" in (argv or [])
-        description = self.description or fn.__doc__
 
-        # fix:
-        parser, cont = expose.setup(
-            fn, prog=fn.__name__, description=description, inplace=inplace, typed=typed
-        )
+        m, parser, cont = codegen.setup(fn, inplace=inplace, typed=typed)
         # TODO: use mock function
         return executor.execute(
-            parser, argv, ignore_logging=self.ignore_logging, cont=cont
+            m, parser, argv, ignore_logging=self.ignore_logging, cont=cont
         )
 
 
 class Executor:
+    injector_class = Injector
+
     def __init__(self, fn: TargetFunction) -> None:
         self.fn = fn
 
-    def create_injector(self):
-        return Injector(self.fn)
-
     def execute(
         self,
+        m,
         parser,
         argv=None,
         *,
@@ -72,8 +62,8 @@ class Executor:
     ):
         cont = cont or self.fn
 
-        injector = self.create_injector()
-        injector.inject(parser)
+        injector = self.injector_class(self.fn)
+        injector.inject(parser, callback=m.stmt)
 
         if not ignore_logging:
             injectlogging.setup(parser)
@@ -84,7 +74,4 @@ class Executor:
         if not ignore_logging:
             injectlogging.activate(params)
 
-        params.pop("expose", None)  # xxx: for ./parsers/expose.py
-        params.pop("inplace", None)  # xxx: for ./parsers/expose.py
-        params.pop("typed", None)  # xxx: for ./parsers/expose.py
         return cont(**params)

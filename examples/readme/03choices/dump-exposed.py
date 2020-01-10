@@ -35,11 +35,15 @@ def run(*, format: DumpFormat = "json"):
 
 def main(argv=None):
     import argparse
-    parser = argparse.ArgumentParser(description=None)
+
+    parser = argparse.ArgumentParser(prog=run.__name__, description=run.__doc__)
     parser.print_usage = parser.print_help
-    parser.add_argument('--format', required=False, default='json', choices=['json', 'csv'], help="(default: 'json')")
+
+    parser.add_argument('--format', required=False, default='json', choices=["'json'", "'csv'"], help="(default: 'json')")
+
     args = parser.parse_args(argv)
-    run(**vars(args))
+    params = vars(args).copy()
+    return run(**params)
 
 
 if __name__ == '__main__':
