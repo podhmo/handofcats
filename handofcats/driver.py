@@ -1,5 +1,4 @@
 import typing as t
-import sys
 from .injector import Injector
 from .actions import TargetFunction, ArgumentParser
 from . import customize
@@ -15,10 +14,18 @@ class Driver:
     def run(
         self, fn: TargetFunction, argv=None,
     ):
-        if "--expose" in (argv or []):
-            return self._run_expose_action(fn, argv)
+        import argparse
+
+        first_parser = argparse.ArgumentParser(add_help=False)
+        customize.first_parser_setup(first_parser)
+
+        fargs, rest = first_parser.parse_known_args(argv)
+        if fargs.expose:  # "--expose" ?
+            return self._run_expose_action(
+                fn, rest, inplace=fargs.inplace, typed=fargs.typed
+            )
         else:
-            return self._run_command_line(fn, argv)
+            return self._run_command_line(fn, rest)
 
     def _run_command_line(
         self, fn: TargetFunction, argv: t.Optional[str] = None
@@ -48,6 +55,8 @@ class Driver:
         argv: t.Optional[str] = None,
         *,
         outname: str = "main",
+        inplace: bool = False,
+        typed: bool = False,
     ) -> None:
         """ generate main() code
 
@@ -73,10 +82,6 @@ class Driver:
         ```
         """
         from .actions import codegen
-
-        # TODO: use first_parser
-        inplace = "--inplace" in (argv or [])
-        typed = "--typed" in (argv or [])
 
         m = codegen.setup_module()
 
@@ -161,13 +166,22 @@ class MultiDriver:
     def run(
         self, argv=None,
     ):
-        if "--expose" in (argv or sys.argv[1:]):
-            return self._run_expose_action(self.functions[0], argv)
+        import argparse
+
+        first_parser = argparse.ArgumentParser(add_help=False)
+        customize.first_parser_setup(first_parser)
+
+        fargs, rest = first_parser.parse_known_args(argv)
+        functions = self.functions
+        if fargs.expose:  # "--expose" ?
+            return self._run_expose_action(
+                functions, rest, inplace=fargs.inplace, typed=fargs.typed
+            )
         else:
-            return self._run_command_line(self.functions[0], argv)
+            return self._run_command_line(rest)
 
     def _run_command_line(
-        self, fn: TargetFunction, argv: t.Optional[str] = None
+        self, functions: t.List[TargetFunction], argv: t.Optional[str] = None
     ) -> t.Any:
         from .actions import commandline
 
@@ -191,7 +205,13 @@ class MultiDriver:
         return subcommand(**params)
 
     def _run_expose_action(
-        self, fn: TargetFunction, argv: t.Optional[str] = None, outname: str = "main",
+        self,
+        functions: t.List[TargetFunction],
+        argv: t.Optional[str] = None,
+        *,
+        outname: str = "main",
+        inplace: bool = False,
+        typed: bool = False,
     ) -> t.Any:
         """ generate main() code
 
@@ -202,10 +222,6 @@ class MultiDriver:
         """
 
         from .actions import codegen
-
-        # TODO: use first_parser
-        inplace = "--inplace" in (argv or sys.argv[1:])
-        typed = "--typed" in (argv or sys.argv[1:])
 
         m = codegen.setup_module()
         if outname in [fn.__name__ for fn in self.functions]:
@@ -242,7 +258,8 @@ class MultiDriver:
             # main()
             m.stmt(f"{outname}()")
 
-        codegen.emit(m, fn, inplace=inplace)
+        fake = functions[0]
+        codegen.emit(m, fake, inplace=inplace)
 
     def setup_parser(
         self,
