@@ -53,11 +53,10 @@ class Driver:
 
 
 class Executor:
+    injector_class = Injector
+
     def __init__(self, fn: TargetFunction) -> None:
         self.fn = fn
-
-    def create_injector(self):
-        return Injector(self.fn)
 
     def execute(
         self,
@@ -70,7 +69,7 @@ class Executor:
     ):
         cont = cont or self.fn
 
-        injector = self.create_injector()
+        injector = self.injector_class(self.fn)
         injector.inject(parser, callback=m.stmt)
 
         if not ignore_logging:
