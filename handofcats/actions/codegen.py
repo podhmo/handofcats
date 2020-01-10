@@ -4,33 +4,24 @@ import re
 import inspect
 from functools import partial
 from prestring.naming import titleize
-from prestring.utils import LazyArgumentsAndKeywords, UnRepr
 from . import TargetFunction, ContFunction, ArgumentParser
 from ._codeobject import Module
 
 History = t.List[t.Dict[str, t.Any]]
 
 
-def _make_args(history: History, *, default: str = ""):
-    name = history["name"]
-    if name == "__init__":
-        name = default
-    kwargs = {
-        k: (repr(v) if k != "type" else v.__name__)
-        for k, v in history["kwargs"].items()
-    }
-    args = [repr(v) for v in history["args"]]
-    return f"{name}({LazyArgumentsAndKeywords(args, kwargs)})"
-
-
-def emit_main(
+def main_code(
     m: Module,
     fn: t.Callable,
-    history: History,
     *,
+    prog: t.Optional[str],
+    description: t.Optional[str] = None,
     outname: str = "main",
     typed: bool = False,
-):
+) -> t.Tuple[Module, ArgumentParser]:
+    if fn.__name__ == outname:
+        outname = titleize(outname)  # main -> Main
+
     if typed:
         m.sep()
         m.from_("typing").import_("Optional, List  # noqa: E402")
@@ -40,25 +31,28 @@ def emit_main(
         mdef = m.def_(outname, "argv=None")
 
     with mdef:
-        m.import_("argparse")
-        m.stmt(f"parser = argparse.ArgumentParser{_make_args(history[0])}")
-        m.stmt("parser.print_usage = parser.print_help")
-        for x in history[1:-1]:
-            m.stmt(f"parser.{_make_args(x)}")
-        m.stmt(f"args = parser.parse_args(argv)")
-        m.stmt(f"{fn.__name__}(**vars(args))")
+        argparse = m.import_("argparse")
+        m.sep()
+        parser = m.let(
+            "parser", argparse.ArgumentParser(prog=prog, description=description)
+        )
+        m.setattr(parser, "print_usage", parser.print_help)
+
+        m.sep()
+        sm = m.submodule()
+        m.sep()
+
+        args = m.let("args", parser.parse_args(m.symbol("argv")))
+        _ = m.let("params", m.symbol("vars")(args).copy())
+        m.return_("fn(**params)")
 
     with m.if_("__name__ == '__main__'"):
-        m.stmt("{}()", outname)
+        m.stmt(f"{outname}()")
+    return sm, parser
 
 
 def emit(
-    m: Module,
-    fn: TargetFunction,
-    *,
-    inplace: bool = False,
-    typed: bool = False,
-    **kwargs: t.Any,
+    m: Module, fn: TargetFunction, *, inplace: bool = False, **kwargs: t.Any,
 ):
     target_file = inspect.getsourcefile(fn)
     with open(target_file) as rf:
@@ -109,15 +103,6 @@ def setup(
 ) -> t.Tuple[Module, ArgumentParser, ContFunction]:
     m = Module()
     m.toplevel = m.submodule()
-    argparse = m.import_("argparse")
-
-    # TODO: main or Main
-    if fn.__name__ == outname:
-        outname = titleize(outname)  # main -> Main
-    with m.def_(outname, "argv=None"):
-        sm = m.submodule()
-        parser = sm.let(
-            "parser", argparse.ArgumentParser(prog=prog, description=description)
-        )
-    cont = partial(emit, m, fn, inplace=inplace, typed=typed)
+    sm, parser = main_code(m, fn, prog=prog, outname=outname, typed=typed)
+    cont = partial(emit, m, fn, inplace=inplace)
     return sm, parser, cont
