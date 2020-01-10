@@ -5,7 +5,7 @@ import inspect
 import logging
 import tempfile
 from prestring.naming import titleize
-from . import TargetFunction, ContFunction, ArgumentParser
+from . import TargetFunction, ArgumentParser
 from ._codeobject import Module
 
 logger = logging.getLogger(__name__)
@@ -92,66 +92,3 @@ def setup_module() -> Module:
     m = Module()
     m.toplevel = m.submodule()
     return m
-
-
-def setup(
-    fn: TargetFunction, *, inplace: bool, typed: bool, outname: str = "main",
-) -> t.Tuple[Module, ArgumentParser, ContFunction]:
-    m = Module()
-    m.toplevel = m.submodule()
-    sm, parser = main_code(m, fn, outname=outname, typed=typed)
-
-    def cont(*, params: t.Dict[str, t.Any]) -> t.Any:
-        return emit(m, fn, inplace=inplace)
-
-    return sm, parser, cont
-
-
-def setup_for_multi_command(
-    fn: TargetFunction, inplace: bool, typed: bool, outname: str = "main"
-) -> t.Tuple[Module, ArgumentParser, ContFunction]:
-    def _main_code(
-        m: Module, *, outname: str = "main", typed: bool = False,
-    ) -> t.Tuple[Module, ArgumentParser]:
-        """ generate main() code
-
-        TODO:
-        """
-        if typed:
-            m.sep()
-            m.from_("typing").import_("Optional, List  # noqa: E402")
-            m.sep()
-            mdef = m.def_(
-                outname, "argv: Optional[List[str]] = None", return_type="None"
-            )
-        else:
-            mdef = m.def_(outname, "argv=None")
-
-        with mdef:
-            argparse = m.import_("argparse")
-            m.sep()
-            parser = m.let("parser", argparse.ArgumentParser())
-            m.setattr(parser, "print_usage", parser.print_help)
-
-            m.sep()
-            sm = m.submodule()
-            m.sep()
-
-            args = m.let("args", parser.parse_args(m.symbol("argv")))
-            params = m.let("params", m.symbol("vars")(args).copy())
-
-            m.let("subcommand", params.pop("subcommand"))
-            m.return_(f"subcommand(**params)")
-
-        with m.if_("__name__ == '__main__'"):
-            m.stmt(f"{outname}()")
-        return sm, parser
-
-    m = Module()
-    m.toplevel = m.submodule()
-    sm, parser = _main_code(m, outname=outname, typed=typed)
-
-    def cont(*, params: t.Dict[str, t.Any]) -> t.Any:
-        return emit(m, fn, inplace=inplace)
-
-    return sm, parser, cont

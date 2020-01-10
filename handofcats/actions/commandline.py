@@ -1,26 +1,11 @@
 import typing as t
-import argparse
 from importlib import import_module
 from types import ModuleType
-from . import TargetFunction, ContFunction, ArgumentParser
+from . import TargetFunction, ArgumentParser
 
 
 def setup_module() -> "_FakeModule":
     return _FakeModule()
-
-
-def setup_for_multi_command(
-    fn: TargetFunction,
-) -> t.Tuple["M", ArgumentParser, ContFunction]:
-    parser = argparse.ArgumentParser()  # xxx
-    parser.print_usage = parser.print_help
-
-    def cont(*, params: t.Dict[str, t.Any]):
-
-        subcommand = params.pop("subcommand")  # xxx
-        return subcommand(**params)  # xxx
-
-    return _FakeModule(), parser, cont
 
 
 class _FakeModule:
