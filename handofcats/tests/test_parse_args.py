@@ -6,24 +6,16 @@ import json
 class Tests(unittest.TestCase):
     maxDiff = None
 
-    def _getTargetFunction(self):
-        from handofcats import as_command
+    def _makeOne(self, fn):
+        from handofcats.actions import testing
+        from handofcats.injector import Injector
 
-        return as_command
-
-    def _callFUT(self, fn, *, argv):
-        target_function = self._getTargetFunction()
-
-        from handofcats.driver import Driver
-        from handofcats.parsers import testing
-
-        class MyDriver(Driver):
-            create_parser = testing.create_parser
-
-        return target_function(fn=fn, argv=argv, _force=True, driver=MyDriver, ignore_logging=True)
+        parser = testing.CatchParseArgsArgumentParser()
+        Injector(fn).inject(parser)
+        return parser
 
     def test_it(self):
-        from handofcats.parsers.testing import ParseArgsCalled
+        from handofcats.actions.testing import ParseArgsCalled
         from collections import namedtuple
 
         C = namedtuple("C", "msg, fn, expected")
@@ -203,7 +195,8 @@ class Tests(unittest.TestCase):
         for c in candidates:
             with self.subTest(msg=c.msg):
                 try:
-                    self._callFUT(c.fn, argv=[])
+                    parser = self._makeOne(c.fn)
+                    parser.parse_args()
                 except ParseArgsCalled as e:
                     got = e.history[1:-1]
                 else:
