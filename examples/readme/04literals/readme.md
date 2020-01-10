@@ -1,18 +1,20 @@
 help
 ```console
-handofcats dump.py:run -h
-usage: handofcats [-h] [--expose] [--inplace] [--typed] [--format {json,csv}]
+$ handofcats dump.py:run -h
+usage: run [-h] [--expose] [--inplace] [--typed] [--format {json,csv}]
+           [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
 
 optional arguments:
-  -h, --help           show this help message and exit
+  -h, --help            show this help message and exit
   --expose
   --inplace
   --typed
-  --format {json,csv}  (default: 'json')
+  --format {json,csv}   (default: 'json')
+  --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run
 ```console
-handofcats dump.py:run
+$ handofcats dump.py:run
 [
   {
     "name": "foo",
@@ -28,9 +30,9 @@ name,age
 foo,20
 bar,21
 ```
---expose
+`--expose`
 ```console
-handofcats dump.py:run --expose | tee dump-exposed.py
+$ handofcats dump.py:run --expose | tee dump-exposed.py
 import sys
 import typing as t
 import typing_extensions as tx
@@ -67,11 +69,15 @@ def run(*, format: DumpFormat = "json"):
 
 def main(argv=None):
     import argparse
-    parser = argparse.ArgumentParser(description=None)
+
+    parser = argparse.ArgumentParser(prog=run.__name__, description=run.__doc__)
     parser.print_usage = parser.print_help
-    parser.add_argument('--format', required=False, default='json', choices=['json', 'csv'], help="(default: 'json')")
+
+    parser.add_argument('--format', required=False, default='json', choices=["'json'", "'csv'"], help="(default: 'json')")
+
     args = parser.parse_args(argv)
-    run(**vars(args))
+    params = vars(args).copy()
+    return run(**params)
 
 
 if __name__ == '__main__':

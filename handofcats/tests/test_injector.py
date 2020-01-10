@@ -3,27 +3,35 @@ import unittest
 import json
 
 
+class _FakeArgumentParser:
+    def __init__(self, *args, **kwargs):
+        self.history = []
+
+    def __getattr__(self, name):
+        self.history.append({"name": name})
+        return self
+
+    def __call__(self, *args, **kwargs):
+        latest = self.history[-1]
+        assert "args" not in latest
+        latest["args"] = args
+        latest["kwargs"] = kwargs
+
+    def parse_args(self, *args, **kwargs):
+        return self.history
+
+
 class Tests(unittest.TestCase):
     maxDiff = None
 
-    def _getTargetFunction(self):
-        from handofcats import as_command
+    def _callFUT(self, fn):
+        from handofcats.injector import Injector
 
-        return as_command
-
-    def _callFUT(self, fn, *, argv):
-        target_function = self._getTargetFunction()
-
-        from handofcats.driver import Driver
-        from handofcats.parsers import testing
-
-        class MyDriver(Driver):
-            create_parser = testing.create_parser
-
-        return target_function(fn=fn, argv=argv, _force=True, driver=MyDriver, ignore_logging=True)
+        parser = _FakeArgumentParser()
+        Injector(fn).inject(parser)
+        return parser.parse_args()
 
     def test_it(self):
-        from handofcats.parsers.testing import ParseArgsCalled
         from collections import namedtuple
 
         C = namedtuple("C", "msg, fn, expected")
@@ -202,12 +210,7 @@ class Tests(unittest.TestCase):
         # yapf: enable
         for c in candidates:
             with self.subTest(msg=c.msg):
-                try:
-                    self._callFUT(c.fn, argv=[])
-                except ParseArgsCalled as e:
-                    got = e.history[1:-1]
-                else:
-                    raise self.fail("something wrong")
+                got = self._callFUT(c.fn)
 
                 got_str = json.dumps(
                     got, indent=2, ensure_ascii=False, sort_keys=True, default=str

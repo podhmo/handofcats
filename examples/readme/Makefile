@@ -14,20 +14,24 @@ default: 00 01 02 03 04
 	$(MAKE) readme TARGET=$$(echo $@*)
 
 readme:
-	@$(MAKE) -C ${TARGET} help >> output.help  2>/dev/stdout
-	@$(MAKE) -C ${TARGET}  default >> output.default  2>/dev/stdout
-	@$(MAKE) -C ${TARGET}  expose >> output.expose  2>/dev/stdout
+	@$(MAKE) -C ${TARGET} help 2>&1 | tee output.help
+	@$(MAKE) -C ${TARGET} default 2>&1 | tee output.default
+	@$(MAKE) -C ${TARGET} expose 2>&1 | tee output.expose
 
 	echo help > ${TARGET}/readme.md
 	echo '```console' >> ${TARGET}/readme.md
-	cat output.help | grep -v '^make\[' >> ${TARGET}/readme.md
+	printf '$$ ' >> ${TARGET}/readme.md
+	cat output.help >> ${TARGET}/readme.md
 	echo '```' >> ${TARGET}/readme.md
+
 	echo run >> ${TARGET}/readme.md
 	echo '```console' >> ${TARGET}/readme.md
-	cat output.default | grep -v '^make\[' >> ${TARGET}/readme.md
+	printf '$$ ' >> ${TARGET}/readme.md
+	cat output.default >> ${TARGET}/readme.md
 	echo '```' >> ${TARGET}/readme.md
-	echo --expose >> ${TARGET}/readme.md
+
+	echo '`--expose`' >> ${TARGET}/readme.md
 	echo '```console' >> ${TARGET}/readme.md
-	cat output.expose | grep -v '^make\[' >> ${TARGET}/readme.md
+	printf '$$ ' >> ${TARGET}/readme.md
+	cat output.expose >> ${TARGET}/readme.md
 	echo '```' >> ${TARGET}/readme.md
-	cat ${TARGET}/readme.md

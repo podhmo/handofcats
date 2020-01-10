@@ -7,13 +7,17 @@ def greeting(message: str, is_surprised: bool = False, name: str = "foo") -> Non
 
 def main(argv=None):
     import argparse
-    parser = argparse.ArgumentParser(description='greeting message')
+
+    parser = argparse.ArgumentParser(prog=greeting.__name__, description=greeting.__doc__)
     parser.print_usage = parser.print_help
+
     parser.add_argument('message')
     parser.add_argument('--is-surprised', action='store_true')
     parser.add_argument('--name', required=False, default='foo', help="(default: 'foo')")
+
     args = parser.parse_args(argv)
-    greeting(**vars(args))
+    params = vars(args).copy()
+    return greeting(**params)
 
 
 if __name__ == '__main__':
