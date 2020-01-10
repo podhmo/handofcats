@@ -10,7 +10,18 @@ def setup(
 ) -> t.Tuple["M", ArgumentParser, ContFunction]:
     parser = argparse.ArgumentParser(prog=prog, description=description)
     parser.print_usage = parser.print_help
-    return M(), parser, fn
+
+    parser.add_argument("--expose", action="store_true")  # xxx (for ./expose.py)
+    parser.add_argument("--inplace", action="store_true")  # xxx (for ./expose.py)
+    parser.add_argument("--typed", action="store_true")  # xxx (for ./expose.py)
+
+    def cont(**params):
+        params.pop("expose", None)  # xxx: for ./expose.py
+        params.pop("inplace", None)  # xxx: for ./expose.py
+        params.pop("typed", None)  # xxx: for ./expose.py
+        return fn(**params)
+
+    return M(), parser, cont
 
 
 class M:

@@ -27,9 +27,6 @@ class Driver:
         m, parser, cont = commandline.setup(
             fn, prog=fn.__name__, description=self.description or fn.__doc__
         )
-        parser.add_argument("--expose", action="store_true")  # xxx (for ./expose.py)
-        parser.add_argument("--inplace", action="store_true")  # xxx (for ./expose.py)
-        parser.add_argument("--typed", action="store_true")  # xxx (for ./expose.py)
         return executor.execute(
             m, parser, argv, ignore_logging=self.ignore_logging, cont=cont
         )
@@ -85,7 +82,4 @@ class Executor:
         if not ignore_logging:
             injectlogging.activate(params)
 
-        params.pop("expose", None)  # xxx: for ./parsers/expose.py
-        params.pop("inplace", None)  # xxx: for ./parsers/expose.py
-        params.pop("typed", None)  # xxx: for ./parsers/expose.py
         return cont(**params)
