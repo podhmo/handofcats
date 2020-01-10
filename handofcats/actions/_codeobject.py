@@ -1,4 +1,3 @@
-from __future__ import annotations
 from functools import update_wrapper
 import typing as t
 import typing_extensions as tx
@@ -10,15 +9,15 @@ from prestring.utils import LazyArgumentsAndKeywords, UnRepr
 
 # TODO: typed prestring module
 class Module(_Module):  # type: ignore
-    def import_(self, module: str, as_: t.Optional[str] = None) -> Symbol:
+    def import_(self, module: str, as_: t.Optional[str] = None) -> "Symbol":
         """like `import <name>`"""
         sym = Symbol(as_ or module)
         super().import_(module, as_=as_)
         return sym
 
     def stmt(
-        self, fmt_or_emittable: t.Union[t.Any, Emittable], *args: t.Any, **kwargs: t.Any
-    ) -> Module:
+        self, fmt_or_emittable: t.Union[t.Any, "Emittable"], *args: t.Any, **kwargs: t.Any
+    ) -> "Module":
         """capture code"""
         if getattr(fmt_or_emittable, "emit", None) is not None:  # Emittable
             assert not args
@@ -26,13 +25,13 @@ class Module(_Module):  # type: ignore
             return fmt_or_emittable.emit(m=self)
         return super().stmt(str(fmt_or_emittable), *args, **kwargs)  # type: ignore
 
-    def let(self, name: str, val: Emittable) -> Emittable:
+    def let(self, name: str, val: "Emittable") -> "Emittable":
         """like `<name> = ob`"""
         assigned = let(name, val)
         assigned.emit(m=self)
         return assigned
 
-    def setattr(self, co: Emittable, name: str, val: t.Any):
+    def setattr(self, co: "Emittable", name: str, val: t.Any):
         """like `<ob>.<name> = <val>`"""
         self.stmt("{}.{} = {}", co, name, as_string(val))
 
@@ -40,7 +39,7 @@ class Module(_Module):  # type: ignore
         """like `<ob>.<name>`"""
         return Attr(name, co=ob)
 
-    def symbol(self, ob: t.Union[str, t.Any]) -> Symbol:
+    def symbol(self, ob: t.Union[str, t.Any]) -> "Symbol":
         """like `<ob>`"""
         if isinstance(ob, str):
             return Symbol(ob)
@@ -57,7 +56,7 @@ class Stringer(tx.Protocol):
         ...
 
 
-def let(name: str, co: Emittable) -> Assign:
+def let(name: str, co: Emittable) -> "Assign":
     return Assign(name, co=co)
 
 
@@ -83,13 +82,13 @@ class Object(Emittable):
     def __str__(self) -> str:
         return self.name
 
-    def __call__(self, *args: t.Any, **kwargs: t.Any) -> Call:
+    def __call__(self, *args: t.Any, **kwargs: t.Any) -> "Call":
         return Call(name=self.name, co=self, args=args, kwargs=kwargs)
 
     def emit(self, *, m: Module) -> Module:
         return self._emit(m, name=self.name)
 
-    def __getattr__(self, name: str) -> Attr:
+    def __getattr__(self, name: str) -> "Attr":
         if self._use_count > 1:
             raise RuntimeError("assign to a variable")
         self._use_count += 1
@@ -108,7 +107,7 @@ class Assign(Emittable):
     def __str__(self) -> str:
         return self.name
 
-    def __getattr__(self, name: str) -> Attr:
+    def __getattr__(self, name: str) -> "Attr":
         return Attr(name, co=self)
 
 
@@ -121,10 +120,10 @@ class Symbol:
     def __str__(self) -> str:
         return self.name
 
-    def __call__(self, *args: t.Any, **kwargs: t.Any) -> Call:
+    def __call__(self, *args: t.Any, **kwargs: t.Any) -> "Call":
         return Call(self.name, co=self, args=args, kwargs=kwargs)
 
-    def __getattr__(self, name: str) -> Attr:
+    def __getattr__(self, name: str) -> "Attr":
         # if name == "emit":
         #     raise AttributeError(name)
         return Attr(name, co=self)
@@ -140,10 +139,10 @@ class Attr:
     def __str__(self) -> str:
         return f"{self._co}.{self.name}"
 
-    def __call__(self, *args: t.Any, **kwargs: t.Any) -> Call:
+    def __call__(self, *args: t.Any, **kwargs: t.Any) -> "Call":
         return Call(self.name, co=self, args=args, kwargs=kwargs)
 
-    def __getattr__(self, name: str) -> Attr:
+    def __getattr__(self, name: str) -> "Attr":
         # if name == "emit":
         #     raise AttributeError(name)
         return Attr(name, co=self)
