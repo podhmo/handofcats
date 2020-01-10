@@ -15,6 +15,30 @@ logger = logging.getLogger(__name__)
 def main_code(
     m: Module, fn: t.Callable, *, outname: str = "main", typed: bool = False,
 ) -> t.Tuple[Module, ArgumentParser]:
+    """ generate main() code
+
+    something like
+
+    ```
+    def main(argv=None):
+        import argparse
+
+        parser = argparse.ArgumentParser(prog=hello.__name__, description=hello.__doc__)
+        parser.print_usage = parser.print_help
+
+        # do_something by handofcats.driver.Executer.execute(). e.g.
+        # parser.add_argument('--name', required=False, default='world', help="(default: 'world')")
+        # parser.add_argument('--debug', action="store_true")
+
+        args = parser.parse_args(argv)
+        params = vars(args).copy()
+        return hello(**params)
+
+    if __name__ == "__main__":
+        main()
+    ```
+    """
+
     if fn.__name__ == outname:
         outname = titleize(outname)  # main -> Main
 
