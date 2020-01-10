@@ -5,9 +5,8 @@ from . import injectlogging
 
 
 class Driver:
-    def __init__(self, *, ignore_logging=False, description: t.Optional[str] = None):
+    def __init__(self, *, ignore_logging=False):
         self.ignore_logging = ignore_logging
-        self.description = description
 
     def run(
         self, fn: TargetFunction, argv=None,
@@ -24,9 +23,7 @@ class Driver:
         from .actions import commandline
 
         fn = executor.fn
-        m, parser, cont = commandline.setup(
-            fn, prog=fn.__name__, description=self.description or fn.__doc__
-        )
+        m, parser, cont = commandline.setup(fn)
         return executor.execute(
             m, parser, argv, ignore_logging=self.ignore_logging, cont=cont
         )
@@ -40,12 +37,8 @@ class Driver:
 
         inplace = "--inplace" in (argv or [])
         typed = "--typed" in (argv or [])
-        description = self.description or fn.__doc__
 
-        # fix:
-        m, parser, cont = codegen.setup(
-            fn, prog=fn.__name__, description=description, inplace=inplace, typed=typed
-        )
+        m, parser, cont = codegen.setup(fn, inplace=inplace, typed=typed)
         # TODO: use mock function
         return executor.execute(
             m, parser, argv, ignore_logging=self.ignore_logging, cont=cont

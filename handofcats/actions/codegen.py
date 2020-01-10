@@ -11,13 +11,7 @@ History = t.List[t.Dict[str, t.Any]]
 
 
 def main_code(
-    m: Module,
-    fn: t.Callable,
-    *,
-    prog: t.Optional[str],
-    description: t.Optional[str] = None,
-    outname: str = "main",
-    typed: bool = False,
+    m: Module, fn: t.Callable, *, outname: str = "main", typed: bool = False,
 ) -> t.Tuple[Module, ArgumentParser]:
     if fn.__name__ == outname:
         outname = titleize(outname)  # main -> Main
@@ -34,7 +28,11 @@ def main_code(
         argparse = m.import_("argparse")
         m.sep()
         parser = m.let(
-            "parser", argparse.ArgumentParser(prog=prog, description=description)
+            "parser",
+            argparse.ArgumentParser(
+                prog=m.getattr(m.symbol(fn), "__name__"),
+                description=m.getattr(m.symbol(fn), "__doc__"),
+            ),
         )
         m.setattr(parser, "print_usage", parser.print_help)
 
@@ -44,7 +42,7 @@ def main_code(
 
         args = m.let("args", parser.parse_args(m.symbol("argv")))
         _ = m.let("params", m.symbol("vars")(args).copy())
-        m.return_("fn(**params)")
+        m.return_(f"{fn.__name__}(**params)")
 
     with m.if_("__name__ == '__main__'"):
         m.stmt(f"{outname}()")
@@ -93,16 +91,10 @@ def emit(
 
 
 def setup(
-    fn: TargetFunction,
-    *,
-    prog: t.Optional[str],
-    description: t.Optional[str] = None,
-    inplace: bool,
-    typed: bool,
-    outname: str = "main",
+    fn: TargetFunction, *, inplace: bool, typed: bool, outname: str = "main",
 ) -> t.Tuple[Module, ArgumentParser, ContFunction]:
     m = Module()
     m.toplevel = m.submodule()
-    sm, parser = main_code(m, fn, prog=prog, outname=outname, typed=typed)
+    sm, parser = main_code(m, fn, outname=outname, typed=typed)
     cont = partial(emit, m, fn, inplace=inplace)
     return sm, parser, cont

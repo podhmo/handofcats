@@ -5,10 +5,8 @@ from types import ModuleType
 from . import TargetFunction, ContFunction, ArgumentParser
 
 
-def setup(
-    fn: TargetFunction, *, prog: t.Optional[str], description: t.Optional[str] = None
-) -> t.Tuple["M", ArgumentParser, ContFunction]:
-    parser = argparse.ArgumentParser(prog=prog, description=description)
+def setup(fn: TargetFunction,) -> t.Tuple["M", ArgumentParser, ContFunction]:
+    parser = argparse.ArgumentParser(prog=fn.__name__, description=fn.__doc__)
     parser.print_usage = parser.print_help
 
     parser.add_argument("--expose", action="store_true")  # xxx (for ./expose.py)
