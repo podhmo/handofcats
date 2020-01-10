@@ -2,12 +2,14 @@ import typing as t
 import sys
 import re
 import inspect
+import logging
+import tempfile
 from functools import partial
 from prestring.naming import titleize
 from . import TargetFunction, ContFunction, ArgumentParser
 from ._codeobject import Module
 
-History = t.List[t.Dict[str, t.Any]]
+logger = logging.getLogger(__name__)
 
 
 def main_code(
@@ -52,9 +54,10 @@ def main_code(
 def emit(
     m: Module, fn: TargetFunction, *, inplace: bool = False, **kwargs: t.Any,
 ):
+    import pathlib
+
     target_file = inspect.getsourcefile(fn)
-    with open(target_file) as rf:
-        source = rf.read()
+    source = pathlib.Path(target_file).read_text()
     rx = re.compile(
         r"(?:^@([\S]+\.)?as_command.*|^.*import as_command.*)\n", re.MULTILINE
     )
@@ -65,29 +68,24 @@ def emit(
         print(m, file=out)
 
     if not inplace:
-        _dump(sys.stdout)
-        sys.exit(0)
-    else:
-        import tempfile
-        import os.path
+        return _dump(sys.stdout)
 
-        outpath = None
-        try:
-            with tempfile.NamedTemporaryFile("w", dir=".", delete=False) as wf:
-                outpath = wf.name
-                _dump(wf)
-            dirpath = os.path.dirname(target_file) or "."
-            os.makedirs(dirpath, exist_ok=True)
-            os.rename(outpath, target_file)
-            sys.exit(0)
-        except Exception as e:
-            print("error is occured. rollback (exception={e})".format(e=e))
-            with open(target_file, "w") as wf:
-                wf.write(source)
-        finally:
-            if os.path.exists(outpath):
-                os.remove(outpath)
-        sys.exit(1)
+    outpath = None
+    try:
+        with tempfile.NamedTemporaryFile("w", dir=".", delete=False) as wf:
+            outpath = pathlib.Path(wf.name)
+            _dump(wf)
+
+        # create directory
+        pathlib.Path(target_file).parent.mkdir(exist_ok=True)
+        return outpath.rename(target_file)
+    except Exception as e:
+        logger.warn("error is occured. rollback (exception=%r)", e)
+        pathlib.Path(target_file).write_text(source)
+    finally:
+        if outpath and outpath.exists():
+            outpath.unlink(missing_ok=True)
+    sys.exit(1)
 
 
 def setup(
