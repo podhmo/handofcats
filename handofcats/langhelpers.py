@@ -1,7 +1,4 @@
 from functools import update_wrapper, partial
-import magicalimport
-
-import_symbol = partial(magicalimport.import_symbol, cwd=True)
 
 
 # stolen from pyramid
