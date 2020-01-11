@@ -237,13 +237,73 @@ def run_as_multi_command(
         # main()
         m.stmt(f"{outname}()")
 
-    fake = functions[0]
-
-    # TODO: FIX-IT (BROKEN)
     def cleanup_code(source: str) -> str:
-        rx = re.compile(
-            r"(?:^@([\S]+\.)?as_command.*|^.*import as_command.*)\n", re.MULTILINE
+        from prestring.python.parse import (
+            parse_string,
+            PyTreeVisitor,
+            type_repr,
+            node_name,
         )
-        return rx.sub("", "".join(source))
+        from lib2to3.pytree import Node
+        from ._ast import CollectSymbolVisitor
 
+        ast = parse_string(source)
+        visitor = CollectSymbolVisitor()
+        visitor.visit(ast)
+        imported_symbols = visitor.symbols
+        candidates = []
+
+        will_be_removed = set()
+        for sym in imported_symbols.values():
+            if sym.fullname == "handofcats.as_subcommand":
+                will_be_removed.add(sym.id)
+                candidates.append(f"@{sym.name}.register")
+                candidates.append(f"@{sym.name}")
+                candidates.append(f"{sym.name}.run(")
+            elif sym.fullname == "handofcats":
+                will_be_removed.add(sym.id)
+                candidates.append(f"@{sym.name}.as_subcommand.register")
+                candidates.append(f"@{sym.name}.as_subcommand")
+                candidates.append(f"{sym.name}.as_subcommand.run(")
+
+        class RemoveNodeVisitor(PyTreeVisitor):
+            def visit_import_name(self, node: Node) -> t.Optional[bool]:
+                if id(node) in will_be_removed:
+                    node.remove()
+                return True
+
+            def visit_import_from(self, node: Node) -> t.Optional[bool]:
+                if id(node) in will_be_removed:
+                    node.remove()
+                return True
+
+            def visit_decorator(self, node: Node) -> t.Optional[bool]:
+                # remove @as_subcommand
+                assert type_repr(node.children[0].value) == "@"
+                stmt = str(node)
+                for x in candidates:
+                    if x in stmt:
+                        node.remove()
+                        return True
+                return True
+
+            def visit_simple_stmt(self, node: Node) -> t.Optional[bool]:
+                # remove as_subcommand.run
+                stmt = str(node)
+                if "@" in stmt:
+                    return False  # continue
+                for x in candidates:
+                    if x in stmt:
+                        parent = node.parent
+                        node.remove()
+                        if not str(parent).strip():
+                            assert node_name(parent.children[-1]) == "DEDENT"
+                            parent.children[-1].prefix = "pass\n"
+                        return True
+                return False  # continue
+
+        RemoveNodeVisitor().visit(ast)
+        return str(ast)
+
+    fake = functions[0]
     emit(m, fake, inplace=inplace, cleanup_code=cleanup_code)
