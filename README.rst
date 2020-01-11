@@ -90,6 +90,24 @@ Using as multi command
 
 .. code-block:: cosole
 
+   $ python cli.py -h
+   usage: cli.py [-h] [--expose] [--inplace] [--typed]
+                 [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
+                 {hello,byebye} ...
+
+   optional arguments:
+     -h, --help            show this help message and exit
+     --expose
+     --inplace
+     --typed
+     --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
+
+   subcommands:
+     {hello,byebye}
+       hello
+       byebye
+
+
    $ python cli.py hello -h
    usage: cli.py hello [-h] [--name NAME]
 
