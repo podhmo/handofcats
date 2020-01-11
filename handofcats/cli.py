@@ -62,7 +62,10 @@ def main(argv=None):
 
     # as single command
     if attr is not None:
-        fn = getattr(module, attr)
+        try:
+            fn = getattr(module, attr)
+        except AttributeError as e:
+            parser.error(f"""\x1b[33m{e}\x1b[0m""")
         driver = args.driver(fn)
         return driver.run(rest_argv)
 
