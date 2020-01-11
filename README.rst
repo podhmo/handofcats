@@ -38,7 +38,10 @@ Using as single command
 .. code-block:: console
 
   $ python greeting.py -h
-  usage: greeting.py [-h] [--expose] [--is-surprised] [--name NAME] message
+  usage: greeting [-h] [--is-surprised] [--name NAME] [--expose] [--inplace]
+                  [--typed]
+                  [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
+                  message
 
   greeting message
 
@@ -46,10 +49,13 @@ Using as single command
     message
 
   optional arguments:
-    -h, --help      show this help message and exit
-    --expose
+    -h, --help            show this help message and exit
     --is-surprised
-    --name NAME
+    --name NAME           (default: 'foo')
+    --expose
+    --inplace
+    --typed
+    --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 
   $ python greeting.py hello
   foo: hello
