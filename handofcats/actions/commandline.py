@@ -1,11 +1,8 @@
 import typing as t
 from importlib import import_module
 from types import ModuleType
-from . import TargetFunction, ArgumentParser
-
-
-def setup_module() -> "_FakeModule":
-    return _FakeModule()
+from ..types import TargetFunction, SetupParserFunction
+from .. import customize
 
 
 class _FakeModule:
@@ -34,3 +31,26 @@ class _FakeModule:
 
     def getattr(self, ob: t.Any, name: str) -> t.Optional[t.Any]:
         return getattr(ob, name)
+
+
+def run_as_single_command(
+    setup_parser: SetupParserFunction,
+    fn: TargetFunction,
+    argv: t.Optional[str] = None,
+    *,
+    ignore_logging: bool = False,
+) -> t.Any:
+    m = _FakeModule()
+
+    customizations = []
+    if not ignore_logging:
+        # TODO: include generated code, emitted by `--expose`
+        customizations.append(customize.logging_setup)
+
+    parser, activate_functions = setup_parser(m, fn, customizations=customizations)
+    args = parser.parse_args(argv)
+    params = vars(args).copy()
+
+    for activate in activate_functions:
+        activate(params)
+    return fn(**params)

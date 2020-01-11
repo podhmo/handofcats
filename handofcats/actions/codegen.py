@@ -5,7 +5,7 @@ import inspect
 import logging
 import tempfile
 from prestring.naming import titleize
-from . import TargetFunction, ArgumentParser
+from ..types import TargetFunction, ArgumentParser, SetupParserFunction
 from ._codeobject import Module
 
 logger = logging.getLogger(__name__)
@@ -92,3 +92,71 @@ def setup_module() -> Module:
     m = Module()
     m.toplevel = m.submodule()
     return m
+
+
+def run_as_single_command(
+    setup_parser: SetupParserFunction,
+    fn: TargetFunction,
+    argv: t.Optional[str] = None,
+    *,
+    outname: str = "main",
+    inplace: bool = False,
+    typed: bool = False,
+) -> None:
+    """ generate main() code
+
+    something like
+
+    ```
+    def main(argv=None):
+        import argparse
+
+        parser = argparse.ArgumentParser(prog=hello.__name__, description=hello.__doc__)
+        parser.print_usage = parser.print_help
+
+        # adding code, by self.setup_parser(). e.g.
+        # parser.add_argument('--name', required=False, default='world', help="(default: 'world')")
+        # parser.add_argument('--debug', action="store_true")
+
+        args = parser.parse_args(argv)
+        params = vars(args).copy()
+        return hello(**params)
+
+    if __name__ == "__main__":
+        main()
+    ```
+    """
+
+    m = Module()
+    m.toplevel = m.submodule()
+
+    if fn.__name__ == outname:
+        outname = titleize(outname)  # main -> Main
+
+    if typed:
+        m.sep()
+        m.from_("typing").import_("Optional, List  # noqa: E402")
+        m.sep()
+        mdef = m.def_(outname, "argv: Optional[List[str]] = None", return_type="None")
+    else:
+        mdef = m.def_(outname, "argv=None")
+
+    # def main(argv=None):
+    with mdef:
+        parser, _ = setup_parser(m, fn, customizations=[])
+
+        # args = parser.parse_args(argv)
+        args = m.let("args", parser.parse_args(m.symbol("argv")))
+
+        # params = vars(args).copy()
+        _ = m.let("params", m.symbol("vars")(args).copy())
+
+        # return fn(**params)
+        m.return_(f"{fn.__name__}(**params)")
+
+    # if __name__ == "__main__":
+    with m.if_("__name__ == '__main__'"):
+        # main()
+        m.stmt(f"{outname}()")
+
+    emit(m, fn, inplace=inplace)

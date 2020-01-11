@@ -2,10 +2,7 @@ import typing as t
 import logging
 import os
 import sys
-from .actions import ArgumentParser
-
-ActivateFunction = t.Callable[[t.Dict[str, t.Any]], None]
-SetupFunction = t.Callable[[ArgumentParser], ActivateFunction]
+from .types import ArgumentParser
 
 
 def first_parser_setup(parser):
