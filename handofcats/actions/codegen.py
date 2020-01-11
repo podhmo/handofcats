@@ -9,6 +9,7 @@ from prestring.naming import titleize
 from ..types import TargetFunction, SetupParserFunction
 from ._codeobject import Module
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -21,10 +22,10 @@ def emit(
 ):
     target_file = inspect.getsourcefile(fn)
     source = pathlib.Path(target_file).read_text()
-    exposed = cleanup_code(source)
+    cleaned = cleanup_code(source)
 
     def _dump(out):
-        print(exposed, file=out)
+        print(cleaned, file=out)
         print(m, file=out)
 
     if not inplace:
@@ -41,7 +42,7 @@ def emit(
         return outpath.rename(target_file)
     except Exception as e:
         logger.warn("error is occured. rollback (exception=%r)", e)
-        pathlib.Path(target_file).write_text(source)
+        pathlib.Path(target_file).write_text(code)
     finally:
         if outpath and outpath.exists():
             outpath.unlink(missing_ok=True)
@@ -113,10 +114,43 @@ def run_as_single_command(
         m.stmt(f"{outname}()")
 
     def cleanup_code(source: str) -> str:
-        rx = re.compile(
-            r"(?:^@([\S]+\.)?as_command.*|^.*import as_command.*)\n", re.MULTILINE
-        )
-        return rx.sub("", "".join(source))
+        from prestring.python.parse import parse_string, PyTreeVisitor, type_repr
+        from lib2to3.pytree import Node
+        from ._ast import CollectSymbolVisitor
+
+        ast = parse_string(source)
+        visitor = CollectSymbolVisitor()
+        visitor.visit(ast)
+        symbols = visitor.symbols
+
+        will_be_removed = set()
+        for sym in symbols.values():
+            if sym.fullname == "handofcats.as_command":
+                will_be_removed.add(sym.id)
+
+        class RemoveNodeVisitor(PyTreeVisitor):
+            def visit_import_name(self, node: Node) -> t.Optional[bool]:
+                if id(node) in will_be_removed:
+                    node.remove()
+                return True
+
+            def visit_import_from(self, node: Node) -> t.Optional[bool]:
+                if id(node) in will_be_removed:
+                    node.remove()
+                return True
+
+            def visit_decorator(self, node: Node) -> t.Optional[bool]:
+                # @ [ <dotted_name> | Leaf ]
+                assert type_repr(node.children[0].value) == "@"
+                for x in node.children:
+                    if hasattr(x, "value") and x.value in symbols:
+                        if symbols.get(x.value).fullname == "handofcats.as_command":
+                            node.remove()
+                            return True
+                return True
+
+        RemoveNodeVisitor().visit(ast)
+        return str(ast)
 
     emit(m, fn, inplace=inplace, cleanup_code=cleanup_code)
 
