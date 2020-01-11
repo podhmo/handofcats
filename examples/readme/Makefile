@@ -12,6 +12,8 @@ default: 00 01 02 03 04
 	$(MAKE) readme TARGET=$$(echo $@*)
 04:
 	$(MAKE) readme TARGET=$$(echo $@*)
+05:
+	$(MAKE) readme-multi TARGET=$$(echo $@*)
 
 readme:
 	@$(MAKE) -C ${TARGET} help 2>&1 | tee output.help
@@ -35,3 +37,34 @@ readme:
 	printf '$$ ' >> ${TARGET}/readme.md
 	cat output.expose >> ${TARGET}/readme.md
 	echo '```' >> ${TARGET}/readme.md
+
+readme-multi:
+	@$(MAKE) -C ${TARGET} help 2>&1 | tee output.help
+	@$(MAKE) -C ${TARGET} help-subcommand 2>&1 | tee output-subcomand.help
+	@$(MAKE) -C ${TARGET} default 2>&1 | tee output.default
+	# @$(MAKE) -C ${TARGET} expose 2>&1 | tee output.expose
+
+	echo help > ${TARGET}/readme.md
+	echo '```console' >> ${TARGET}/readme.md
+	printf '$$ ' >> ${TARGET}/readme.md
+	cat output.help >> ${TARGET}/readme.md
+	echo '```' >> ${TARGET}/readme.md
+
+	echo "help ( subcommand )" >> ${TARGET}/readme.md
+
+	echo '```console' >> ${TARGET}/readme.md
+	printf '$$ ' >> ${TARGET}/readme.md
+	cat output-subcomand.help >> ${TARGET}/readme.md
+	echo '```' >> ${TARGET}/readme.md
+
+	echo run >> ${TARGET}/readme.md
+	echo '```console' >> ${TARGET}/readme.md
+	printf '$$ ' >> ${TARGET}/readme.md
+	cat output.default >> ${TARGET}/readme.md
+	echo '```' >> ${TARGET}/readme.md
+
+	# echo '`--expose`' >> ${TARGET}/readme.md
+	# echo '```console' >> ${TARGET}/readme.md
+	# printf '$$ ' >> ${TARGET}/readme.md
+	# cat output.expose >> ${TARGET}/readme.md
+	# echo '```' >> ${TARGET}/readme.md
