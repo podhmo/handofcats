@@ -8,8 +8,8 @@ handofcats
 A tiny magically Converter that making executable command script from plain python function.
 If the function is type annotated, it is used.
 
-- Please using `as_command()`, if you want single command.
-- Please using `as_subcommand()` and `as_subcommand.run()`,  if you want single command.
+- If you want single command, using `as_command()` is helpful
+- If you want multi command has many sub-commands, using `as_subcommand()` and `as_subcommand.run()` is helpful
 
 as_command()
 ----------------------------------------
