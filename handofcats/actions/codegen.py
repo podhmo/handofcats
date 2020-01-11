@@ -4,6 +4,7 @@ import re
 import inspect
 import logging
 import tempfile
+import pathlib
 from prestring.naming import titleize
 from ..types import TargetFunction, ArgumentParser, SetupParserFunction
 from ._codeobject import Module
@@ -18,8 +19,6 @@ def emit(
     cleanup_code: t.Callable[[str], str],
     inplace: bool = False,
 ):
-    import pathlib
-
     target_file = inspect.getsourcefile(fn)
     source = pathlib.Path(target_file).read_text()
     exposed = cleanup_code(source)
