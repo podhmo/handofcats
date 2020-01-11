@@ -4,9 +4,17 @@ import sys
 
 
 def first_parser_setup(parser):
-    parser.add_argument("--expose", action="store_true")  # xxx (./actions/codegen.py)
-    parser.add_argument("--inplace", action="store_true")  # xxx (./actions/codegen.py)
-    parser.add_argument("--typed", action="store_true")  # xxx (./actions/codegen.py)
+    parser.add_argument(
+        "--expose",
+        action="store_true",
+        help="dump generated code. with --inplace, eject from handofcats dependency",
+    )  # xxx (./actions/codegen.py)
+    parser.add_argument(
+        "--inplace", action="store_true", help="overwrite file"
+    )  # xxx (./actions/codegen.py)
+    parser.add_argument(
+        "--typed", action="store_true", help="typed expression is dumped"
+    )  # xxx (./actions/codegen.py)
     return first_parser_activate
 
 

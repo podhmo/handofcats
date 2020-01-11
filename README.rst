@@ -58,9 +58,10 @@ help
     -h, --help            show this help message and exit
     --is-surprised
     --name NAME           (default: 'foo')
-    --expose
-    --inplace
-    --typed
+    --expose              dump generated code. with --inplace, eject from
+                          handofcats dependency
+    --inplace             overwrite file
+    --typed               typed expression is dumped
     --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 
 
@@ -116,9 +117,10 @@ help
 
    optional arguments:
      -h, --help            show this help message and exit
-     --expose
-     --inplace
-     --typed
+     --expose              dump generated code. with --inplace, eject from
+                           handofcats dependency
+     --inplace             overwrite file
+     --typed               typed expression is dumped
      --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 
    subcommands:
@@ -196,15 +198,21 @@ It is also ok, calling the function that not decorated via handofcats command.
 
   $ handofcats sum.py:sum -h
   handofcats sum.py:sum -h
-  usage: handofcats [-h] [--expose] x y
+  usage: sum [-h] [--expose] [--inplace] [--typed]
+             [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
+             x y
 
   positional arguments:
     x
     y
 
   optional arguments:
-    -h, --help  show this help message and exit
-    --expose
+    -h, --help            show this help message and exit
+    --expose              dump generated code. with --inplace, eject from
+                          handofcats dependency
+    --inplace             overwrite file
+    --typed               typed expression is dumped
+    --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 
 experimental
 ----------------------------------------

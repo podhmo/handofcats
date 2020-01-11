@@ -15,9 +15,10 @@ optional arguments:
   -h, --help            show this help message and exit
   --is-surprised
   --name NAME           (default: 'foo')
-  --expose
-  --inplace
-  --typed
+  --expose              dump generated code. with --inplace, eject from
+                        handofcats dependency
+  --inplace             overwrite file
+  --typed               typed expression is dumped
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run
