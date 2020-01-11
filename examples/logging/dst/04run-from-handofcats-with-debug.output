@@ -1,9 +1,9 @@
-level:DEBUG	name:def	where:def.py:7	relative:24.932146072387695	message:"debug" logger's message
-level:INFO	name:def	where:def.py:8	relative:25.072097778320312	message:"info" logger's message
-level:WARNING	name:def	where:def.py:9	relative:25.13599395751953	message:"warning" logger's message
-level:ERROR	name:def	where:def.py:10	relative:25.196075439453125	message:"error" logger's message
-level:CRITICAL	name:def	where:def.py:11	relative:25.254011154174805	message:"critical" logger's message
-level:INFO	name:def	where:def.py:13	relative:25.319814682006836	message:
+level:DEBUG	name:def	where:def.py:7	relative:27.258872985839844	message:"debug" logger's message
+level:INFO	name:def	where:def.py:8	relative:27.398109436035156	message:"info" logger's message
+level:WARNING	name:def	where:def.py:9	relative:27.468204498291016	message:"warning" logger's message
+level:ERROR	name:def	where:def.py:10	relative:27.634143829345703	message:"error" logger's message
+level:CRITICAL	name:def	where:def.py:11	relative:27.77719497680664	message:"critical" logger's message
+level:INFO	name:def	where:def.py:13	relative:27.875185012817383	message:
 MULTILINE MESSAGE
 
 - hello
