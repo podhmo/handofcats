@@ -1,4 +1,4 @@
-default: 00 01 02 03 04 05
+default: 00 01 02 03 04 05 06
 
 FLAKE8 := flake8
 
@@ -32,3 +32,6 @@ FLAKE8 := flake8
 	python $(shell echo $@*/)cli.py --expose | tee $(shell echo $@*/)_expose.py
 	$(FLAKE8) $(shell echo $@*)/_exposed.py
 
+# use as plain module
+06:
+	(cd $(shell echo $@*/) && python main.py) | tee $(shell echo $@*/)main.output

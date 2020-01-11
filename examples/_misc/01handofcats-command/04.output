@@ -1,0 +1,15 @@
+python -m handofcats xxxx.py
+usage: handofcats [--driver DRIVER] [--multi-driver MULTI_DRIVER] entry_point
+
+positional arguments:
+  entry_point           target EntryPoint. (format '<file name>:<attr>' or
+                        '<file name>')
+
+optional arguments:
+  --driver DRIVER       DI, driver class, this is experimental (default:
+                        handofcats.driver:Driver)
+  --multi-driver MULTI_DRIVER
+                        DI, multidriver class, this is experimental (default:
+                        handofcats.driver:MultiDriver)
+handofcats: error: [33m[Errno 2] No such file or directory: 'CWD/xxxx.py'[0m
+make[1]: *** [04] Error 2
