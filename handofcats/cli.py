@@ -71,8 +71,8 @@ def main(argv=None):
 
     # as multi command
     driver = get_default_multi_driver()
-    assert isinstance(driver, args.multi_driver)
     if driver is not None:
+        assert isinstance(driver, args.multi_driver)
         return driver.run(rest_argv)
 
     fns = _collect_functions(module)
