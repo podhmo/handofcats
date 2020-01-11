@@ -1,16 +1,17 @@
 import typing as t
 import dataclasses
 from prestring.python.parse import PyTreeVisitor, type_repr
-from prestring.python.parse import parse_file  # noqa
+from prestring.python.parse import parse_file, parse_string  # noqa
 from lib2to3.pytree import Node
 
 
 # parse imports symbols
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Symbol:
     fullname: str
     name: t.Optional[str] = None
     id: int = 0
+    from_: str = ""
 
 
 def parse_dotted_as_name(node: Node) -> Symbol:
@@ -77,18 +78,18 @@ class CollectSymbolVisitor(PyTreeVisitor):
 
         if type_repr(node.children[1].type) == "dotted_as_name":
             sym = parse_dotted_as_name(node.children[1])
-            sym.id = id(node)
+            sym = dataclasses.replace(sym, id=id(node), from_=type_repr(node.type))
             self.symbols[sym.name] = sym
         elif type_repr(node.children[1].type) == "dotted_name":
             # <Leaf> { . <Leaf> }+
             module = parse_dotted_name(node.children[1])
             sym = Symbol(name=module, fullname=module)
-            sym.id = id(node)
+            sym = dataclasses.replace(sym, id=id(node), from_=type_repr(node.type))
             self.symbols[module] = sym
         else:
             module = node.children[1].value.strip()
             sym = Symbol(name=module, fullname=module)
-            sym.id = id(node)
+            sym = dataclasses.replace(sym, id=id(node), from_=type_repr(node.type))
             self.symbols[module] = sym
         return True  # stop
 
@@ -113,9 +114,19 @@ class CollectSymbolVisitor(PyTreeVisitor):
         for x in node.children[i + 1 :]:
             if type_repr(x.type) == "import_as_name":
                 sym = parse_import_as_name(x)
+                sym = dataclasses.replace(
+                    sym,
+                    fullname=f"{module}.{sym.name}",
+                    id=id(node),
+                    from_=type_repr(node.type),
+                )
                 sym_list.append(sym)
             elif type_repr(x.type) == "import_as_names":
                 syms = parse_import_as_names(x, module=module)
+                syms = [
+                    dataclasses.replace(sym, id=id(node), from_=type_repr(node.type))
+                    for sym in syms
+                ]
                 sym_list.extend(syms)
             elif x.value.strip() == "(":
                 continue
@@ -124,10 +135,29 @@ class CollectSymbolVisitor(PyTreeVisitor):
             else:
                 name = x.value.strip()
                 sym = Symbol(name=name, fullname=f"{module}.{name}")
+                sym = dataclasses.replace(sym, id=id(node), from_=type_repr(node.type))
                 sym_list.append(sym)
 
         # todo: relative
         for sym in sym_list:
-            sym.id = id(node)
             self.symbols[sym.name] = sym
         return True  # stop
+
+
+# debug output
+if __name__ == "__main__":
+
+    def parse_imported_symbols(t: Node) -> t.Dict[str, Symbol]:
+        v = CollectSymbolVisitor()
+        v.visit(t)
+        return v.symbols
+
+    t = parse_string(
+        """
+    from handofcats import as_subcommand
+    from handofcats import as_subcommand as register
+    """
+    )
+    D = parse_imported_symbols(t)
+    for name, sym in D.items():
+        print(f"{name} -- {sym}")
