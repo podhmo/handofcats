@@ -1,6 +1,5 @@
 import typing as t
 import sys
-import re
 import inspect
 import logging
 import tempfile
@@ -21,8 +20,8 @@ def emit(
     inplace: bool = False,
 ):
     target_file = inspect.getsourcefile(fn)
-    source = pathlib.Path(target_file).read_text()
-    cleaned = cleanup_code(source)
+    code = pathlib.Path(target_file).read_text()
+    cleaned = cleanup_code(code)
 
     def _dump(out):
         print(cleaned, file=out)
@@ -113,12 +112,12 @@ def run_as_single_command(
         # main()
         m.stmt(f"{outname}()")
 
-    def cleanup_code(source: str) -> str:
+    def cleanup_code(code: str) -> str:
         from prestring.python.parse import parse_string, PyTreeVisitor, type_repr
         from lib2to3.pytree import Node
         from ._ast import CollectSymbolVisitor
 
-        ast = parse_string(source)
+        ast = parse_string(code)
         visitor = CollectSymbolVisitor()
         visitor.visit(ast)
         symbols = visitor.symbols
@@ -237,7 +236,7 @@ def run_as_multi_command(
         # main()
         m.stmt(f"{outname}()")
 
-    def cleanup_code(source: str) -> str:
+    def cleanup_code(code: str) -> str:
         from prestring.python.parse import (
             parse_string,
             PyTreeVisitor,
@@ -247,7 +246,7 @@ def run_as_multi_command(
         from lib2to3.pytree import Node
         from ._ast import CollectSymbolVisitor
 
-        ast = parse_string(source)
+        ast = parse_string(code)
         visitor = CollectSymbolVisitor()
         visitor.visit(ast)
         imported_symbols = visitor.symbols

@@ -1,8 +1,6 @@
-import typing as t
 import logging
 import os
 import sys
-from .types import ArgumentParser
 
 
 def first_parser_setup(parser):
