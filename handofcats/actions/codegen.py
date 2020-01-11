@@ -50,9 +50,9 @@ def emit(
 
 def run_as_single_command(
     setup_parser: SetupParserFunction[TargetFunction],
-    fn: TargetFunction,
-    argv: t.Optional[str] = None,
     *,
+    fn: TargetFunction,
+    argv: t.Optional[str],
     outname: str = "main",
     inplace: bool = False,
     typed: bool = False,
@@ -83,7 +83,6 @@ def run_as_single_command(
 
     m = Module()
     m.toplevel = m.submodule()
-
     if fn.__name__ == outname:
         outname = titleize(outname)  # main -> Main
 
@@ -124,9 +123,9 @@ def run_as_single_command(
 
 def run_as_multi_command(
     setup_parser: SetupParserFunction[t.List[TargetFunction]],
+    *,
     functions: t.List[TargetFunction],
     argv: t.Optional[str] = None,
-    *,
     outname: str = "main",
     inplace: bool = False,
     typed: bool = False,

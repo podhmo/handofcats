@@ -28,13 +28,17 @@ class Driver:
             from .actions import codegen
 
             return codegen.run_as_single_command(
-                fn, rest, inplace=fargs.inplace, typed=fargs.typed,
+                self.setup_parser,
+                fn=fn,
+                argv=rest,
+                inplace=fargs.inplace,
+                typed=fargs.typed,
             )
         else:
             from .actions import commandline
 
             return commandline.run_as_single_command(
-                self.setup_parser, fn, rest, ignore_logging=self.ignore_logging
+                self.setup_parser, fn=fn, argv=rest, ignore_logging=self.ignore_logging
             )
 
     def setup_parser(
@@ -98,8 +102,8 @@ class MultiDriver:
 
             return codegen.run_as_multi_command(
                 self.setup_parser,
-                functions,
-                rest,
+                functions=functions,
+                argv=rest,
                 inplace=fargs.inplace,
                 typed=fargs.typed,
             )
@@ -107,7 +111,10 @@ class MultiDriver:
             from .actions import commandline
 
             return commandline.run_as_multi_command(
-                self.setup_parser, functions, rest, ignore_logging=self.ignore_logging,
+                self.setup_parser,
+                functions=functions,
+                argv=rest,
+                ignore_logging=self.ignore_logging,
             )
 
     def setup_parser(
