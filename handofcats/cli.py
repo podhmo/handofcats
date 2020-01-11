@@ -91,7 +91,3 @@ def _collect_functions(module: ModuleType) -> t.List[TargetFunction]:
             continue
         functions.append(val)
     return functions
-
-
-if __name__ == "__main__":
-    main()
