@@ -8,9 +8,9 @@ handofcats
 A tiny magically Converter that making executable command script from plain python function.
 If the function is type annotated, it is used.
 
-- If you want single command, `as_command()` is helpful ✨ 
-- If you want multi command has many sub-commands, `as_subcommand()` is helpful ✨ 
-- If you want Something like `create-react-app's eject <https://github.com/facebook/create-react-app#philosophy>`_, use `--expose` option ◀️ 
+- If you want single command, ``as_command()`` is helpful ✨ 
+- If you want multi command has many sub-commands, ``as_subcommand()`` is helpful ✨ 
+- If you want Something like `create-react-app's eject <https://github.com/facebook/create-react-app#philosophy>`_, use ``--expose`` option ◀️ 
 
 as_command()
 ----------------------------------------
@@ -136,10 +136,10 @@ help
 
 
 
-`--expose`
+``--expose``
 ----------------------------------------
 
-Calling with `--expose` option, generationg the code that dropping dependencies of handofcats module.
+Calling with ``--expose`` option, generationg the code that dropping dependencies of handofcats module.
 
 Something like `create-react-app's eject <https://github.com/facebook/create-react-app#philosophy>`_ .
 
@@ -170,12 +170,12 @@ Something like `create-react-app's eject <https://github.com/facebook/create-rea
   if __name__ == '__main__':
       main()
 
-`--inplace`
+``--inplace``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-With `inplace` option, when `--expose`, overwrite target source.
+With ``inplace`` option, when ``--expose``, overwrite target source.
 
-`handofcats` command
+``handofcats`` command
 ----------------------------------------
 
 sum.py
