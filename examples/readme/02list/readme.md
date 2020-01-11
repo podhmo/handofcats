@@ -1,7 +1,7 @@
 help
 ```console
 $ handofcats sum.py:psum -h
-usage: psum [-h] [--expose] [--inplace] [--typed] [--ys YS]
+usage: psum [-h] [--ys YS] [--expose] [--inplace] [--typed]
             [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
             [xs [xs ...]]
 
@@ -10,10 +10,10 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  --ys YS
   --expose
   --inplace
   --typed
-  --ys YS
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run
@@ -40,10 +40,8 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser(prog=psum.__name__, description=psum.__doc__)
     parser.print_usage = parser.print_help
-
     parser.add_argument('xs', type=int, nargs='*')
     parser.add_argument('--ys', required=False, action='append', type=int)
-
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return psum(**params)

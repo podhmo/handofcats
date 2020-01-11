@@ -1,8 +1,8 @@
 help
 ```console
 $ python greeting.py -h
-usage: greeting [-h] [--expose] [--inplace] [--typed] [--is-surprised]
-                [--name NAME]
+usage: greeting [-h] [--is-surprised] [--name NAME] [--expose] [--inplace]
+                [--typed]
                 [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
                 message
 
@@ -13,11 +13,11 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  --is-surprised
+  --name NAME           (default: 'foo')
   --expose
   --inplace
   --typed
-  --is-surprised
-  --name NAME           (default: 'foo')
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run
@@ -29,7 +29,6 @@ foo: hello!
 ```console
 $ python greeting.py --expose | tee greeting-exposed.py
 
-
 def greeting(message: str, is_surprised: bool = False, name: str = "foo") -> None:
     """greeting message"""
     suffix = "!" if is_surprised else ""
@@ -40,11 +39,9 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser(prog=greeting.__name__, description=greeting.__doc__)
     parser.print_usage = parser.print_help
-
     parser.add_argument('message')
     parser.add_argument('--is-surprised', action='store_true')
     parser.add_argument('--name', required=False, default='foo', help="(default: 'foo')")
-
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return greeting(**params)

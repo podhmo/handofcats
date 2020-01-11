@@ -1,0 +1,2 @@
+as_subcommand -- Symbol(fullname='handofcats.as_subcommand', name='as_subcommand', id=0, from_='import_from')
+register -- Symbol(fullname='handofcats.register', name='register', id=0, from_='import_from')

@@ -1,15 +1,15 @@
 help
 ```console
 $ handofcats dump.py:run -h
-usage: run [-h] [--expose] [--inplace] [--typed] [--format {json,csv}]
+usage: run [-h] [--format {json,csv}] [--expose] [--inplace] [--typed]
            [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
 
 optional arguments:
   -h, --help            show this help message and exit
+  --format {json,csv}   (default: 'json')
   --expose
   --inplace
   --typed
-  --format {json,csv}   (default: 'json')
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run
@@ -72,9 +72,7 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser(prog=run.__name__, description=run.__doc__)
     parser.print_usage = parser.print_help
-
     parser.add_argument('--format', required=False, default='json', choices=["'json'", "'csv'"], help="(default: 'json')")
-
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return run(**params)

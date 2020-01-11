@@ -6,10 +6,8 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser(prog=sum.__name__, description=sum.__doc__)
     parser.print_usage = parser.print_help
-
     parser.add_argument('x', type=int)
     parser.add_argument('y', type=int)
-
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return sum(**params)

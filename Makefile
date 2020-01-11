@@ -6,8 +6,10 @@ ci:
 
 examples:
 	$(MAKE) -C examples/readme
-	$(MAKE) -C examples/variation
+	$(MAKE) -C examples/parse-args
 	$(MAKE) -C examples/logging
+	$(MAKE) -C examples/multi-command
+	$(MAKE) -C examples/_misc
 .PHONY: examples
 
 format:

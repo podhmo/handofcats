@@ -16,7 +16,10 @@ class Module(_Module):  # type: ignore
         return sym
 
     def stmt(
-        self, fmt_or_emittable: t.Union[t.Any, "Emittable"], *args: t.Any, **kwargs: t.Any
+        self,
+        fmt_or_emittable: t.Union[t.Any, "Emittable"],
+        *args: t.Any,
+        **kwargs: t.Any,
     ) -> "Module":
         """capture code"""
         if getattr(fmt_or_emittable, "emit", None) is not None:  # Emittable

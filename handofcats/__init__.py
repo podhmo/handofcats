@@ -1,5 +1,5 @@
 import sys
-from .driver import Driver
+from .driver import Driver, MultiDriver
 from .util import import_symbol
 
 
@@ -9,7 +9,9 @@ def import_symbol_maybe(ob_or_path, sep=":"):
     return import_symbol(ob_or_path, sep=sep)
 
 
-def as_command(fn=None, *, argv=None, driver=Driver, level=2, _force=False, ignore_logging=False):
+def as_command(
+    fn=None, *, argv=None, driver=Driver, level=2, _force=False, ignore_logging=False
+):
     create_driver = import_symbol_maybe(driver)
     if argv is None:
         argv = sys.argv[1:]
@@ -28,6 +30,9 @@ def as_command(fn=None, *, argv=None, driver=Driver, level=2, _force=False, igno
         return call
     else:
         return call(fn, level=level, argv=argv)
+
+
+as_subcommand = MultiDriver()
 
 
 # alias

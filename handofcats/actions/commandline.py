@@ -1,25 +1,8 @@
 import typing as t
-import argparse
 from importlib import import_module
 from types import ModuleType
-from . import TargetFunction, ContFunction, ArgumentParser
-
-
-def setup(fn: TargetFunction,) -> t.Tuple["M", ArgumentParser, ContFunction]:
-    parser = argparse.ArgumentParser(prog=fn.__name__, description=fn.__doc__)
-    parser.print_usage = parser.print_help
-
-    parser.add_argument("--expose", action="store_true")  # xxx (for ./expose.py)
-    parser.add_argument("--inplace", action="store_true")  # xxx (for ./expose.py)
-    parser.add_argument("--typed", action="store_true")  # xxx (for ./expose.py)
-
-    def cont(**params):
-        params.pop("expose", None)  # xxx: for ./expose.py
-        params.pop("inplace", None)  # xxx: for ./expose.py
-        params.pop("typed", None)  # xxx: for ./expose.py
-        return fn(**params)
-
-    return _FakeModule(), parser, cont
+from ..types import TargetFunction, SetupParserFunction
+from .. import customize
 
 
 class _FakeModule:
@@ -48,3 +31,57 @@ class _FakeModule:
 
     def getattr(self, ob: t.Any, name: str) -> t.Optional[t.Any]:
         return getattr(ob, name)
+
+
+def run_as_single_command(
+    setup_parser: SetupParserFunction[TargetFunction],
+    *,
+    fn: TargetFunction,
+    argv: t.Optional[str] = None,
+    ignore_logging: bool = False,
+) -> t.Any:
+    m = _FakeModule()
+
+    customizations = [
+        customize.first_parser_setup,
+    ]
+    if not ignore_logging:
+        # TODO: include generated code, emitted by `--expose`
+        customizations.append(customize.logging_setup)
+
+    parser, activate_functions = setup_parser(m, fn, customizations=customizations)
+    args = parser.parse_args(argv)
+    params = vars(args).copy()
+
+    for activate in activate_functions:
+        activate(params)
+    return fn(**params)
+
+
+def run_as_multi_command(
+    setup_parser: SetupParserFunction[t.List[TargetFunction]],
+    *,
+    functions: t.List[TargetFunction],
+    argv: t.Optional[str] = None,
+    ignore_logging: bool = False,
+) -> t.Any:
+    m = _FakeModule()
+
+    customizations = [
+        customize.first_parser_setup,
+    ]
+    if not ignore_logging:
+        # TODO: include generated code, emitted by `--expose`
+        customizations.append(customize.logging_setup)
+
+    parser, activate_functions = setup_parser(
+        m, functions, customizations=customizations
+    )
+    args = parser.parse_args(argv)
+    params = vars(args).copy()
+
+    for activate in activate_functions:
+        activate(params)
+
+    subcommand = params.pop("subcommand")
+    return subcommand(**params)

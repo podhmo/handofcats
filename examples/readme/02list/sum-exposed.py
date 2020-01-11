@@ -11,10 +11,8 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser(prog=psum.__name__, description=psum.__doc__)
     parser.print_usage = parser.print_help
-
     parser.add_argument('xs', type=int, nargs='*')
     parser.add_argument('--ys', required=False, action='append', type=int)
-
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return psum(**params)
