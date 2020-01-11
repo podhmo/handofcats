@@ -12,11 +12,18 @@ from . import customize
 class Driver:
     injector_class = Injector
 
-    def __init__(self, *, ignore_logging=False):
+    def __init__(self, fn: TargetFunction, *, ignore_logging=False):
+        self.fn = fn
         self.ignore_logging = ignore_logging
 
+    def register(self, fn: TargetFunction) -> TargetFunction:
+        self.fn = fn  # overwrite
+        return fn
+
+    __call__ = register
+
     def run(
-        self, fn: TargetFunction, argv=None,
+        self, argv=None,
     ):
         import argparse
 
@@ -24,6 +31,8 @@ class Driver:
         customize.first_parser_setup(first_parser)
 
         fargs, rest = first_parser.parse_known_args(argv)
+
+        fn = self.fn
 
         # run command normally
         if not fargs.expose:
@@ -82,12 +91,15 @@ class Driver:
 class MultiDriver:
     injector_class = Injector
 
-    def __init__(self, *, ignore_logging=False):
+    def __init__(
+        self, functions: t.List[TargetFunction] = None, *, ignore_logging=False
+    ):
         self.ignore_logging = ignore_logging
-        self.functions: t.List[TargetFunction] = []
+        self.functions: t.List[TargetFunction] = functions or []
 
-    def register(self, fn: TargetFunction) -> None:
+    def register(self, fn: TargetFunction) -> TargetFunction:
         self.functions.append(fn)
+        return fn
 
     __call__ = register
 
@@ -100,6 +112,7 @@ class MultiDriver:
         customize.first_parser_setup(first_parser)
 
         fargs, rest = first_parser.parse_known_args(argv)
+
         functions = self.functions
 
         # run command normally
