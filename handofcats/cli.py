@@ -23,7 +23,7 @@ def main(argv=None):
     parser.add_argument(
         "entry_point",
         type=import_symbol,
-        help="target EntryPoint. (must be in 'module:attrs' format)",
+        help="target EntryPoint. (format '<file name>:<attr>' or '<file name>')",
     )
     parser.add_argument(
         "--driver",
