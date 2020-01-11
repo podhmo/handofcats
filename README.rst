@@ -27,7 +27,7 @@ greeting.py
       print("{name}: {message}{suffix}".format(name=name, message=message, suffix=suffix))
 
 
-Using as single command
+🚀  Using as single command
 
 .. code-block:: console
 
@@ -91,7 +91,7 @@ cli.py
    # :warning: don't forget this
    as_subcommand.run()
 
-Using as multi command
+🚀  Using as multi command
 
 .. code-block:: cosole
 
