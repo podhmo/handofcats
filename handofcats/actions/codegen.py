@@ -68,7 +68,7 @@ def run_as_single_command(
         parser = argparse.ArgumentParser(prog=hello.__name__, description=hello.__doc__)
         parser.print_usage = parser.print_help
 
-        # adding code, by self.setup_parser(). e.g.
+        # # adding code, by self.setup_parser(). e.g.
         # parser.add_argument('--name', required=False, default='world', help="(default: 'world')")
         # parser.add_argument('--debug', action="store_true")
 
@@ -132,11 +132,41 @@ def run_as_multi_command(
 ) -> t.Any:
     """ generate main() code
 
-        something like
+    something like
 
-        ```
-        ```
-        """
+    ```
+    def main(argv=None):
+        import argparse
+
+        parser = argparse.ArgumentParser()
+        subparsers = parser.add_subparsers(title='subcommands', dest='subcommand')
+        subparsers.required = True
+
+        fn = <fn 1>
+        sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
+        # # adding code, by self.setup_parser(). e.g.
+        # parser.add_argument('--name', required=False, default='world', help="(default: 'world')")
+        # parser.add_argument('--debug', action="store_true")
+        sub_parser.set_defaults(subcommand=fn)
+
+        fn = <fn 2>
+        sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
+        # # adding code, by self.setup_parser(). e.g.
+        # sub_parser.add_argument('filename')
+        sub_parser.set_defaults(subcommand=fn)
+
+        ...
+
+        args = parser.parse_args(argv)
+        params = vars(args).copy()
+        subcommand = params.pop('subcommand')
+        return subcommand(**params)
+
+
+    if __name__ == '__main__':
+        main()
+    ```
+    """
 
     m = Module()
     m.toplevel = m.submodule()
