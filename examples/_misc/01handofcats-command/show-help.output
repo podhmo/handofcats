@@ -1,0 +1,15 @@
+python -m handofcats -h
+usage: handofcats [--driver DRIVER] [--multi-driver MULTI_DRIVER] entry_point
+
+positional arguments:
+  entry_point           target EntryPoint. (format '<file name>:<attr>' or
+                        '<file name>')
+
+optional arguments:
+  --driver DRIVER       DI, driver class, this is experimental (default:
+                        handofcats.driver:Driver)
+  --multi-driver MULTI_DRIVER
+                        DI, multidriver class, this is experimental (default:
+                        handofcats.driver:MultiDriver)
+handofcats: error: the following arguments are required: entry_point
+make[1]: *** [show-help] Error 2
