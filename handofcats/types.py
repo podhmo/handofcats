@@ -3,6 +3,8 @@ import typing_extensions as tx
 
 # TODO: document
 
+
+T = t.TypeVar("T")
 PrestringModule = t.Any
 
 
@@ -22,10 +24,10 @@ CustomizeActivateFunction = t.Callable[[t.Dict[str, t.Any]], None]
 CustomizeSetupFunction = t.Callable[[ArgumentParser], CustomizeActivateFunction]
 
 
-class SetupParserFunction(tx.Protocol):
+class SetupParserFunction(tx.Protocol[T]):
     def __call__(
         m: PrestringModule,
-        fn: TargetFunction,
+        fn_or_functions: T,
         argv=None,
         *,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
