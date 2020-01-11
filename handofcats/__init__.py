@@ -1,6 +1,6 @@
 import sys
 from .driver import Driver, MultiDriver
-from .util import import_symbol
+from .langhelpers import import_symbol
 
 
 def import_symbol_maybe(ob_or_path, sep=":"):

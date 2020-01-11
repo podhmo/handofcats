@@ -1,14 +1,14 @@
 import argparse
 from logging import getLogger as get_logger
 from . import as_command
-from . import util
+from . import langhelpers
 
 logger = get_logger(__name__)
 
 
 def import_symbol(path, sep=":", logger=logger):
     try:
-        return util.import_symbol(path, sep=sep)
+        return langhelpers.import_symbol(path, sep=sep)
     except ValueError as e:
         logger.info(str(e), exc_info=True)
         import argparse  # xxx
