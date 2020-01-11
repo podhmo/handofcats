@@ -31,6 +31,17 @@ Using as single command
 
 .. code-block:: console
 
+  $ python greeting.py hello
+  foo: hello
+  $ python greeting.py --is-surprised hello
+  foo: hello!
+  $ python greeting.py --is-surprised --name=bar bye
+  bar: bye!
+
+help
+
+.. code-block:: console
+
   $ python greeting.py -h
   usage: greeting [-h] [--is-surprised] [--name NAME] [--expose] [--inplace]
                   [--typed]
@@ -51,14 +62,8 @@ Using as single command
     --typed
     --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 
-  $ python greeting.py hello
-  foo: hello
-  $ python greeting.py --is-surprised hello
-  foo: hello!
-  $ python greeting.py --is-surprised --name=bar bye
-  bar: bye!
 
-(:warning: TODO: detail description)
+( :warning: TODO: detail description )
 
 
 as_subcommand() and as_subcommand.run()
@@ -90,6 +95,19 @@ Using as multi command
 
 .. code-block:: cosole
 
+   $ python cli.py hello
+   hello world
+
+   $ python cli.py hello --name foo
+   hello foo
+
+   $ python cli.py byebye foo
+   byebye foo
+
+help
+
+.. code-block:: cosole
+
    $ python cli.py -h
    usage: cli.py [-h] [--expose] [--inplace] [--typed]
                  [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
@@ -115,8 +133,6 @@ Using as multi command
      -h, --help   show this help message and exit
      --name NAME  (default: 'world')
 
-   $ python cli.py hello --name world
-   hello world
 
 
 `--expose`
