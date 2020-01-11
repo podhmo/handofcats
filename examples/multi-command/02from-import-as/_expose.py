@@ -1,19 +1,17 @@
-from handofcats.driver import MultiDriver
-
-md = MultiDriver()
+from handofcats import as_subcommand as register
 
 
-@md.register
+@register
 def hello(*, name: str = "world"):
     print(f"hello {name}")
 
 
-@md.register
+@register
 def byebye(name):
     print(f"byebye {name}")
 
 
-md.run()
+register.run()
 
 def main(argv=None):
     import argparse
