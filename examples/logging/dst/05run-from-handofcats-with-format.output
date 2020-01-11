@@ -4,4 +4,4 @@
 {"level": "ERROR", "funcname": "run", "message": "'"error" logger\'s message'"}
 {"level": "CRITICAL", "funcname": "run", "message": "'"critical" logger\'s message'"}
 {"level": "INFO", "funcname": "run", "message": "'\nMULTILINE MESSAGE\n\n- hello\n- byebye\n'"}
-** handofcats.injectlogging: DEBUG=1, activate logging **
+** handofcats.customize: DEBUG=1, activate logging **
