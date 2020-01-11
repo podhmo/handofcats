@@ -24,22 +24,25 @@ class Driver:
         customize.first_parser_setup(first_parser)
 
         fargs, rest = first_parser.parse_known_args(argv)
-        if fargs.expose:  # "--expose" ?
-            from .actions import codegen
 
-            return codegen.run_as_single_command(
-                self.setup_parser,
-                fn=fn,
-                argv=rest,
-                inplace=fargs.inplace,
-                typed=fargs.typed,
-            )
-        else:
+        # run command normally
+        if not fargs.expose:
             from .actions import commandline
 
             return commandline.run_as_single_command(
                 self.setup_parser, fn=fn, argv=rest, ignore_logging=self.ignore_logging
             )
+
+        # code generation is needed
+        from .actions import codegen
+
+        return codegen.run_as_single_command(
+            self.setup_parser,
+            fn=fn,
+            argv=rest,
+            inplace=fargs.inplace,
+            typed=fargs.typed,
+        )
 
     def setup_parser(
         self,
@@ -97,17 +100,8 @@ class MultiDriver:
         fargs, rest = first_parser.parse_known_args(argv)
         functions = self.functions
 
-        if fargs.expose:  # "--expose" ?
-            from .actions import codegen
-
-            return codegen.run_as_multi_command(
-                self.setup_parser,
-                functions=functions,
-                argv=rest,
-                inplace=fargs.inplace,
-                typed=fargs.typed,
-            )
-        else:
+        # run command normally
+        if not fargs.expose:
             from .actions import commandline
 
             return commandline.run_as_multi_command(
@@ -116,6 +110,17 @@ class MultiDriver:
                 argv=rest,
                 ignore_logging=self.ignore_logging,
             )
+
+        # code generation is needed
+        from .actions import codegen
+
+        return codegen.run_as_multi_command(
+            self.setup_parser,
+            functions=functions,
+            argv=rest,
+            inplace=fargs.inplace,
+            typed=fargs.typed,
+        )
 
     def setup_parser(
         self,
