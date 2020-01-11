@@ -1,4 +1,4 @@
-from functools import update_wrapper, partial
+from functools import update_wrapper
 
 
 # stolen from pyramid
