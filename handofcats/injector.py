@@ -4,7 +4,7 @@ import sys
 import warnings
 import itertools
 from logging import getLogger as get_logger
-from .util import reify
+from .langhelpers import reify
 from .accessor import Accessor
 
 logger = get_logger(__name__)

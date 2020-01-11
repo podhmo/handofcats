@@ -1,6 +1,6 @@
 import typing as t
 import inspect
-from .util import reify
+from .langhelpers import reify
 from collections import namedtuple
 
 
