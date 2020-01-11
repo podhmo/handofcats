@@ -5,14 +5,20 @@ handofcats
   :target: https://travis-ci.org/podhmo/handofcats.svg
 
 
-A tiny Converter that making executable command script from python function.
-If the function is type annotated, it is also used.
+A tiny magically Converter that making executable command script from plain python function.
+If the function is type annotated, it is used.
 
-Please using `as_command()` decorator.
-
+Please using `as_command()`, if you want single command.
+Please using `as_subcommand()` and `as_subcommand.run()`,  if you want single command.
 
 as_command()
 ----------------------------------------
+
+- single command
+- multi command ( the command has sub-commands )
+
+single command
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 greeting.py
 
@@ -26,6 +32,8 @@ greeting.py
       suffix = "!" if is_surprised else ""
       print("{name}: {message}{suffix}".format(name=name, message=message, suffix=suffix))
 
+
+Using as single command
 
 .. code-block:: console
 
@@ -50,7 +58,45 @@ greeting.py
   $ python greeting.py --is-surprised --name=bar bye
   bar: bye!
 
-(TODO: detail description)
+(:warning: TODO: detail description)
+
+multi command
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+cli.py
+
+.. code-block:: python
+
+   from handofcats import as_subcommand
+
+
+   @as_subcommand
+   def hello(*, name: str = "world"):
+       print(f"hello {name}")
+
+
+   @as_subcommand
+   def byebye(name):
+       print(f"byebye {name}")
+
+
+   # :warning: don't forget this
+   as_subcommand.run()
+
+Using as multi command
+
+.. code-block:: cosole
+
+   $ python cli.py hello -h
+   usage: cli.py hello [-h] [--name NAME]
+
+   optional arguments:
+     -h, --help   show this help message and exit
+     --name NAME  (default: 'world')
+
+   $ python cli.py hello --name world
+   hello world
+
 
 `--expose`
 ----------------------------------------
@@ -60,6 +106,7 @@ calling with `--expose` option, generationg the code that dropping dependencies 
 .. code-block:: console
 
   $ python greeting.py --expose
+
   def greeting(message: str, is_surprised: bool = False, name: str = "foo") -> None:
       """greeting message"""
       suffix = "!" if is_surprised else ""
@@ -67,18 +114,19 @@ calling with `--expose` option, generationg the code that dropping dependencies 
 
   def main(argv=None):
       import argparse
-      parser = argparse.ArgumentParser(description='greeting message')
+
+      parser = argparse.ArgumentParser(prog=greeting.__name__, description=greeting.__doc__)
       parser.print_usage = parser.print_help
       parser.add_argument('message')
       parser.add_argument('--is-surprised', action='store_true')
-      parser.add_argument('--name', default='foo', required=False)
+      parser.add_argument('--name', required=False, default='foo', help="(default: 'foo')")
       args = parser.parse_args(argv)
-      greeting(**vars(args))
+      params = vars(args).copy()
+      return greeting(**params)
 
 
   if __name__ == '__main__':
       main()
-
 
 `--inplace`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
