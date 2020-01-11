@@ -42,7 +42,9 @@ def run_as_single_command(
 ) -> t.Any:
     m = _FakeModule()
 
-    customizations = []
+    customizations = [
+        customize.first_parser_setup,
+    ]
     if not ignore_logging:
         # TODO: include generated code, emitted by `--expose`
         customizations.append(customize.logging_setup)
@@ -65,7 +67,9 @@ def run_as_multi_command(
 ) -> t.Any:
     m = _FakeModule()
 
-    customizations = []
+    customizations = [
+        customize.first_parser_setup,
+    ]
     if not ignore_logging:
         # TODO: include generated code, emitted by `--expose`
         customizations.append(customize.logging_setup)
