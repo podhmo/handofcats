@@ -50,13 +50,15 @@ def main(argv=None):
 
     args, rest_argv = parser.parse_known_args(argv)
 
-    attr = None
-    if ":" in args.entry_point:
-        module_path, attr = args.entry_point.rsplit(":", 1)
-    else:
-        module_path = args.entry_point
-
-    module = magicalimport.import_module(module_path, cwd=True)
+    try:
+        attr = None
+        if ":" in args.entry_point:
+            module_path, attr = args.entry_point.rsplit(":", 1)
+        else:
+            module_path = args.entry_point
+        module = _import_module(module_path)
+    except argparse.ArgumentTypeError as e:
+        parser.error(e)
 
     # as single command
     if attr is not None:
