@@ -6,7 +6,7 @@ import logging
 import tempfile
 import pathlib
 from prestring.naming import titleize
-from ..types import TargetFunction, ArgumentParser, SetupParserFunction
+from ..types import TargetFunction, SetupParserFunction
 from ._codeobject import Module
 
 logger = logging.getLogger(__name__)
@@ -46,46 +46,6 @@ def emit(
         if outpath and outpath.exists():
             outpath.unlink(missing_ok=True)
     sys.exit(1)
-
-
-def main_code(
-    m: Module, fn: t.Callable, *, outname: str = "main", typed: bool = False,
-) -> t.Tuple[Module, ArgumentParser]:
-
-    if fn.__name__ == outname:
-        outname = titleize(outname)  # main -> Main
-
-    if typed:
-        m.sep()
-        m.from_("typing").import_("Optional, List  # noqa: E402")
-        m.sep()
-        mdef = m.def_(outname, "argv: Optional[List[str]] = None", return_type="None")
-    else:
-        mdef = m.def_(outname, "argv=None")
-
-    with mdef:
-        argparse = m.import_("argparse")
-        m.sep()
-        parser = m.let(
-            "parser",
-            argparse.ArgumentParser(
-                prog=m.getattr(m.symbol(fn), "__name__"),
-                description=m.getattr(m.symbol(fn), "__doc__"),
-            ),
-        )
-        m.setattr(parser, "print_usage", parser.print_help)
-
-        m.sep()
-        sm = m.submodule()
-        m.sep()
-
-        args = m.let("args", parser.parse_args(m.symbol("argv")))
-        _ = m.let("params", m.symbol("vars")(args).copy())
-        m.return_(f"{fn.__name__}(**params)")
-
-    with m.if_("__name__ == '__main__'"):
-        m.stmt(f"{outname}()")
-    return sm, parser
 
 
 def run_as_single_command(
