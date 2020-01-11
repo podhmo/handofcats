@@ -89,6 +89,8 @@ class MultiDriver:
     def register(self, fn: TargetFunction) -> None:
         self.functions.append(fn)
 
+    __call__ = register
+
     def run(
         self, argv=None,
     ):
