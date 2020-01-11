@@ -10,6 +10,7 @@ If the function is type annotated, it is used.
 
 - If you want single command, `as_command()` is helpful ✨ 
 - If you want multi command has many sub-commands, `as_subcommand()` is helpful ✨ 
+- If you want Something like `create-react-app's eject <https://github.com/facebook/create-react-app#philosophy>`_, use `--expose` option ◀️ 
 
 as_command()
 ----------------------------------------
@@ -138,7 +139,11 @@ help
 `--expose`
 ----------------------------------------
 
-calling with `--expose` option, generationg the code that dropping dependencies of handofcats module.
+Calling with `--expose` option, generationg the code that dropping dependencies of handofcats module.
+
+Something like `create-react-app's eject <https://github.com/facebook/create-react-app#philosophy>`_ .
+
+> No Lock-In: You can “eject” to a custom setup at any time. Run a single command, and all the configuration and build dependencies will be moved directly into your project, so you can pick up right where you left off.
 
 .. code-block:: console
 
