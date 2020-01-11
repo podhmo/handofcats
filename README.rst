@@ -10,9 +10,9 @@ If the function is type annotated, it is used.
 
 - If you want single command, ``as_command()`` is helpful ✨ 
 - If you want multi command has many sub-commands, ``as_subcommand()`` is helpful ✨ 
-- If you want Something like `create-react-app's eject <https://github.com/facebook/create-react-app#philosophy>`_, use ``--expose`` option ◀️ 
+- If you want something like `create-react-app's eject <https://github.com/facebook/create-react-app#philosophy>`_, use ` ``--expose`` option <https://github.com/podhmo/handofcats#--expose>`_ ◀️ 
 
-as_command()
+``as_command()``
 ----------------------------------------
 
 greeting.py
@@ -67,7 +67,7 @@ help
 ( :warning: TODO: detail description )
 
 
-as_subcommand() and as_subcommand.run()
+``as_subcommand()`` and ``as_subcommand.run()``
 ------------------------------------------------------------------------------------------------------------------------
 
 multi command ( the command has sub-commands ) .
@@ -139,11 +139,13 @@ help
 ``--expose``
 ----------------------------------------
 
-Calling with ``--expose`` option, generationg the code that dropping dependencies of handofcats module.
+Runing with ``--expose`` option, generationg the code that dropping dependencies of handofcats module.
 
 Something like `create-react-app's eject <https://github.com/facebook/create-react-app#philosophy>`_ .
 
 > No Lock-In: You can “eject” to a custom setup at any time. Run a single command, and all the configuration and build dependencies will be moved directly into your project, so you can pick up right where you left off.
+
+If you want to eject from `the code described above <https://github.com/podhmo/handofcats#as_command>`_, ``--expose`` is helpful, maybe.
 
 .. code-block:: console
 
@@ -170,10 +172,10 @@ Something like `create-react-app's eject <https://github.com/facebook/create-rea
   if __name__ == '__main__':
       main()
 
-``--inplace``
+``--expose`` with ``--inplace``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-With ``inplace`` option, when ``--expose``, overwrite target source.
+In addition, running with ``inplace`` option, when ``--expose``, overwrite target source code.
 
 ``handofcats`` command
 ----------------------------------------
