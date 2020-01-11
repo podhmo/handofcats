@@ -7,7 +7,6 @@ from .types import (
     CustomizeActivateFunction,
 )
 from . import customize
-from prestring.naming import titleize
 
 
 class Driver:
@@ -93,93 +92,23 @@ class MultiDriver:
 
         fargs, rest = first_parser.parse_known_args(argv)
         functions = self.functions
+
         if fargs.expose:  # "--expose" ?
-            return self._run_expose_action(
-                functions, rest, inplace=fargs.inplace, typed=fargs.typed
+            from .actions import codegen
+
+            return codegen.run_as_multi_command(
+                self.setup_parser,
+                functions,
+                rest,
+                inplace=fargs.inplace,
+                typed=fargs.typed,
             )
         else:
-            return self._run_command_line(rest)
+            from .actions import commandline
 
-    def _run_command_line(
-        self, functions: t.List[TargetFunction], argv: t.Optional[str] = None
-    ) -> t.Any:
-        from .actions import commandline
-
-        m = commandline.setup_module()
-
-        customizations = []
-        if not self.ignore_logging:
-            # TODO: include generated code, emitted by `--expose`
-            customizations.append(customize.logging_setup)
-
-        parser, activate_functions = self.setup_parser(
-            m, self.functions, customizations=customizations
-        )
-        args = parser.parse_args(argv)
-        params = vars(args).copy()
-
-        for activate in activate_functions:
-            activate(params)
-
-        subcommand = params.pop("subcommand")
-        return subcommand(**params)
-
-    def _run_expose_action(
-        self,
-        functions: t.List[TargetFunction],
-        argv: t.Optional[str] = None,
-        *,
-        outname: str = "main",
-        inplace: bool = False,
-        typed: bool = False,
-    ) -> t.Any:
-        """ generate main() code
-
-        something like
-
-        ```
-        ```
-        """
-
-        from .actions import codegen
-
-        m = codegen.setup_module()
-        if outname in [fn.__name__ for fn in self.functions]:
-            outname = titleize(outname)  # main -> Main
-
-        if typed:
-            m.sep()
-            m.from_("typing").import_("Optional, List  # noqa: E402")
-            m.sep()
-            mdef = m.def_(
-                outname, "argv: Optional[List[str]] = None", return_type="None"
+            return commandline.run_as_multi_command(
+                self.setup_parser, functions, rest, ignore_logging=self.ignore_logging,
             )
-        else:
-            mdef = m.def_(outname, "argv=None")
-
-        # def main(argv=None):
-        with mdef:
-            parser, _ = self.setup_parser(m, fn, customizations=[])
-
-            # args = parser.parse_args(argv)
-            args = m.let("args", parser.parse_args(m.symbol("argv")))
-
-            # params = vars(args).copy()
-            params = m.let("params", m.symbol("vars")(args).copy())
-
-            # subcommand = params.pop("subcommand")
-            m.let("subcommand", params.pop("subcommand"))
-
-            # return subcommand(**params)
-            m.return_(f"subcommand(**params)")
-
-        # if __name__ == "__main__":
-        with m.if_("__name__ == '__main__'"):
-            # main()
-            m.stmt(f"{outname}()")
-
-        fake = functions[0]
-        codegen.emit(m, fake, inplace=inplace)
 
     def setup_parser(
         self,

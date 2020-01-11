@@ -54,3 +54,30 @@ def run_as_single_command(
     for activate in activate_functions:
         activate(params)
     return fn(**params)
+
+
+def run_as_multi_command(
+    setup_parser: SetupParserFunction,
+    functions: t.List[TargetFunction],
+    argv: t.Optional[str] = None,
+    *,
+    ignore_logging: bool = False,
+) -> t.Any:
+    m = _FakeModule()
+
+    customizations = []
+    if not ignore_logging:
+        # TODO: include generated code, emitted by `--expose`
+        customizations.append(customize.logging_setup)
+
+    parser, activate_functions = setup_parser(
+        m, functions, customizations=customizations
+    )
+    args = parser.parse_args(argv)
+    params = vars(args).copy()
+
+    for activate in activate_functions:
+        activate(params)
+
+    subcommand = params.pop("subcommand")
+    return subcommand(**params)

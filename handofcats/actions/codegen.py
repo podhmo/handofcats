@@ -88,12 +88,6 @@ def main_code(
     return sm, parser
 
 
-def setup_module() -> Module:
-    m = Module()
-    m.toplevel = m.submodule()
-    return m
-
-
 def run_as_single_command(
     setup_parser: SetupParserFunction,
     fn: TargetFunction,
@@ -160,3 +154,59 @@ def run_as_single_command(
         m.stmt(f"{outname}()")
 
     emit(m, fn, inplace=inplace)
+
+
+def run_as_multi_command(
+    setup_parser: SetupParserFunction,
+    functions: t.List[TargetFunction],
+    argv: t.Optional[str] = None,
+    *,
+    outname: str = "main",
+    inplace: bool = False,
+    typed: bool = False,
+) -> t.Any:
+    """ generate main() code
+
+        something like
+
+        ```
+        ```
+        """
+
+    m = Module()
+    m.toplevel = m.submodule()
+
+    if outname in [fn.__name__ for fn in functions]:
+        outname = titleize(outname)  # main -> Main
+
+    if typed:
+        m.sep()
+        m.from_("typing").import_("Optional, List  # noqa: E402")
+        m.sep()
+        mdef = m.def_(outname, "argv: Optional[List[str]] = None", return_type="None")
+    else:
+        mdef = m.def_(outname, "argv=None")
+
+    # def main(argv=None):
+    with mdef:
+        parser, _ = setup_parser(m, functions, customizations=[])
+
+        # args = parser.parse_args(argv)
+        args = m.let("args", parser.parse_args(m.symbol("argv")))
+
+        # params = vars(args).copy()
+        params = m.let("params", m.symbol("vars")(args).copy())
+
+        # subcommand = params.pop("subcommand")
+        m.let("subcommand", params.pop("subcommand"))
+
+        # return subcommand(**params)
+        m.return_(f"subcommand(**params)")
+
+    # if __name__ == "__main__":
+    with m.if_("__name__ == '__main__'"):
+        # main()
+        m.stmt(f"{outname}()")
+
+    fake = functions[0]
+    emit(m, fake, inplace=inplace)
