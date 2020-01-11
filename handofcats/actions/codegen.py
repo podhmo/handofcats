@@ -12,16 +12,17 @@ logger = logging.getLogger(__name__)
 
 
 def emit(
-    m: Module, fn: TargetFunction, *, inplace: bool = False,
+    m: Module,
+    fn: TargetFunction,
+    *,
+    cleanup_code: t.Callable[[str], str],
+    inplace: bool = False,
 ):
     import pathlib
 
     target_file = inspect.getsourcefile(fn)
     source = pathlib.Path(target_file).read_text()
-    rx = re.compile(
-        r"(?:^@([\S]+\.)?as_command.*|^.*import as_command.*)\n", re.MULTILINE
-    )
-    exposed = rx.sub("", "".join(source))
+    exposed = cleanup_code(source)
 
     def _dump(out):
         print(exposed, file=out)
@@ -153,7 +154,13 @@ def run_as_single_command(
         # main()
         m.stmt(f"{outname}()")
 
-    emit(m, fn, inplace=inplace)
+    def cleanup_code(source: str) -> str:
+        rx = re.compile(
+            r"(?:^@([\S]+\.)?as_command.*|^.*import as_command.*)\n", re.MULTILINE
+        )
+        return rx.sub("", "".join(source))
+
+    emit(m, fn, inplace=inplace, cleanup_code=cleanup_code)
 
 
 def run_as_multi_command(
@@ -209,4 +216,12 @@ def run_as_multi_command(
         m.stmt(f"{outname}()")
 
     fake = functions[0]
-    emit(m, fake, inplace=inplace)
+
+    # TODO: FIX-IT (BROKEN)
+    def cleanup_code(source: str) -> str:
+        rx = re.compile(
+            r"(?:^@([\S]+\.)?as_command.*|^.*import as_command.*)\n", re.MULTILINE
+        )
+        return rx.sub("", "".join(source))
+
+    emit(m, fake, inplace=inplace, cleanup_code=cleanup_code)
