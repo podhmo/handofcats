@@ -39,7 +39,7 @@ greeting.py
   $ python greeting.py --is-surprised --name=bar bye
   bar: bye!
 
-help
+help message
 
 .. code-block:: console
 
@@ -106,7 +106,7 @@ cli.py
    $ python cli.py byebye foo
    byebye foo
 
-help
+help message
 
 .. code-block:: cosole
 
@@ -179,6 +179,7 @@ If you want to eject from `the code described above <https://github.com/podhmo/h
 
 In addition, running with ``inplace`` option, when ``--expose``, overwrite target source code.
 
+
 ``handofcats`` command
 ----------------------------------------
 
@@ -213,6 +214,94 @@ It is also ok, calling the function that not decorated via handofcats command.
     --inplace             overwrite file
     --typed               typed expression is dumped
     --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
+
+``--expose`` with handofcats command
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Passed in the form ``<filename>.py``, it will be interpreted as a multi-command. Of course, the ``--expose`` option also works.
+
+And passed in the form ``<filename>.py:<function name>``, it will be interpreted as a single-command.
+
+
+So, plain python function only needed.
+
+cli.py
+
+.. code-block:: python
+
+  def hello(*, name: str = "world"):
+      print(f"hello {name}")
+
+
+  # FIXME: default arguments (positional arguments)
+  def byebye(name: str):
+      print(f"byebye {name}")
+
+
+  # ignored
+  def _ignore(name: str):
+      print("ignored")
+
+
+.. code-block:: console
+
+  $ handofcats cli.py hello --name foo
+  hello foo
+  $ handofcats cli.py:hello --name foo
+  hello foo
+
+  # treated as multi-command
+  $ handofcats cli.py --expose --typed
+  def hello(*, name: str = "world"):
+      print(f"hello {name}")
+
+
+  # FIXME: default arguments (positional arguments)
+  def byebye(name: str):
+      print(f"byebye {name}")
+
+
+  # ignored
+  def _ignore(name: str):
+      print("ignored")
+
+
+
+  from typing import Optional, List  # noqa: E402
+
+
+  def main(argv: Optional[List[str]] = None) -> None:
+      import argparse
+
+      parser = argparse.ArgumentParser()
+      subparsers = parser.add_subparsers(title='subcommands', dest='subcommand')
+      subparsers.required = True
+
+      fn = hello
+      sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
+      sub_parser.add_argument('--name', required=False, default='world', help="(default: 'world')")
+      sub_parser.set_defaults(subcommand=fn)
+
+      fn = byebye
+      sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
+      sub_parser.add_argument('name')
+      sub_parser.set_defaults(subcommand=fn)
+
+      args = parser.parse_args(argv)
+      params = vars(args).copy()
+      subcommand = params.pop('subcommand')
+      return subcommand(**params)
+
+
+  if __name__ == '__main__':
+      main()
+
+  # treated as single-command
+  $ handofcats cli.py:hello --expose --typed
+  ...
+
+.. code-block:: console
+
 
 experimental
 ----------------------------------------
