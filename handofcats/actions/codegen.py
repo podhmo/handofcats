@@ -26,7 +26,7 @@ def emit(
     def _dump(out):
         if hasattr(m, "toplevel"):
             print(m.toplevel, file=out)
-        print(cleaned, file=out)
+        print(cleaned.rstrip(), file=out)
         print(m, file=out)
 
     if not inplace:
