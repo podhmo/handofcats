@@ -2,7 +2,7 @@
 
 <https://travis-ci.org/podhmo/handofcats.svg>
 
-A tiny magically Converter that making executable command script from
+A tiny magically Converter that making executable command from
 plain python function. If the function is type annotated, it is used.
 
   - If you want single-command, `as_command()` is helpful ✨
@@ -169,6 +169,8 @@ if __name__ == '__main__':
 
 In addition, running with `inplace` option, when `--expose`, overwrite
 target source code.
+
+For handofcats, eject action is `--inplace --exepose`.
 
 # `handofcats` command
 
