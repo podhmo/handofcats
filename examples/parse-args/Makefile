@@ -1,4 +1,4 @@
-default: 00 01 02 03 04 05
+default: 00 01 02 03 04 05 06
 
 # positional arguments
 00:
@@ -27,5 +27,10 @@ default: 00 01 02 03 04 05
 
 # --typed
 05:
+	python $@*/main.py --typed --expose | tee $$(echo $@*)/_exposed.py
+	flake8 --ignore=E302,E303,E305,E501 $$(echo $@*)/_exposed.py
+
+# star args
+06:
 	python $@*/main.py --typed --expose | tee $$(echo $@*)/_exposed.py
 	flake8 --ignore=E302,E303,E305,E501 $$(echo $@*)/_exposed.py
