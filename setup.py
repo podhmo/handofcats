@@ -1,3 +1,4 @@
+import sys
 import os
 import fastentrypoints
 from setuptools import setup, find_packages
@@ -12,6 +13,8 @@ except IOError:
     README = CHANGES = ""
 
 install_requires = ["prestring", "typing_extensions", "magicalimport"]
+if sys.version_info[:2] <= (3, 6):
+    install_requires.append("dataclasses")
 
 docs_extras = []
 tests_require = []
