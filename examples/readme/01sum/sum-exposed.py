@@ -4,10 +4,10 @@ def sum(x: int, y: int) -> None:
 def main(argv=None):
     import argparse
 
-    parser = argparse.ArgumentParser(prog=sum.__name__, description=sum.__doc__)
+    parser = argparse.ArgumentParser(prog=sum.__name__, description=sum.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
     parser.print_usage = parser.print_help
-    parser.add_argument('x', type=int)
-    parser.add_argument('y', type=int)
+    parser.add_argument('x', type=int, help='-')
+    parser.add_argument('y', type=int, help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return sum(**params)

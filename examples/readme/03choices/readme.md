@@ -6,11 +6,10 @@ usage: run [-h] [--format {json,csv}] [--expose] [--inplace] [--typed]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --format {json,csv}   (default: 'json')
-  --expose              dump generated code. with --inplace, eject from
-                        handofcats dependency
-  --inplace             overwrite file
-  --typed               typed expression is dumped
+  --format {json,csv}   - (default: json)
+  --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
+  --inplace             overwrite file (default: False)
+  --typed               typed expression is dumped (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run
@@ -72,9 +71,9 @@ def run(*, format: DumpFormat = "json"):
 def main(argv=None):
     import argparse
 
-    parser = argparse.ArgumentParser(prog=run.__name__, description=run.__doc__)
+    parser = argparse.ArgumentParser(prog=run.__name__, description=run.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
     parser.print_usage = parser.print_help
-    parser.add_argument('--format', required=False, default='json', choices=["'json'", "'csv'"], help="(default: 'json')")
+    parser.add_argument('--format', required=False, default='json', choices=["'json'", "'csv'"], help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return run(**params)

@@ -9,10 +9,10 @@ def psum(xs: t.List[int], *, ys: t.Optional[t.List[int]] = None):
 def main(argv=None):
     import argparse
 
-    parser = argparse.ArgumentParser(prog=psum.__name__, description=psum.__doc__)
+    parser = argparse.ArgumentParser(prog=psum.__name__, description=psum.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
     parser.print_usage = parser.print_help
-    parser.add_argument('xs', type=int, nargs='*')
-    parser.add_argument('--ys', required=False, action='append', type=int)
+    parser.add_argument('xs', type=int, nargs='*', help='-')
+    parser.add_argument('--ys', required=False, action='append', type=int, help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return psum(**params)

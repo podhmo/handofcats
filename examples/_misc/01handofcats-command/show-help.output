@@ -12,4 +12,4 @@ optional arguments:
                         DI, multidriver class, this is experimental (default:
                         handofcats.driver:MultiDriver)
 handofcats: error: the following arguments are required: entry_point
-make[1]: *** [show-help] Error 2
+make[3]: *** [show-help] Error 2

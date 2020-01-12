@@ -6,15 +6,14 @@ usage: psum [-h] [--ys YS] [--expose] [--inplace] [--typed]
             [xs [xs ...]]
 
 positional arguments:
-  xs
+  xs                    - (default: None)
 
 optional arguments:
   -h, --help            show this help message and exit
-  --ys YS
-  --expose              dump generated code. with --inplace, eject from
-                        handofcats dependency
-  --inplace             overwrite file
-  --typed               typed expression is dumped
+  --ys YS               - (default: None)
+  --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
+  --inplace             overwrite file (default: False)
+  --typed               typed expression is dumped (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run
@@ -39,10 +38,10 @@ def psum(xs: t.List[int], *, ys: t.Optional[t.List[int]] = None):
 def main(argv=None):
     import argparse
 
-    parser = argparse.ArgumentParser(prog=psum.__name__, description=psum.__doc__)
+    parser = argparse.ArgumentParser(prog=psum.__name__, description=psum.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
     parser.print_usage = parser.print_help
-    parser.add_argument('xs', type=int, nargs='*')
-    parser.add_argument('--ys', required=False, action='append', type=int)
+    parser.add_argument('xs', type=int, nargs='*', help='-')
+    parser.add_argument('--ys', required=False, action='append', type=int, help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return psum(**params)

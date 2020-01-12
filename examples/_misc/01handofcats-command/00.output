@@ -6,11 +6,10 @@ usage: hello [-h] [--name NAME] [--expose] [--inplace] [--typed]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --name NAME           (default: 'world')
-  --expose              dump generated code. with --inplace, eject from
-                        handofcats dependency
-  --inplace             overwrite file
-  --typed               typed expression is dumped
+  --name NAME           - (default: world)
+  --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
+  --inplace             overwrite file (default: False)
+  --typed               typed expression is dumped (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 python -m handofcats 00single.py:hello --expose
 def hello(*, name: str = "world"):
@@ -19,9 +18,9 @@ def hello(*, name: str = "world"):
 def main(argv=None):
     import argparse
 
-    parser = argparse.ArgumentParser(prog=hello.__name__, description=hello.__doc__)
+    parser = argparse.ArgumentParser(prog=hello.__name__, description=hello.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
     parser.print_usage = parser.print_help
-    parser.add_argument('--name', required=False, default='world', help="(default: 'world')")
+    parser.add_argument('--name', required=False, default='world', help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return hello(**params)

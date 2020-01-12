@@ -102,6 +102,9 @@ class Injector:
         *,
         ignore_arguments: bool = False,
         ignore_flags: bool = False,
+        help_default: t.Optional[
+            t.Union[str, t.Callable[[t.Dict[str, t.Any]], None]]
+        ] = "-",  # need by argparse.ArgumentDefaultsHelpFormatter
         callback: t.Callable[[t.Any], t.Any] = id,
     ):
         arguments = [(opt, None) for opt in self.accessor.arguments]
@@ -123,8 +126,21 @@ class Injector:
                 kwargs["nargs"] = "*"
                 kwargs.pop("action")
 
-            if "default" in kwargs:
-                kwargs["help"] = "(default: {!r})".format(kwargs["default"])
+            if help_default is not None:
+                if callable(help_default):
+                    help_default(kwargs)
+                else:
+                    kwargs["help"] = help_default
 
             logger.debug("add_argument %s %r", opt.option_name, kwargs)
             callback(parser.add_argument(opt.option_name, **kwargs))
+
+
+def _help_default(kwargs: t.Dict[str, t.Any]):
+    """
+    append help message generated from default value
+
+    NOTE: if using argparse.ArgumentDefaultsHelpFormatter, this is default behaviour.
+    """
+    if "default" in kwargs:
+        kwargs["help"] = "(default: {!r})".format(kwargs["default"])

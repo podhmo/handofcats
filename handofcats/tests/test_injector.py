@@ -25,10 +25,10 @@ class Tests(unittest.TestCase):
     maxDiff = None
 
     def _callFUT(self, fn):
-        from handofcats.injector import Injector
+        from handofcats.injector import Injector, _help_default
 
         parser = _FakeArgumentParser()
-        Injector(fn).inject(parser)
+        Injector(fn).inject(parser, help_default=_help_default)
         return parser.parse_args()
 
     def test_it(self):

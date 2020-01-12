@@ -29,3 +29,9 @@ default: 00 01 02 03 04 05
 05:
 	python $@*/main.py --typed --expose | tee $$(echo $@*)/_exposed.py
 	flake8 --ignore=E302,E303,E305,E501 $$(echo $@*)/_exposed.py
+
+# long-description (RawTextHelpMessage)
+06:
+	python $@*/main.py --typed --expose | tee $$(echo $@*)/_exposed.py
+	flake8 --ignore=E302,E303,E305,E501 $$(echo $@*)/_exposed.py
+	python $@*/main.py -h | tee $$(echo $@*)/help.output
