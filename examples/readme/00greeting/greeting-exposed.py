@@ -9,7 +9,7 @@ def greeting(message: str, is_surprised: bool = False, name: str = "foo") -> Non
 def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
-    parser = argparse.ArgumentParser(prog=greeting.__name__, description=greeting.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
+    parser = argparse.ArgumentParser(prog=greeting.__name__, description=greeting.__doc__, formatter_class=type('_HelpFormatter', (argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter), {}))
     parser.print_usage = parser.print_help  # type: ignore
     parser.add_argument('message', help='-')
     parser.add_argument('--is-surprised', action='store_true', help='-')
