@@ -45,17 +45,23 @@ def as_command(
 _default_multi_driver = None
 
 
-def as_subcommand(fn: TargetFunction, driver=MultiDriver) -> TargetFunction:
+def as_subcommand(
+    fn: TargetFunction, driver=MultiDriver, config: Config = default_config
+) -> TargetFunction:
     global _default_multi_driver
     if _default_multi_driver is None:
         create_driver = import_symbol_maybe(driver)
-        _default_multi_driver = create_driver()
+        _default_multi_driver = create_driver(config=config)
     _default_multi_driver.register(fn)
     return fn
 
 
 def _as_subcommand_run(
-    argv=None, driver=MultiDriver, level=1, _force=False, config:Config=default_config
+    argv=None,
+    driver=MultiDriver,
+    level=1,
+    _force=False,
+    config: Config = default_config,
 ):
     global _default_multi_driver
 
