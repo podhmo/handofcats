@@ -5,8 +5,8 @@
 A tiny magically Converter that making executable command script from
 plain python function. If the function is type annotated, it is used.
 
-  - If you want single command, `as_command()` is helpful ✨
-  - If you want multi command has many sub-commands, `as_subcommand()` is helpful ✨
+  - If you want single-command, `as_command()` is helpful ✨
+  - If you want sub-commands, `as_subcommand()` is helpful ✨
   - If you want something like [create-react-app's eject](https://github.com/facebook/create-react-app#philosophy), use `--expose` option](https://github.com/podhmo/handofcats#--expose) ◀️
 
 ## `as_command()`
@@ -23,7 +23,7 @@ def greeting(message: str, is_surprised: bool = False, name: str = "foo") -> Non
     print("{name}: {message}{suffix}".format(name=name, message=message, suffix=suffix))
 ```
 
-🚀 Using as single command
+🚀 Using as single-command
 
 ``` console
 $ python greeting.py hello
@@ -63,7 +63,7 @@ optional arguments:
 
 ## `as_subcommand()` and `as_subcommand.run()`
 
-multi command ( the command has sub-commands ) .
+If you want sub-commands, from following code.
 
 cli.py
 
@@ -85,7 +85,7 @@ def byebye(name):
 as_subcommand.run()
 ```
 
-🚀 Using as multi command
+🚀 Using as sub-commands
 
 ``` cosole
 $ python cli.py hello
@@ -134,7 +134,7 @@ dependencies of handofcats module.
 
 Something like [create-react-app'seject](https://github.com/facebook/create-react-app#philosophy) .
 
-> No Lock-In: You can “eject” to a custom setup at any time. Run a single command, and all the configuration and build dependencies will be moved directly into your project, so you can pick up right where you left off.
+> No Lock-In: You can “eject” to a custom setup at any time. Run a single-command, and all the configuration and build dependencies will be moved directly into your project, so you can pick up right where you left off.
 
 If you want to eject from [the code described above](https://github.com/podhmo/handofcats#as_command), `--expose` is helpful, maybe.
 
@@ -208,7 +208,7 @@ optional arguments:
 # `--expose` with handofcats command
 
 Passed in the form `<filename>.py`, it will be interpreted as a
-multi-command. Of course, the `--expose` option also works.
+sub-commands. Of course, the `--expose` option also works.
 
 And passed in the form `<filename>.py:<function name>`, it will be
 interpreted as a single-command.
@@ -235,7 +235,7 @@ def _ignore(name: str):
 ```
 
 ``` console
-# treated as multi-command
+# treated as sub-commands
 $ handofcats cli.py --expose
 import typing as t
 
