@@ -1,4 +1,5 @@
 import typing as t
+import typing as t
 
 
 def hello(*, name: str = "world", nickname: t.Optional[str] = None) -> None:
@@ -10,10 +11,7 @@ def byebye(*, args: t.List[str]) -> None:
 
 
 
-from typing import Optional, List  # noqa: E402
-
-
-def main(argv: Optional[List[str]] = None) -> None:
+def main(argv: t.Optional[t.List[t.str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser()
@@ -26,7 +24,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     sub_parser.add_argument('--nickname', required=False)
     sub_parser.set_defaults(subcommand=fn)
 
-    fn = byebye
+    fn = byebye  # type: ignore
     sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
     sub_parser.add_argument('--args', required=True, action='append')
     sub_parser.set_defaults(subcommand=fn)
