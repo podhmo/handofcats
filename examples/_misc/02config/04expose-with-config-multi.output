@@ -1,4 +1,4 @@
-
+import typing as t
 
 
 def hello(*, name: str = "world"):
@@ -9,7 +9,7 @@ def byebye(*, name: str):
     print(f"byebye {name}")
 
 
-def main(argv=None):
+def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))

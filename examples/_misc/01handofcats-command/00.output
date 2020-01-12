@@ -1,7 +1,7 @@
 python -m handofcats 00single.py:hello
 hello world
 python -m handofcats 00single.py:hello -h
-usage: hello [-h] [--name NAME] [--expose] [--inplace] [--typed]
+usage: hello [-h] [--name NAME] [--expose] [--inplace] [--untyped]
              [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
 
 optional arguments:
@@ -9,15 +9,15 @@ optional arguments:
   --name NAME           - (default: world)
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
-  --typed               typed expression is dumped (default: False)
+  --untyped             untyped expression is dumped (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 python -m handofcats 00single.py:hello --expose
-
+import typing as t
 def hello(*, name: str = "world"):
     print(f"hello {name}")
 
 
-def main(argv=None):
+def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(prog=hello.__name__, description=hello.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))

@@ -1,4 +1,4 @@
-
+import typing as t
 
 
 
@@ -15,7 +15,7 @@ def byebye(name):
 register.run()
 
 
-def main(argv=None):
+def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))

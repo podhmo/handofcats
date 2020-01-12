@@ -1,4 +1,4 @@
-
+import typing as t
 
 def greeting(message: str, is_surprised: bool = False, name: str = "foo") -> None:
     """greeting message"""
@@ -6,7 +6,7 @@ def greeting(message: str, is_surprised: bool = False, name: str = "foo") -> Non
     print("{name}: {message}{suffix}".format(name=name, message=message, suffix=suffix))
 
 
-def main(argv=None):
+def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(prog=greeting.__name__, description=greeting.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))

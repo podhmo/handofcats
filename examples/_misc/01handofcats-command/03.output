@@ -3,7 +3,7 @@ hello world
 python -m handofcats 03multi-decorated.py byebye foo
 byebye foo
 python -m handofcats 03multi-decorated.py -h
-usage: __main__.py [-h] [--expose] [--inplace] [--typed]
+usage: __main__.py [-h] [--expose] [--inplace] [--untyped]
                    [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
                    {hello,byebye} ...
 
@@ -11,7 +11,7 @@ optional arguments:
   -h, --help            show this help message and exit
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
-  --typed               typed expression is dumped (default: False)
+  --untyped             untyped expression is dumped (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 
 subcommands:
@@ -19,7 +19,7 @@ subcommands:
     hello
     byebye
 python -m handofcats 03multi-decorated.py --expose
-
+import typing as t
 
 def hello(*, name: str = "world"):
     print(f"hello {name}")
@@ -39,7 +39,7 @@ def _ignore(name: str):
     print("of cource, ignored")
 
 
-def main(argv=None):
+def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))

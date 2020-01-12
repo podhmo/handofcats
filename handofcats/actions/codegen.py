@@ -24,9 +24,23 @@ def emit(
     cleaned = cleanup_code(code)
 
     def _dump(out):
-        if hasattr(m, "toplevel"):
+        content = cleaned.rstrip()
+        if "from __future__ import" not in content:
+            if hasattr(m, "toplevel"):
+                print(m.toplevel, file=out)
+            print(content, file=out)
+        else:
+            # NOTE: from __future__ import xxx 's position is beginning of file.
+            lines = content.split("\n")
+            buf = []
+            for i, line in enumerate(lines):
+                if "from __future__ import" in line:
+                    buf.append(line)
+                else:
+                    break
+            print("\n".join(buf), file=out)
             print(m.toplevel, file=out)
-        print(cleaned.rstrip(), file=out)
+            print("\n".join(lines[i:]), file=out)
         print(m, file=out)
 
     if not inplace:

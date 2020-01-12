@@ -1,3 +1,4 @@
+import typing as t
 
 def run(file_name: str) -> None:
     """
@@ -15,16 +16,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
     pass
 
 
-
-from typing import Optional, List  # noqa: E402
-
-
-def main(argv: Optional[List[str]] = None) -> None:
+def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(prog=run.__name__, description=run.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
-    parser.print_usage = parser.print_help
-    parser.add_argument('file_name')
+    parser.print_usage = parser.print_help  # type: ignore
+    parser.add_argument('file_name', help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return run(**params)

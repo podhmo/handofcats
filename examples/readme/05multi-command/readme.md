@@ -1,15 +1,15 @@
 help
 ```console
 $ python cli.py -h
-usage: cli.py [-h] [--expose] [--inplace] [--typed]
+usage: cli.py [-h] [--expose] [--inplace] [--untyped]
               [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
               {hello,byebye} ...
 
 optional arguments:
   -h, --help            show this help message and exit
-  --expose
-  --inplace
-  --typed
+  --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
+  --inplace             overwrite file (default: False)
+  --untyped             untyped expression is dumped (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 
 subcommands:
@@ -24,7 +24,7 @@ usage: cli.py hello [-h] [--name NAME]
 
 optional arguments:
   -h, --help   show this help message and exit
-  --name NAME  (default: 'world')
+  --name NAME  -
 ```
 run
 ```console

@@ -1,5 +1,5 @@
-
 import typing as t
+
 
 
 def psum(xs: t.List[int], *, ys: t.Optional[t.List[int]] = None):
@@ -8,7 +8,7 @@ def psum(xs: t.List[int], *, ys: t.Optional[t.List[int]] = None):
         print(f"Σ {xs} + Σ {ys} = {sum(xs) + sum(ys)}")
 
 
-def main(argv=None):
+def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(prog=psum.__name__, description=psum.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))

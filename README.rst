@@ -45,7 +45,7 @@ help message
 
   $ python greeting.py -h
   usage: greeting [-h] [--is-surprised] [--name NAME] [--expose] [--inplace]
-                  [--typed]
+                  [--untyped]
                   [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
                   message
 
@@ -61,7 +61,7 @@ help message
     --expose              dump generated code. with --inplace, eject from
                           handofcats dependency
     --inplace             overwrite file
-    --typed               typed expression is dumped
+    --untyped             untyped expression is dumped (default: False)
     --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 
 
@@ -111,7 +111,7 @@ help message
 .. code-block:: cosole
 
    $ python cli.py -h
-   usage: cli.py [-h] [--expose] [--inplace] [--typed]
+   usage: cli.py [-h] [--expose] [--inplace] [--untyped]
                  [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
                  {hello,byebye} ...
 
@@ -119,7 +119,7 @@ help message
      -h, --help            show this help message and exit
      --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
      --inplace             overwrite file
-     --typed               typed expression is dumped
+     --untyped             untyped expression is dumped (default: False)
      --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 
    subcommands:
@@ -151,20 +151,22 @@ If you want to eject from `the code described above <https://github.com/podhmo/h
 .. code-block:: console
 
   $ python greeting.py --expose
+  import typing as t
 
   def greeting(message: str, is_surprised: bool = False, name: str = "foo") -> None:
       """greeting message"""
       suffix = "!" if is_surprised else ""
       print("{name}: {message}{suffix}".format(name=name, message=message, suffix=suffix))
 
-  def main(argv=None):
+
+  def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
       import argparse
 
-      parser = argparse.ArgumentParser(prog=greeting.__name__, description=greeting.__doc__)
-      parser.print_usage = parser.print_help
-      parser.add_argument('message')
-      parser.add_argument('--is-surprised', action='store_true')
-      parser.add_argument('--name', required=False, default='foo', help="(default: 'foo')")
+      parser = argparse.ArgumentParser(prog=greeting.__name__, description=greeting.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
+      parser.print_usage = parser.print_help  # type: ignore
+      parser.add_argument('message', help='-')
+      parser.add_argument('--is-surprised', action='store_true', help='-')
+      parser.add_argument('--name', required=False, default='foo', help='-')
       args = parser.parse_args(argv)
       params = vars(args).copy()
       return greeting(**params)
@@ -172,6 +174,7 @@ If you want to eject from `the code described above <https://github.com/podhmo/h
 
   if __name__ == '__main__':
       main()
+
 
 ``--expose`` with ``--inplace``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -198,7 +201,7 @@ It is also ok, calling the function that not decorated via handofcats command.
 
   $ handofcats sum.py:sum -h
   handofcats sum.py:sum -h
-  usage: sum [-h] [--expose] [--inplace] [--typed]
+  usage: sum [-h] [--expose] [--inplace] [--untyped]
              [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
              x y
 
@@ -210,7 +213,7 @@ It is also ok, calling the function that not decorated via handofcats command.
     -h, --help            show this help message and exit
     --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
     --inplace             overwrite file
-    --typed               typed expression is dumped
+    --untyped             untyped expression is dumped (default: False)
     --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 
 ``--expose`` with handofcats command
@@ -249,7 +252,9 @@ cli.py
   hello foo
 
   # treated as multi-command
-  $ handofcats cli.py --expose --typed
+  $ handofcats cli.py --expose
+  import typing as t
+
   def hello(*, name: str = "world"):
       print(f"hello {name}")
 
@@ -260,29 +265,29 @@ cli.py
 
 
   # ignored
+  def ignore(name: str):
+      print(f"ignored {name}")
+
+
   def _ignore(name: str):
-      print("ignored")
+      print("of cource, ignored")
 
 
-
-  from typing import Optional, List  # noqa: E402
-
-
-  def main(argv: Optional[List[str]] = None) -> None:
+  def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
       import argparse
 
-      parser = argparse.ArgumentParser()
+      parser = argparse.ArgumentParser(formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
       subparsers = parser.add_subparsers(title='subcommands', dest='subcommand')
       subparsers.required = True
 
       fn = hello
       sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
-      sub_parser.add_argument('--name', required=False, default='world', help="(default: 'world')")
+      sub_parser.add_argument('--name', required=False, default='world', help='-')
       sub_parser.set_defaults(subcommand=fn)
 
-      fn = byebye
+      fn = byebye  # type: ignore
       sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
-      sub_parser.add_argument('name')
+      sub_parser.add_argument('name', help='-')
       sub_parser.set_defaults(subcommand=fn)
 
       args = parser.parse_args(argv)
@@ -294,8 +299,9 @@ cli.py
   if __name__ == '__main__':
       main()
 
+
   # treated as single-command
-  $ handofcats cli.py:hello --expose --typed
+  $ handofcats cli.py:hello --expose
   ...
 
 .. code-block:: console
