@@ -136,7 +136,7 @@ Something like [create-react-app'seject](https://github.com/facebook/create-reac
 
 > No Lock-In: You can “eject” to a custom setup at any time. Run a single command, and all the configuration and build dependencies will be moved directly into your project, so you can pick up right where you left off.
 
-If you want to eject from [the code describedabove](https://github.com/podhmo/handofcats#as_command), `--expose` is helpful, maybe.
+If you want to eject from [the code described above](https://github.com/podhmo/handofcats#as_command), `--expose` is helpful, maybe.
 
 ``` console
 $ python greeting.py --expose
