@@ -6,11 +6,8 @@ A tiny magically Converter that making executable command script from
 plain python function. If the function is type annotated, it is used.
 
   - If you want single command, `as_command()` is helpful ✨
-  - If you want multi command has many sub-commands, `as_subcommand()`
-    is helpful ✨
-  - If you want something like [create-react-app's
-    eject](https://github.com/facebook/create-react-app#philosophy), use
-    [`--expose` option](https://github.com/podhmo/handofcats#--expose) ◀️
+  - If you want multi command has many sub-commands, `as_subcommand()` is helpful ✨
+  - If you want something like [create-react-app's eject](https://github.com/facebook/create-react-app#philosophy), use `--expose` option](https://github.com/podhmo/handofcats#--expose) ◀️
 
 ## `as_command()`
 
