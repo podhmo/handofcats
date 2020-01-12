@@ -8,7 +8,8 @@ def option_name(name):
     return name.strip("_").replace("_", "-")
 
 
-Option = namedtuple("Option", "name, option_name, required, type, default")
+# TODO: use dataclasses
+Option = namedtuple("Option", "name, option_name, required, type, default, varargs")
 
 
 class Accessor:
@@ -25,6 +26,11 @@ class Accessor:
         for name in self.resolver.argspec.args:
             if not self.resolver.has_default(name):
                 r.append(self.create_positional(name))
+
+        # *args
+        if self.resolver.argspec.varargs is not None:
+            name = self.resolver.argspec.varargs
+            r.append(self.create_positional(name, varargs=True))
         return r
 
     @reify
@@ -47,15 +53,21 @@ class Accessor:
             required=required,
             type=self.resolver.resolve_type(name),
             default=self.resolver.resolve_default(name),
+            varargs=False,
         )
 
-    def create_positional(self, name) -> Option:
+    def create_positional(self, name, *, varargs=False) -> Option:
+        typ = self.resolver.resolve_type(name)
+        if varargs:
+            typ = t.List[typ]
+
         return Option(
             name=name,
             option_name=option_name(name).replace("-", "_"),
             required=True,
-            type=self.resolver.resolve_type(name),
+            type=typ,
             default=self.resolver.resolve_default(name),
+            varargs=varargs,
         )
 
 
