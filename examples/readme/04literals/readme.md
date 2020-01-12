@@ -33,6 +33,7 @@ bar,21
 `--expose`
 ```console
 $ handofcats dump.py:run --expose | tee dump-exposed.py
+
 import sys
 import typing as t
 import typing_extensions as tx
@@ -67,11 +68,12 @@ def run(*, format: DumpFormat = "json"):
     dump = globals()["{}_dump".format(format)]
     dump(rows)
 
+
 def main(argv=None):
     import argparse
 
     parser = argparse.ArgumentParser(prog=run.__name__, description=run.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
-    parser.print_usage = parser.print_help
+    parser.print_usage = parser.print_help  # type: ignore
     parser.add_argument('--format', required=False, default='json', choices=["'json'", "'csv'"], help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()

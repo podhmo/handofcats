@@ -86,8 +86,10 @@ class Driver:
             ),
         )
 
-        # parser.print_usage = parser.print_help
+        # parser.print_usage = parser.print_help  # type: ignore
         m.setattr(parser, "print_usage", parser.print_help)
+        m.unnewline()
+        m.stmt("  # type: ignore")
 
         injector = self.injector_class(fn)
         injector.inject(parser, callback=m.stmt)
@@ -193,9 +195,12 @@ class MultiDriver:
         m.setattr(subparsers, "required", True)  # for py3.6
         m.sep()
 
-        for target_fn in self.functions:
+        for i, target_fn in enumerate(self.functions):
             # fn = <target function>
             fn = m.let("fn", m.symbol(target_fn))
+            if i > 0:
+                m.unnewline()
+                m.stmt("  # type: ignore")
 
             # sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
             sub_parser = m.let(

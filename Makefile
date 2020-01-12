@@ -5,11 +5,13 @@ ci:
 	git diff
 
 examples:
-	$(MAKE) -C examples/readme
-	$(MAKE) -C examples/parse-args
-	$(MAKE) -C examples/logging
-	$(MAKE) -C examples/multi-command
-	$(MAKE) -C examples/_misc
+	$(MAKE) -C examples/readme && \
+ $(MAKE) -C examples/parse-args && \
+ $(MAKE) -C examples/logging && \
+ $(MAKE) -C examples/multi-command && \
+ $(MAKE) -C examples/_misc \
+ || ( GIT_PAGER=cat git diff 2>&1 && exit 1 )
+
 .PHONY: examples
 
 format:
