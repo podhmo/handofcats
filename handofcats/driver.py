@@ -6,15 +6,16 @@ from .types import (
     CustomizeSetupFunction,
     CustomizeActivateFunction,
 )
+from .config import Config, default_config
 from . import customize
 
 
 class Driver:
     injector_class = Injector
 
-    def __init__(self, fn: TargetFunction, *, ignore_logging=False):
+    def __init__(self, fn: TargetFunction, *, config: Config = default_config):
         self.fn = fn
-        self.ignore_logging = ignore_logging
+        self.config = config
 
     def register(self, fn: TargetFunction) -> TargetFunction:
         self.fn = fn  # overwrite
@@ -39,7 +40,7 @@ class Driver:
             from .actions import commandline
 
             return commandline.run_as_single_command(
-                self.setup_parser, fn=fn, argv=rest, ignore_logging=self.ignore_logging
+                self.setup_parser, fn=fn, argv=rest, config=self.config
             )
 
         # code generation is needed
@@ -92,9 +93,12 @@ class MultiDriver:
     injector_class = Injector
 
     def __init__(
-        self, functions: t.List[TargetFunction] = None, *, ignore_logging=False
+        self,
+        functions: t.List[TargetFunction] = None,
+        *,
+        config: Config = default_config,
     ):
-        self.ignore_logging = ignore_logging
+        self.config = config
         self.functions: t.List[TargetFunction] = functions or []
 
     def register(self, fn: TargetFunction) -> TargetFunction:
@@ -120,10 +124,7 @@ class MultiDriver:
             from .actions import commandline
 
             return commandline.run_as_multi_command(
-                self.setup_parser,
-                functions=functions,
-                argv=rest,
-                ignore_logging=self.ignore_logging,
+                self.setup_parser, functions=functions, argv=rest, config=self.config,
             )
 
         # code generation is needed

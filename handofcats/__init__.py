@@ -2,6 +2,7 @@ import typing as t
 import sys
 from .driver import Driver, MultiDriver
 from .types import TargetFunction
+from .config import Config, default_config
 
 
 def import_symbol_maybe(ob_or_path: str, *, sep: str = ":") -> t.Optional[t.Any]:
@@ -13,7 +14,13 @@ def import_symbol_maybe(ob_or_path: str, *, sep: str = ":") -> t.Optional[t.Any]
 
 
 def as_command(
-    fn=None, *, argv=None, driver=Driver, level=2, _force=False, ignore_logging=False
+    fn=None,
+    *,
+    argv=None,
+    driver=Driver,
+    level=2,
+    _force=False,
+    config: Config = default_config,
 ) -> TargetFunction:
     create_driver = import_symbol_maybe(driver)
     if argv is None:
@@ -26,7 +33,7 @@ def as_command(
             name = frame.f_globals["__name__"]
             if name != "__main__":
                 return fn
-        driver = create_driver(fn, ignore_logging=ignore_logging)
+        driver = create_driver(fn, config=config)
         return driver.run(argv)
 
     if fn is None:
@@ -48,13 +55,13 @@ def as_subcommand(fn: TargetFunction, driver=MultiDriver) -> TargetFunction:
 
 
 def _as_subcommand_run(
-    argv=None, driver=MultiDriver, level=1, _force=False, ignore_logging=False
+    argv=None, driver=MultiDriver, level=1, _force=False, config:Config=default_config
 ):
     global _default_multi_driver
 
     if _default_multi_driver is None:
         create_driver = import_symbol_maybe(driver)
-        _default_multi_driver = create_driver()
+        _default_multi_driver = create_driver(config=config)
 
     driver = _default_multi_driver
     if argv is None:
