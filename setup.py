@@ -1,5 +1,6 @@
 import sys
 import os
+import fastentrypoints
 from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -11,7 +12,7 @@ try:
 except IOError:
     README = CHANGES = ""
 
-install_requires = ["prestring", "typing_extensions"]
+install_requires = ["prestring", "typing_extensions", "magicalimport"]
 if sys.version_info[:2] <= (3, 6):
     install_requires.append("dataclasses")
 
@@ -47,6 +48,6 @@ setup(
     test_suite="handofcats.tests",
     entry_points="""
 [console_scripts]
-handofcats=handofcats.__main__:main
+handofcats=handofcats.cli:main
 """,
 )
