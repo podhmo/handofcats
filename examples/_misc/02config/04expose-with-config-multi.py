@@ -1,4 +1,5 @@
-from handofcats import as_subcommand, Config
+from handofcats import as_subcommand
+from handofcats import Config
 
 
 @as_subcommand

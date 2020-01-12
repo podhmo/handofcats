@@ -1,4 +1,5 @@
-from handofcats import as_command, Config
+from handofcats import as_command
+from handofcats import Config
 
 
 @as_command(config=Config(ignore_logging=True))
