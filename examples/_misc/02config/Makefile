@@ -15,7 +15,7 @@ default: 00 01 02 03 04
 # eject with config
 03:
 	python $(shell echo $@*.py) --expose | tee $(patsubst %.py,%.output,$(shell echo $@*.py))
-	flake8 --ignore=E501,E302 $(patsubst %.py,%.output,$(shell echo $@*.py))
+	flake8 --ignore=E501,E302,E303 $(patsubst %.py,%.output,$(shell echo $@*.py))
 
 # eject with config, with multi-command
 04:

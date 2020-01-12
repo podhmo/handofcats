@@ -50,7 +50,7 @@ default:
 
 # help
 show-help:
-	python -m handofcats -h
+	python -m handofcats -h || exit 0
 # logging
 run-debug:
 	python -m handofcats $(shell echo $@*.py):use_root_logger
