@@ -117,8 +117,7 @@ help message
 
    optional arguments:
      -h, --help            show this help message and exit
-     --expose              dump generated code. with --inplace, eject from
-                           handofcats dependency
+     --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
      --inplace             overwrite file
      --typed               typed expression is dumped
      --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
@@ -209,8 +208,7 @@ It is also ok, calling the function that not decorated via handofcats command.
 
   optional arguments:
     -h, --help            show this help message and exit
-    --expose              dump generated code. with --inplace, eject from
-                          handofcats dependency
+    --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
     --inplace             overwrite file
     --typed               typed expression is dumped
     --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
