@@ -215,6 +215,8 @@ interpreted as a single-command.
 
 So, plain python function only needed.
 
+<details>
+
 cli.py
 
 ``` python
@@ -286,6 +288,8 @@ if __name__ == '__main__':
 $ handofcats cli.py:hello --expose
 ...
 ```
+
+</details>
 
 # experimental
 
