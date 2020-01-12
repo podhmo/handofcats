@@ -2,7 +2,6 @@ usage: hello [-h] [--expose] [--inplace] [--typed]
 
 optional arguments:
   -h, --help  show this help message and exit
-  --expose    dump generated code. with --inplace, eject from handofcats
-              dependency
-  --inplace   overwrite file
-  --typed     typed expression is dumped
+  --expose    dump generated code. with --inplace, eject from handofcats dependency (default: False)
+  --inplace   overwrite file (default: False)
+  --typed     typed expression is dumped (default: False)

@@ -6,15 +6,14 @@ usage: sum [-h] [--expose] [--inplace] [--typed]
            x y
 
 positional arguments:
-  x
-  y
+  x                     -
+  y                     -
 
 optional arguments:
   -h, --help            show this help message and exit
-  --expose              dump generated code. with --inplace, eject from
-                        handofcats dependency
-  --inplace             overwrite file
-  --typed               typed expression is dumped
+  --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
+  --inplace             overwrite file (default: False)
+  --typed               typed expression is dumped (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run
@@ -31,10 +30,10 @@ def sum(x: int, y: int) -> None:
 def main(argv=None):
     import argparse
 
-    parser = argparse.ArgumentParser(prog=sum.__name__, description=sum.__doc__)
+    parser = argparse.ArgumentParser(prog=sum.__name__, description=sum.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
     parser.print_usage = parser.print_help
-    parser.add_argument('x', type=int)
-    parser.add_argument('y', type=int)
+    parser.add_argument('x', type=int, help='-')
+    parser.add_argument('y', type=int, help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
     return sum(**params)
