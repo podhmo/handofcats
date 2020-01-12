@@ -28,7 +28,15 @@ def _import_module(path, logger=logger) -> ModuleType:
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(prog="handofcats", add_help=False)
+    parser = argparse.ArgumentParser(
+        prog="handofcats",
+        add_help=False,
+        formatter_class=type(
+            "_HelpFormatter",
+            (argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter),
+            {},
+        ),
+    )
     parser.print_usage = parser.print_help
 
     parser.add_argument(

@@ -17,12 +17,12 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     subparsers.required = True
 
     fn = hello
-    sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
+    sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__, formatter_class=parser.formatter_class)
     sub_parser.add_argument('--name', required=False, default='world', help='-')
     sub_parser.set_defaults(subcommand=fn)
 
     fn = byebye  # type: ignore
-    sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
+    sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__, formatter_class=parser.formatter_class)
     sub_parser.add_argument('--name', required=True, help='-')
     sub_parser.set_defaults(subcommand=fn)
 

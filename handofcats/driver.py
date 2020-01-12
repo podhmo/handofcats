@@ -206,7 +206,9 @@ class MultiDriver:
             sub_parser = m.let(
                 "sub_parser",
                 subparsers.add_parser(
-                    m.getattr(fn, "__name__"), help=m.getattr(fn, "__doc__")
+                    m.getattr(fn, "__name__"),
+                    help=m.getattr(fn, "__doc__"),
+                    formatter_class=parser.formatter_class,
                 ),
             )
             Injector(target_fn).inject(sub_parser, callback=m.stmt)

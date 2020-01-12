@@ -18,6 +18,12 @@ subcommands:
   {hello,byebye}
     hello
     byebye
+python -m handofcats 02multi.py hello -h
+usage: __main__.py hello [-h] [--name NAME]
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --name NAME  - (default: world)
 python -m handofcats 02multi.py --expose
 import typing as t
 def hello(*, name: str = "world"):
@@ -42,12 +48,12 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     subparsers.required = True
 
     fn = hello
-    sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
+    sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__, formatter_class=parser.formatter_class)
     sub_parser.add_argument('--name', required=False, default='world', help='-')
     sub_parser.set_defaults(subcommand=fn)
 
     fn = byebye  # type: ignore
-    sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
+    sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__, formatter_class=parser.formatter_class)
     sub_parser.add_argument('name', help='-')
     sub_parser.set_defaults(subcommand=fn)
 
