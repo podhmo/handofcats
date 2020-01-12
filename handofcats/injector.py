@@ -128,3 +128,8 @@ class Injector:
 
             logger.debug("add_argument %s %r", opt.option_name, kwargs)
             callback(parser.add_argument(opt.option_name, **kwargs))
+
+            # NOTE:
+            # varargs : t.Optional[str]
+            # if the function has *args is passed, this value is not None.
+            callback(parser.set_defaults(varargs=self.accessor.resolver.argspec.varargs))

@@ -53,10 +53,11 @@ def run_as_single_command(
     parser, activate_functions = setup_parser(m, fn, customizations=customizations)
     args = parser.parse_args(argv)
     params = vars(args).copy()
+    positionals = params.pop(params.pop("varargs"), None) or ()
 
     for activate in activate_functions:
         activate(params)
-    return fn(**params)
+    return fn(*positionals, **params)
 
 
 def run_as_multi_command(
