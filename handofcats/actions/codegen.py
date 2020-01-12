@@ -31,14 +31,16 @@ def emit(
             print(content, file=out)
         else:
             # NOTE: from __future__ import xxx 's position is beginning of file.
-            import re
-
-            def _repl(match: re.Match) -> str:
-                return f"{match.group(0)}\n{m.toplevel}"
-
-            rx = re.compile(r"^from __future__ import .*")
-            content = rx.sub(_repl, content, count=1)
-            print(content, file=out)
+            lines = content.split("\n")
+            buf = []
+            for i, line in enumerate(lines):
+                if "from __future__ import" in line:
+                    buf.append(line)
+                else:
+                    break
+            print("\n".join(buf), file=out)
+            print(m.toplevel, file=out)
+            print("\n".join(lines[i:]), file=out)
         print(m, file=out)
 
     if not inplace:
