@@ -1,4 +1,4 @@
-python -m handofcats 05not-function.py:xxxx
+python -m handofcats 05not-function.py:xxxx || exit 0
 usage: handofcats [--driver DRIVER] [--multi-driver MULTI_DRIVER] entry_point
 
 positional arguments:
@@ -12,4 +12,3 @@ optional arguments:
                         DI, multidriver class, this is experimental (default:
                         handofcats.driver:MultiDriver)
 handofcats: error: [33mmodule '05not-function' has no attribute 'xxxx'[0m
-make[1]: *** [05] Error 2

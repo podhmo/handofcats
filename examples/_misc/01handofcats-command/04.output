@@ -1,4 +1,4 @@
-python -m handofcats xxxx.py
+python -m handofcats xxxx.py || exit 0
 usage: handofcats [--driver DRIVER] [--multi-driver MULTI_DRIVER] entry_point
 
 positional arguments:
@@ -12,4 +12,3 @@ optional arguments:
                         DI, multidriver class, this is experimental (default:
                         handofcats.driver:MultiDriver)
 handofcats: error: [33m[Errno 2] No such file or directory: 'CWD/xxxx.py'[0m
-make[1]: *** [04] Error 2
