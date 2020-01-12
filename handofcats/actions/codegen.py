@@ -24,7 +24,7 @@ def emit(
     cleaned = cleanup_code(code)
 
     def _dump(out):
-        content = cleaned.strip()
+        content = cleaned.rstrip()
         if "from __future__ import" not in content:
             if hasattr(m, "toplevel"):
                 print(m.toplevel, file=out)
