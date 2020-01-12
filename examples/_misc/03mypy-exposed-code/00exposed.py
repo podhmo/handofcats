@@ -1,5 +1,5 @@
 import typing as t
-import typing as t
+
 
 
 def hello(*, name: str = "world", nickname: t.Optional[str] = None) -> None:
@@ -11,7 +11,7 @@ def byebye(*, args: t.List[str]) -> None:
 
 
 
-def main(argv: t.Optional[t.List[t.str]] = None) -> t.Any:
+def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(prog=hello.__name__, description=hello.__doc__)
