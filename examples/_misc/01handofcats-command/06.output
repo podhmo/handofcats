@@ -1,4 +1,4 @@
-python -m handofcats 06*.py:logger
+python -m handofcats 06*.py:logger || exit 0
 usage: handofcats [--driver DRIVER] [--multi-driver MULTI_DRIVER] entry_point
 
 positional arguments:
@@ -12,4 +12,3 @@ optional arguments:
                         DI, multidriver class, this is experimental (default:
                         handofcats.driver:MultiDriver)
 handofcats: error: [33m[Errno 2] No such file or directory: '/Users/nao/vboxshare/venvs/my/handofcats/examples/_misc/01handofcats-command/06*.py'[0m
-make[1]: *** [06] Error 2

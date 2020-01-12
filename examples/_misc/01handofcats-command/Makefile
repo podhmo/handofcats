@@ -39,14 +39,14 @@ default:
 
 # file not found
 04:
-	python -m handofcats xxxx.py
+	python -m handofcats xxxx.py || exit 0
 
 # attr is not found
 05:
-	python -m handofcats $(shell echo $@*.py):xxxx
+	python -m handofcats $(shell echo $@*.py):xxxx || exit 0
 06:
 # attr is not function
-	python -m handofcats $(shell echo $@*.py):logger
+	python -m handofcats $(shell echo $@*.py):logger || exit 0
 
 # help
 show-help:
