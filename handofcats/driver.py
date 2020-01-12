@@ -6,15 +6,16 @@ from .types import (
     CustomizeSetupFunction,
     CustomizeActivateFunction,
 )
+from .config import Config, default_config
 from . import customize
 
 
 class Driver:
     injector_class = Injector
 
-    def __init__(self, fn: TargetFunction, *, ignore_logging=False):
+    def __init__(self, fn: TargetFunction, *, config: Config = default_config):
         self.fn = fn
-        self.ignore_logging = ignore_logging
+        self.config = config
 
     def register(self, fn: TargetFunction) -> TargetFunction:
         self.fn = fn  # overwrite
@@ -27,30 +28,33 @@ class Driver:
     ):
         import argparse
 
-        first_parser = argparse.ArgumentParser(add_help=False)
-        customize.first_parser_setup(first_parser)
-
-        fargs, rest = first_parser.parse_known_args(argv)
-
         fn = self.fn
 
+        if self.config.ignore_expose:
+            rest_argv = argv
+        else:
+            first_parser = argparse.ArgumentParser(add_help=False)
+            customize.first_parser_setup(first_parser)
+
+            fargs, rest_argv = first_parser.parse_known_args(argv)
+
+            # code generation is needed
+            if fargs.expose:
+                from .actions import codegen
+
+                return codegen.run_as_single_command(
+                    self.setup_parser,
+                    fn=fn,
+                    argv=rest_argv,
+                    inplace=fargs.inplace,
+                    typed=fargs.typed,
+                )
+
         # run command normally
-        if not fargs.expose:
-            from .actions import commandline
+        from .actions import commandline
 
-            return commandline.run_as_single_command(
-                self.setup_parser, fn=fn, argv=rest, ignore_logging=self.ignore_logging
-            )
-
-        # code generation is needed
-        from .actions import codegen
-
-        return codegen.run_as_single_command(
-            self.setup_parser,
-            fn=fn,
-            argv=rest,
-            inplace=fargs.inplace,
-            typed=fargs.typed,
+        return commandline.run_as_single_command(
+            self.setup_parser, fn=fn, argv=rest_argv, config=self.config
         )
 
     def setup_parser(
@@ -92,9 +96,12 @@ class MultiDriver:
     injector_class = Injector
 
     def __init__(
-        self, functions: t.List[TargetFunction] = None, *, ignore_logging=False
+        self,
+        functions: t.List[TargetFunction] = None,
+        *,
+        config: Config = default_config,
     ):
-        self.ignore_logging = ignore_logging
+        self.config = config
         self.functions: t.List[TargetFunction] = functions or []
 
     def register(self, fn: TargetFunction) -> TargetFunction:
@@ -108,33 +115,33 @@ class MultiDriver:
     ):
         import argparse
 
-        first_parser = argparse.ArgumentParser(add_help=False)
-        customize.first_parser_setup(first_parser)
-
-        fargs, rest = first_parser.parse_known_args(argv)
-
         functions = self.functions
 
+        if self.config.ignore_expose:
+            rest_argv = argv
+        else:
+            first_parser = argparse.ArgumentParser(add_help=False)
+            customize.first_parser_setup(first_parser)
+
+            fargs, rest_argv = first_parser.parse_known_args(argv)
+
+            if fargs.expose:
+                # code generation is needed
+                from .actions import codegen
+
+                return codegen.run_as_multi_command(
+                    self.setup_parser,
+                    functions=functions,
+                    argv=rest_argv,
+                    inplace=fargs.inplace,
+                    typed=fargs.typed,
+                )
+
         # run command normally
-        if not fargs.expose:
-            from .actions import commandline
+        from .actions import commandline
 
-            return commandline.run_as_multi_command(
-                self.setup_parser,
-                functions=functions,
-                argv=rest,
-                ignore_logging=self.ignore_logging,
-            )
-
-        # code generation is needed
-        from .actions import codegen
-
-        return codegen.run_as_multi_command(
-            self.setup_parser,
-            functions=functions,
-            argv=rest,
-            inplace=fargs.inplace,
-            typed=fargs.typed,
+        return commandline.run_as_multi_command(
+            self.setup_parser, functions=functions, argv=rest_argv, config=self.config,
         )
 
     def setup_parser(

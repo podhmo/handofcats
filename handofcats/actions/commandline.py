@@ -3,6 +3,7 @@ from importlib import import_module
 from types import ModuleType
 from ..types import TargetFunction, SetupParserFunction
 from .. import customize
+from ..config import Config, default_config
 
 
 class _FakeModule:
@@ -38,14 +39,14 @@ def run_as_single_command(
     *,
     fn: TargetFunction,
     argv: t.Optional[str] = None,
-    ignore_logging: bool = False,
+    config: Config = default_config,
 ) -> t.Any:
     m = _FakeModule()
 
-    customizations = [
-        customize.first_parser_setup,
-    ]
-    if not ignore_logging:
+    customizations = []
+    if not config.ignore_expose:
+        customizations.append(customize.first_parser_setup)
+    if not config.ignore_logging:
         # TODO: include generated code, emitted by `--expose`
         customizations.append(customize.logging_setup)
 
@@ -63,14 +64,14 @@ def run_as_multi_command(
     *,
     functions: t.List[TargetFunction],
     argv: t.Optional[str] = None,
-    ignore_logging: bool = False,
+    config: Config = default_config,
 ) -> t.Any:
     m = _FakeModule()
 
-    customizations = [
-        customize.first_parser_setup,
-    ]
-    if not ignore_logging:
+    customizations = []
+    if not config.ignore_expose:
+        customizations.append(customize.first_parser_setup)
+    if not config.ignore_logging:
         # TODO: include generated code, emitted by `--expose`
         customizations.append(customize.logging_setup)
 
