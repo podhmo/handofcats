@@ -24,6 +24,8 @@ def emit(
     cleaned = cleanup_code(code)
 
     def _dump(out):
+        if hasattr(m, "toplevel"):
+            print(m.toplevel, file=out)
         print(cleaned, file=out)
         print(m, file=out)
 
@@ -82,15 +84,17 @@ def run_as_single_command(
     """
 
     m = Module()
-    m.toplevel = m.submodule()
+    m.sep()
+    m.toplevel = Module()
+
     if fn.__name__ == outname:
         outname = titleize(outname)  # main -> Main
 
     if typed:
-        m.sep()
-        m.from_("typing").import_("Optional, List  # noqa: E402")
-        m.sep()
-        mdef = m.def_(outname, "argv: Optional[List[str]] = None", return_type="None")
+        m.toplevel.import_("typing", as_="t")
+        mdef = m.def_(
+            outname, "argv: t.Optional[t.List[t.str]] = None", return_type="t.Any"
+        )
     else:
         mdef = m.def_(outname, "argv=None")
 
@@ -202,16 +206,17 @@ def run_as_multi_command(
     """
 
     m = Module()
-    m.toplevel = m.submodule()
+    m.sep()
+    m.toplevel = Module()
 
     if outname in [fn.__name__ for fn in functions]:
         outname = titleize(outname)  # main -> Main
 
     if typed:
-        m.sep()
-        m.from_("typing").import_("Optional, List  # noqa: E402")
-        m.sep()
-        mdef = m.def_(outname, "argv: Optional[List[str]] = None", return_type="None")
+        m.toplevel.import_("typing", as_="t")
+        mdef = m.def_(
+            outname, "argv: t.Optional[t.List[t.str]] = None", return_type="t.Any"
+        )
     else:
         mdef = m.def_(outname, "argv=None")
 

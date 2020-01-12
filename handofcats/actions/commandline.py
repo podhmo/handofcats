@@ -33,6 +33,9 @@ class _FakeModule:
     def getattr(self, ob: t.Any, name: str) -> t.Optional[t.Any]:
         return getattr(ob, name)
 
+    def unnewline(self) -> None:
+        pass
+
 
 def run_as_single_command(
     setup_parser: SetupParserFunction[TargetFunction],
