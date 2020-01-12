@@ -1,5 +1,5 @@
 
-from handofcats import Config
+
 def hello():
     print("hello")
 
