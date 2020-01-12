@@ -91,9 +91,11 @@ def run_as_single_command(
         outname = titleize(outname)  # main -> Main
 
     if typed:
+        # import typing as t
         m.toplevel.import_("typing", as_="t")
+
         mdef = m.def_(
-            outname, "argv: t.Optional[t.List[t.str]] = None", return_type="t.Any"
+            outname, "argv: t.Optional[t.List[str]] = None", return_type="t.Any"
         )
     else:
         mdef = m.def_(outname, "argv=None")
@@ -128,6 +130,8 @@ def run_as_single_command(
 
         will_be_removed = set()
         for sym in symbols.values():
+            if typed and sym.name == "t" and sym.fullname == "typing":
+                will_be_removed.add(sym.id)  # duplicated
             if sym.fullname.startswith("handofcats"):
                 will_be_removed.add(sym.id)
 
@@ -213,9 +217,11 @@ def run_as_multi_command(
         outname = titleize(outname)  # main -> Main
 
     if typed:
+        # import typing as t
         m.toplevel.import_("typing", as_="t")
+
         mdef = m.def_(
-            outname, "argv: t.Optional[t.List[t.str]] = None", return_type="t.Any"
+            outname, "argv: t.Optional[t.List[str]] = None", return_type="t.Any"
         )
     else:
         mdef = m.def_(outname, "argv=None")
@@ -259,6 +265,9 @@ def run_as_multi_command(
 
         will_be_removed = set()
         for sym in imported_symbols.values():
+            if typed and sym.name == "t" and sym.fullname == "typing":
+                will_be_removed.add(sym.id)  # duplicated
+
             if sym.fullname.startswith("handofcats"):
                 will_be_removed.add(sym.id)
 
