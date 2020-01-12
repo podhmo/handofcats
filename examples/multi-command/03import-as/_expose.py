@@ -1,11 +1,11 @@
 
+
 def hello(*, name: str = "world"):
     print(f"hello {name}")
 
 
 def byebye(name):
     print(f"byebye {name}")
-
 
 
 def main(argv=None):
@@ -20,7 +20,7 @@ def main(argv=None):
     sub_parser.add_argument('--name', required=False, default='world', help='-')
     sub_parser.set_defaults(subcommand=fn)
 
-    fn = byebye
+    fn = byebye  # type: ignore
     sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__)
     sub_parser.add_argument('name', help='-')
     sub_parser.set_defaults(subcommand=fn)

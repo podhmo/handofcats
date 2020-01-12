@@ -1,7 +1,7 @@
 python -m handofcats run-debug.py:use_root_logger
 WARNING:root:And this, too
 DEBUG=1 python -m handofcats run-debug.py:use_root_logger
-level:DEBUG	name:root	where:run-debug.py:7	relative:56.243181228637695	message:This message should go to the log file
-level:INFO	name:root	where:run-debug.py:8	relative:56.44631385803223	message:So should this
-level:WARNING	name:root	where:run-debug.py:9	relative:56.54120445251465	message:And this, too
+level:DEBUG	name:root	where:run-debug.py:7	relative:57.301998138427734	message:This message should go to the log file
+level:INFO	name:root	where:run-debug.py:8	relative:57.43885040283203	message:So should this
+level:WARNING	name:root	where:run-debug.py:9	relative:57.51395225524902	message:And this, too
 ** handofcats.customize: DEBUG=1, activate logging **
