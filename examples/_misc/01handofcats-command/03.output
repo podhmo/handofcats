@@ -18,6 +18,12 @@ subcommands:
   {hello,byebye}
     hello
     byebye
+python -m handofcats 03multi-decorated.py hello -h
+usage: __main__.py hello [-h] [--name NAME]
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --name NAME  -
 python -m handofcats 03multi-decorated.py --expose
 import typing as t
 

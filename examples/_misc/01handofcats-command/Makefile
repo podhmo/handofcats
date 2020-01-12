@@ -27,6 +27,7 @@ default:
 	python -m handofcats $(shell echo $@*.py) hello
 	python -m handofcats $(shell echo $@*.py) byebye foo
 	python -m handofcats $(shell echo $@*.py) -h
+	python -m handofcats $(shell echo $@*.py) hello -h
 	python -m handofcats $(shell echo $@*.py) --expose
 
 # multi command
@@ -34,6 +35,7 @@ default:
 	python -m handofcats $(shell echo $@*.py) hello
 	python -m handofcats $(shell echo $@*.py) byebye foo
 	python -m handofcats $(shell echo $@*.py) -h
+	python -m handofcats $(shell echo $@*.py) hello -h
 	python -m handofcats $(shell echo $@*.py) --expose
 
 
@@ -46,7 +48,7 @@ default:
 	python -m handofcats $(shell echo $@*.py):xxxx || exit 0
 06:
 # attr is not function
-	python -m handofcats $(shell echo $@*.py):logger || exit 0
+	( python -m handofcats $(shell echo $@*.py):logger 2>&1 || exit 0 ) | sed 's@$(shell pwd)@CWD@g'
 
 # help
 show-help:
