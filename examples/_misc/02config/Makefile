@@ -6,3 +6,6 @@ default: 00 01
 # ignore-expose=True -> expose options are disabled
 01:
 	python $(shell echo $@*.py) -h | tee $(patsubst %.py,%.output,$(shell echo $@*.py))
+# ignore-expose=True, with multi-command
+02:
+	python $(shell echo $@*.py) -h | tee $(patsubst %.py,%.output,$(shell echo $@*.py))
