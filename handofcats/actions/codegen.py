@@ -133,7 +133,7 @@ def run_as_single_command(
         # main()
         m.stmt(f"{outname}()")
 
-    emit(m, fn, inplace=inplace, cleanup_code=partial(cleanup_code, typed=typed))
+    emit(m, fn, inplace=inplace, cleanup_code=partial(_cleanup_code, typed=typed))
 
 
 def run_as_multi_command(
@@ -222,10 +222,10 @@ def run_as_multi_command(
         m.stmt(f"{outname}()")
 
     fake = functions[0]
-    emit(m, fake, inplace=inplace, cleanup_code=partial(cleanup_code, typed=typed))
+    emit(m, fake, inplace=inplace, cleanup_code=partial(_cleanup_code, typed=typed))
 
 
-def cleanup_code(code: str, *, typed: bool) -> str:
+def _cleanup_code(code: str, *, typed: bool) -> str:
     from prestring.python.parse import (
         parse_string,
         PyTreeVisitor,
