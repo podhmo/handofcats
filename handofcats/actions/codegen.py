@@ -124,7 +124,7 @@ def run_as_single_command(
 
         will_be_removed = set()
         for sym in symbols.values():
-            if sym.fullname == "handofcats.as_command":
+            if sym.fullname.startswith("handofcats"):
                 will_be_removed.add(sym.id)
 
         class RemoveNodeVisitor(PyTreeVisitor):
@@ -254,13 +254,14 @@ def run_as_multi_command(
 
         will_be_removed = set()
         for sym in imported_symbols.values():
-            if sym.fullname == "handofcats.as_subcommand":
+            if sym.fullname.startswith("handofcats"):
                 will_be_removed.add(sym.id)
+
+            if sym.fullname == "handofcats.as_subcommand":
                 candidates.append(f"@{sym.name}.register")
                 candidates.append(f"@{sym.name}")
                 candidates.append(f"{sym.name}.run(")
             elif sym.fullname == "handofcats":
-                will_be_removed.add(sym.id)
                 candidates.append(f"@{sym.name}.as_subcommand.register")
                 candidates.append(f"@{sym.name}.as_subcommand")
                 candidates.append(f"{sym.name}.as_subcommand.run(")
