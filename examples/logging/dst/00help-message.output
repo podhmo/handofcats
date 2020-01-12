@@ -1,4 +1,4 @@
-usage: run [-h] [--expose] [--inplace] [--typed]
+usage: run [-h] [--expose] [--inplace] [--untyped]
            [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
 
 positional arguments:
@@ -8,5 +8,5 @@ optional arguments:
   -h, --help            show this help message and exit
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
-  --typed               typed expression is dumped (default: False)
+  --untyped             untyped expression is dumped (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}

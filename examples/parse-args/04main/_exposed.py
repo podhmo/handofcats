@@ -1,10 +1,9 @@
-
-
+import typing as t
 def main(name: str) -> None:
     pass
 
 
-def Main(argv=None):
+def Main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(prog=main.__name__, description=main.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))

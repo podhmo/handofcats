@@ -1,7 +1,7 @@
 help
 ```console
 $ handofcats dump.py:run -h
-usage: run [-h] [--format {json,csv}] [--expose] [--inplace] [--typed]
+usage: run [-h] [--format {json,csv}] [--expose] [--inplace] [--untyped]
            [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
 
 optional arguments:
@@ -9,7 +9,7 @@ optional arguments:
   --format {json,csv}   - (default: json)
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
-  --typed               typed expression is dumped (default: False)
+  --untyped             untyped expression is dumped (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run
@@ -33,9 +33,9 @@ bar,21
 `--expose`
 ```console
 $ handofcats dump.py:run --expose | tee dump-exposed.py
-
-import sys
 import typing as t
+import sys
+
 import typing_extensions as tx
 
 def csv_dump(rows: t.Sequence[dict]) -> None:
@@ -69,7 +69,7 @@ def run(*, format: DumpFormat = "json"):
     dump(rows)
 
 
-def main(argv=None):
+def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(prog=run.__name__, description=run.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))

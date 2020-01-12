@@ -1,9 +1,9 @@
-
+import typing as t
 def sum(x: int, y: int) -> None:
     print(f"{x} + {y} = {x + y}")
 
 
-def main(argv=None):
+def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(prog=sum.__name__, description=sum.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))

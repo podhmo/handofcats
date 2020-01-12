@@ -1,7 +1,7 @@
 help
 ```console
 $ handofcats sum.py:psum -h
-usage: psum [-h] [--ys YS] [--expose] [--inplace] [--typed]
+usage: psum [-h] [--ys YS] [--expose] [--inplace] [--untyped]
             [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
             [xs [xs ...]]
 
@@ -13,7 +13,7 @@ optional arguments:
   --ys YS               - (default: None)
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
-  --typed               typed expression is dumped (default: False)
+  --untyped             untyped expression is dumped (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run
@@ -27,17 +27,14 @@ handofcats sum.py:psum 10 20 --ys 1 --ys 2
 `--expose`
 ```console
 $ handofcats sum.py:psum --expose | tee sum-exposed.py
-
 import typing as t
-
-
 def psum(xs: t.List[int], *, ys: t.Optional[t.List[int]] = None):
     print(f"Σ {xs} = {sum(xs)}")
     if ys:
         print(f"Σ {xs} + Σ {ys} = {sum(xs) + sum(ys)}")
 
 
-def main(argv=None):
+def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(prog=psum.__name__, description=psum.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
