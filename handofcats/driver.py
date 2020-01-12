@@ -75,6 +75,14 @@ class Driver:
             argparse.ArgumentParser(
                 prog=m.getattr(m.symbol(fn), "__name__"),
                 description=m.getattr(m.symbol(fn), "__doc__"),
+                formatter_class=m.symbol(type)(
+                    "_HelpFormatter",
+                    (
+                        argparse.ArgumentDefaultsHelpFormatter,
+                        argparse.RawTextHelpFormatter,
+                    ),
+                    {},
+                ),
             ),
         )
 
@@ -156,7 +164,19 @@ class MultiDriver:
         m.sep()
 
         # parser = argparse.ArgumentParser()
-        parser = m.let("parser", argparse.ArgumentParser(),)
+        parser = m.let(
+            "parser",
+            argparse.ArgumentParser(
+                formatter_class=m.symbol(type)(
+                    "_HelpFormatter",
+                    (
+                        argparse.ArgumentDefaultsHelpFormatter,
+                        argparse.RawTextHelpFormatter,
+                    ),
+                    {},
+                ),
+            ),
+        )
 
         activate_functions = []
         for setup in customizations or []:
