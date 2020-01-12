@@ -1,41 +1,34 @@
 help
 ```console
-$ handofcats dump.py:runusauusage: psum [-h] [--ys YS] [--expose] [--inplace] [--untyped]
-            [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
-            [xs [xs ...]]
+$ python greeting.py -h
+usage: greeting [-h] [--is-surprised] [--name NAME] [--expose] [--inplace]
+                [--untyped]
+                [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
+                message
+
+greeting message
 
 positional arguments:
-  xs                    - (default: None)
+  message               -
 
 optional arguments:
   -h, --help            show this help message and exit
-  --ys YS               - (default: None)
+  --is-surprised        - (default: False)
+  --name NAME           - (default: foo)
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
   --untyped             untyped expression is dumped (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
-(default: False)
-  --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run
 ```console
-$ handofcats sum.py:psum [
-  {
-Σ [10, 20] = 30
-handofcats sum.py:psum 10 20 --ys 1 --ys 2
-Σ [10, 20] = 30
-Σ [10, 20] + Σ [1, 2] = 33
-n -W ignorename,age
-foo,20
-bar,21
- --format=csv
-name,age
-foo,20
-bar,21
+$ python greeting.py --is-surprised hello
+foo: hello!
 ```
 `--expose`
 ```console
-$ handofcats sum.py:psum --expose | tee sum-exposed.pyimimport typing as t
+$ python greeting.py --expose | tee greeting-exposed.py
+import typing as t
 
 def greeting(message: str, is_surprised: bool = False, name: str = "foo") -> None:
     """greeting message"""
