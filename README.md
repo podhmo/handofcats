@@ -10,9 +10,7 @@ plain python function. If the function is type annotated, it is used.
     is helpful ✨
   - If you want something like [create-react-app's
     eject](https://github.com/facebook/create-react-app#philosophy), use
-    <span class="title-ref">
-    </span><span class="title-ref">--expose</span>[option](https://github.com/podhmo/handofcats#--expose)
-    ◀️
+    [`--expose` option](https://github.com/podhmo/handofcats#--expose) ◀️
 
 ## `as_command()`
 
