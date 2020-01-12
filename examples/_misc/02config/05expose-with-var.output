@@ -9,7 +9,6 @@ def byebye(*, name: str):
     print(f"byebye {name}")
 
 
-cfg = Config(ignore_logging=True)
 if __name__ == "__main__":
     pass
 

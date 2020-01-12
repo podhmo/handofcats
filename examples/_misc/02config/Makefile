@@ -1,4 +1,4 @@
-default: 00 01 02 03 04
+default: 00 01 02 03 04 05
 
 # ignore-logging=True -> logging options are disabled
 00:
