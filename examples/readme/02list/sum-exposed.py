@@ -11,7 +11,7 @@ def psum(xs: t.List[int], *, ys: t.Optional[t.List[int]] = None):
 def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
-    parser = argparse.ArgumentParser(prog=psum.__name__, description=psum.__doc__, formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
+    parser = argparse.ArgumentParser(prog=psum.__name__, description=psum.__doc__, formatter_class=type('_HelpFormatter', (argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter), {}))
     parser.print_usage = parser.print_help  # type: ignore
     parser.add_argument('xs', type=int, nargs='*', help='-')
     parser.add_argument('--ys', required=False, action='append', type=int, help='-')

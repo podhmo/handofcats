@@ -11,7 +11,7 @@ def byebye(name):
 def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
-    parser = argparse.ArgumentParser(formatter_class=type('_HelpFormatter', [argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter], {}))
+    parser = argparse.ArgumentParser(formatter_class=type('_HelpFormatter', (argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter), {}))
     subparsers = parser.add_subparsers(title='subcommands', dest='subcommand')
     subparsers.required = True
 

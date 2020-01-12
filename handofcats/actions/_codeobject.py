@@ -67,7 +67,7 @@ def as_string(val: t.Any) -> t.Union[t.Dict[str, t.Any], t.List[t.Any], str, UnR
     if isinstance(val, dict):
         return {k: as_string(v) for k, v in val.items()}
     elif isinstance(val, (tuple, list)):
-        return [as_string(v) for v in val]
+        return val.__class__([as_string(v) for v in val])
     elif hasattr(val, "emit"):
         return UnRepr(val)
     elif callable(val) and hasattr(val, "__name__"):
