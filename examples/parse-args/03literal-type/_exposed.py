@@ -1,4 +1,6 @@
 import typing as t
+
+
 from typing_extensions import Literal
 
 Mode = Literal["a", "w", "r"]

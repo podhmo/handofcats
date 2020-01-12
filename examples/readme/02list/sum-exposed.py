@@ -1,4 +1,7 @@
 import typing as t
+
+
+
 def psum(xs: t.List[int], *, ys: t.Optional[t.List[int]] = None):
     print(f"Σ {xs} = {sum(xs)}")
     if ys:

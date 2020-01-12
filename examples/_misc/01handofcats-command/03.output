@@ -20,6 +20,7 @@ subcommands:
     byebye
 python -m handofcats 03multi-decorated.py --expose
 import typing as t
+
 def hello(*, name: str = "world"):
     print(f"hello {name}")
 

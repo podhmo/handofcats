@@ -1,4 +1,5 @@
 import typing as t
+
 def greeting(message: str, is_surprised: bool = False, name: str = "foo") -> None:
     """greeting message"""
     suffix = "!" if is_surprised else ""

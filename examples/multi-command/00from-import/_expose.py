@@ -1,4 +1,5 @@
 import typing as t
+
 def hello(*, name: str = "world"):
     print(f"hello {name}")
 

@@ -13,6 +13,7 @@ optional arguments:
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 python -m handofcats 01single-decorated.py:hello --expose
 import typing as t
+
 def hello(*, name: str = "world"):
     print(f"hello {name}")
 
