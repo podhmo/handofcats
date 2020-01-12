@@ -24,9 +24,21 @@ def emit(
     cleaned = cleanup_code(code)
 
     def _dump(out):
-        if hasattr(m, "toplevel"):
-            print(m.toplevel, file=out)
-        print(cleaned.rstrip(), file=out)
+        content = cleaned.strip()
+        if "from __future__ import" not in content:
+            if hasattr(m, "toplevel"):
+                print(m.toplevel, file=out)
+            print(content, file=out)
+        else:
+            # NOTE: from __future__ import xxx 's position is beginning of file.
+            import re
+
+            def _repl(match: re.Match) -> str:
+                return f"{match.group(0)}\n{m.toplevel}"
+
+            rx = re.compile(r"^from __future__ import .*")
+            content = rx.sub(_repl, content, count=1)
+            print(content, file=out)
         print(m, file=out)
 
     if not inplace:
