@@ -47,7 +47,7 @@ class Driver:
                     fn=fn,
                     argv=rest_argv,
                     inplace=fargs.inplace,
-                    typed=fargs.typed,
+                    typed=not fargs.untyped,
                 )
 
         # run command normally
@@ -144,7 +144,7 @@ class MultiDriver:
                     functions=functions,
                     argv=rest_argv,
                     inplace=fargs.inplace,
-                    typed=fargs.typed,
+                    typed=not fargs.untyped,
                 )
 
         # run command normally

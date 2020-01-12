@@ -13,7 +13,7 @@ def first_parser_setup(parser):
         "--inplace", action="store_true", help="overwrite file"
     )  # xxx (./actions/codegen.py)
     parser.add_argument(
-        "--typed", action="store_true", help="typed expression is dumped"
+        "--untyped", action="store_true", help="untyped expression is dumped",
     )  # xxx (./actions/codegen.py)
     return first_parser_activate
 
@@ -21,7 +21,7 @@ def first_parser_setup(parser):
 def first_parser_activate(params):
     params.pop("expose", None)  # xxx: ./actions/codegen.py
     params.pop("inplace", None)  # xxx: ./actions/codegen.py
-    params.pop("typed", None)  # xxx: ./actions/codegen.py
+    params.pop("untyped", None)  # xxx: ./actions/codegen.py
 
 
 def logging_setup(parser):
