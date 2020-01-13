@@ -27,12 +27,12 @@ lint:
 # 	mypy --strict --strict-equality --ignore-missing-imports handofcats
 
 build:
-#	pip install wheel
-	python setup.py bdist_wheel
+#	pip install wheel readme_renderer[md]
+	python setup.py sdist bdist_wheel
 
-upload:
+upload: build
 #	pip install twine
 	twine check dist/handofcats-$(shell cat VERSION)*
-	twine upload dist/handofcats-$(shell cat VERSION)*
+	twine upload --verbose dist/handofcats-$(shell cat VERSION)*
 
 .PHONY: test format lint build upload examples typing

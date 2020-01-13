@@ -5,15 +5,15 @@
 A tiny magically Converter that making executable command from
 plain python function. If the function is type annotated, it is used.
 
-  - If you want single-command, `as_command()` is helpful ✨
-  - If you want sub-commands, `as_subcommand()` is helpful ✨
-  - If you want something like [create-react-app's eject](https://github.com/facebook/create-react-app#philosophy), use `--expose` option](https://github.com/podhmo/handofcats#--expose) ◀️
+- If you want single-command, `as_command()` is helpful ✨
+- If you want sub-commands, `as_subcommand()` is helpful ✨
+- If you want something like [create-react-app's eject](https://github.com/facebook/create-react-app#philosophy), use [`--expose` option](https://github.com/podhmo/handofcats#--expose) ◀️
 
 ## `as_command()`
 
 greeting.py
 
-``` python
+```python
 from handofcats import as_command
 
 @as_command
@@ -127,7 +127,7 @@ optional arguments:
   --name NAME  (default: 'world')
 ```
 
-# `--expose`
+## `--expose`
 
 Runing with `--expose` option, generationg the code that dropping
 dependencies of handofcats module.
@@ -165,14 +165,14 @@ if __name__ == '__main__':
     main()
 ```
 
-## `--expose` with `--inplace`
+### `--expose` with `--inplace`
 
 In addition, running with `inplace` option, when `--expose`, overwrite
 target source code.
 
 For handofcats, eject action is `--inplace --exepose`.
 
-# `handofcats` command
+## `handofcats` command
 
 sum.py
 
@@ -180,7 +180,6 @@ sum.py
 def sum(x: int, y: int) -> None:
     print(f"{x} + {y} = {x + y}")
 ```
-
 
 It is also ok, calling the function that not decorated via handofcats
 command.
@@ -207,7 +206,7 @@ optional arguments:
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 
-# `--expose` with handofcats command
+### `--expose` with handofcats command
 
 Passed in the form `<filename>.py`, it will be interpreted as a
 sub-commands. Of course, the `--expose` option also works.
@@ -216,8 +215,6 @@ And passed in the form `<filename>.py:<function name>`, it will be
 interpreted as a single-command.
 
 So, plain python function only needed.
-
-<details>
 
 cli.py
 
@@ -291,11 +288,9 @@ $ handofcats cli.py:hello --expose
 ...
 ```
 
-</details>
+## experimental
 
-# experimental
-
-## sequences
+### sequences
 
 ``` python
 from typing import List, Optional
@@ -307,7 +302,7 @@ def psum(xs: List[int], *, ys: Optional[List[int]] = None):
     ..
 ```
 
-## choices
+### choices
 
 ``` python
 from typing_extensions import Literal

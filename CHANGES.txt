@@ -1,3 +1,9 @@
+3.0.0
+
+- add sub-commands support
+- some refactoring
+- on `--expose`, default format is typed code, changes to more mypy friendly output
+
 2.5.0
 
 - logging option for lazy person

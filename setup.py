@@ -26,7 +26,8 @@ setup(
     version=open(os.path.join(here, "VERSION")).read().strip(),
     description="python function to command translator",
     long_description=README + "\n\n" + CHANGES,
-    long_description_content_type="text/markdown",
+    # long_description_content_type="text/markdown; charset=UTF-8; variant=GFM",
+    long_description_content_type="text/plain",
     # https://pypi.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         "Development Status :: 4 - Beta",
