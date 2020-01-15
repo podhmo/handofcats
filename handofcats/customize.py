@@ -1,6 +1,23 @@
 import logging
 import os
 import sys
+from functools import partial
+
+
+class _Marker:
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+    def __call__(self, fn):
+        setattr(fn, self.name, True)
+        return fn
+
+    def is_(self, fn):
+        return getattr(fn, self.name, False)
+
+
+codegen = _Marker("_codegen_need")
+need_codegen = codegen.is_
 
 
 def first_parser_setup(parser):
@@ -24,14 +41,17 @@ def first_parser_activate(params):
     params.pop("untyped", None)  # xxx: ./actions/codegen.py
 
 
-def logging_setup(parser):
+@codegen
+def logging_setup(m, parser):
+    m.stmt("# setup")
     logging_levels = list(logging._nameToLevel.keys())
     parser.add_argument("--logging", choices=logging_levels, default=None)
-    return logging_activate
+    return partial(logging_activate, m)
 
 
+@codegen
 def logging_activate(
-    params, *, logging_level=None, logging_format=None, logging_stream=None
+    m, params, *, logging_level=None, logging_format=None, logging_stream=None
 ):
     logging_format = (
         logging_format

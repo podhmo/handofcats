@@ -1,4 +1,5 @@
 import typing as t
+import contextlib
 from importlib import import_module
 from types import ModuleType
 from ..types import TargetFunction, SetupParserFunction
@@ -17,6 +18,24 @@ class _FakeModule:
 
     def stmt(self, ob: t.Any) -> t.Any:
         return ob
+
+    @contextlib.contextmanager
+    def if_(self, cond: bool) -> None:
+        if not cond:
+            raise Fail(cond)
+        yield None
+
+    def is_(self, x: t.Any, y: t.Any) -> bool:
+        return x is y
+
+    def is_not(self, x: t.Any, y: t.Any) -> bool:
+        return x is not y
+
+    def in_(self, x: t.Any, y: t.Any) -> bool:
+        return x in y
+
+    def format_(self, fmt: str, *args, **kwargs) -> str:
+        return fmt.format(*args, **kwargs)
 
     def sep(self):
         pass
@@ -37,6 +56,10 @@ class _FakeModule:
         pass
 
 
+class Fail(Exception):
+    pass
+
+
 def run_as_single_command(
     setup_parser: SetupParserFunction[TargetFunction],
     *,
@@ -50,7 +73,6 @@ def run_as_single_command(
     if not config.ignore_expose:
         customizations.append(customize.first_parser_setup)
     if not config.ignore_logging:
-        # TODO: include generated code, emitted by `--expose`
         customizations.append(customize.logging_setup)
 
     parser, activate_functions = setup_parser(m, fn, customizations=customizations)
@@ -75,7 +97,6 @@ def run_as_multi_command(
     if not config.ignore_expose:
         customizations.append(customize.first_parser_setup)
     if not config.ignore_logging:
-        # TODO: include generated code, emitted by `--expose`
         customizations.append(customize.logging_setup)
 
     parser, activate_functions = setup_parser(

@@ -7,6 +7,8 @@ import pathlib
 from functools import partial
 from prestring.naming import titleize
 from ..types import TargetFunction, SetupParserFunction
+from ..config import Config, default_config
+from .. import customize
 from ._codeobject import Module
 
 
@@ -70,6 +72,7 @@ def run_as_single_command(
     *,
     fn: TargetFunction,
     argv: t.Optional[str],
+    config: Config = default_config,
     outname: str = "main",
     inplace: bool = False,
     typed: bool = False,
@@ -117,13 +120,19 @@ def run_as_single_command(
 
     # def main(argv=None):
     with mdef:
-        parser, _ = setup_parser(m, fn, customizations=[])
+        customizations = []
+        if not config.ignore_logging:
+            customizations.append(customize.logging_setup)
+        parser, activate_functions = setup_parser(m, fn, customizations=customizations)
 
         # args = parser.parse_args(argv)
         args = m.let("args", parser.parse_args(m.symbol("argv")))
 
         # params = vars(args).copy()
-        _ = m.let("params", m.symbol("vars")(args).copy())
+        params = m.let("params", m.symbol("vars")(args).copy())
+
+        for activate in activate_functions:
+            activate(params)
 
         # return fn(**params)
         m.return_(f"{fn.__name__}(**params)")
@@ -141,6 +150,7 @@ def run_as_multi_command(
     *,
     functions: t.List[TargetFunction],
     argv: t.Optional[str] = None,
+    config: Config = default_config,
     outname: str = "main",
     inplace: bool = False,
     typed: bool = False,
@@ -202,13 +212,19 @@ def run_as_multi_command(
 
     # def main(argv=None):
     with mdef:
-        parser, _ = setup_parser(m, functions, customizations=[])
+        customizations = []
+        if not config.ignore_logging:
+            customizations.append(customize.logging_setup)
+        parser, activate_functions = setup_parser(m, fn, customizations=customizations)
 
         # args = parser.parse_args(argv)
         args = m.let("args", parser.parse_args(m.symbol("argv")))
 
         # params = vars(args).copy()
         params = m.let("params", m.symbol("vars")(args).copy())
+
+        for activate in activate_functions:
+            activate(params)
 
         # subcommand = params.pop("subcommand")
         m.let("subcommand", params.pop("subcommand"))

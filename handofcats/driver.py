@@ -96,7 +96,10 @@ class Driver:
 
         activate_functions = []
         for setup in customizations or []:
-            afn = setup(parser)
+            if customize.need_codegen(setup):
+                afn = setup(m, parser)
+            else:
+                afn = setup(parser)
             if afn is not None:
                 activate_functions.append(afn)
         return parser, activate_functions
@@ -182,7 +185,10 @@ class MultiDriver:
 
         activate_functions = []
         for setup in customizations or []:
-            afn = setup(parser)
+            if customize.need_codegen(setup):
+                afn = setup(m, parser)
+            else:
+                afn = setup(parser)
             if afn is not None:
                 activate_functions.append(afn)
 

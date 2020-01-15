@@ -2,7 +2,7 @@ from functools import update_wrapper
 import typing as t
 import typing_extensions as tx
 from prestring.python import Module as _Module
-from prestring.utils import LazyArgumentsAndKeywords, UnRepr
+from prestring.utils import LazyArgumentsAndKeywords, UnRepr, LazyFormat
 
 # note: internal package, move to prestring?
 
@@ -28,8 +28,23 @@ class Module(_Module):  # type: ignore
             return fmt_or_emittable.emit(m=self)
         return super().stmt(str(fmt_or_emittable), *args, **kwargs)  # type: ignore
 
+    def is_(self, x: "Emittable", y: "Emittable") -> "Stringer":
+        """like `is <ob>`"""
+        return LazyFormat("{} is {}", x, y)
+
+    def is_not(self, x: "Emittable", y: "Emittable") -> "Stringer":
+        """like `is <ob>`"""
+        return LazyFormat("{} is not {}", x, y)
+
+    def in_(self, x: "Emittable", y: "Emittable") -> "Stringer":
+        """like `in <ob>`"""
+        return LazyFormat("{} in {}", x, y)
+
+    def format_(self, fmt: str, *args: t.Any, **kwargs: t.Any) -> "_LazyFormatRepr":
+        return _LazyFormatRepr(fmt, *args, **kwargs)
+
     def let(self, name: str, val: "Emittable") -> "Emittable":
-        """like `<name> = ob`"""
+        """like `<name> = <ob>`"""
         assigned = let(name, val)
         assigned.emit(m=self)
         return assigned
@@ -44,9 +59,16 @@ class Module(_Module):  # type: ignore
 
     def symbol(self, ob: t.Union[str, t.Any]) -> "Symbol":
         """like `<ob>`"""
-        if isinstance(ob, str):
-            return Symbol(ob)
+        if isinstance(ob, (str, int, float, bool)):
+            return Symbol(str(ob))
         return Symbol(ob.__name__)
+
+
+class _LazyFormatRepr(LazyFormat):
+    def __str__(self) -> str:
+        return "{!r}.format({})".format(
+            self.fmt, LazyArgumentsAndKeywords(self.args, self.kwargs)
+        )
 
 
 class Emittable(tx.Protocol):
@@ -68,6 +90,10 @@ def as_string(val: t.Any) -> t.Union[t.Dict[str, t.Any], t.List[t.Any], str, UnR
         return {k: as_string(v) for k, v in val.items()}
     elif isinstance(val, (tuple, list)):
         return val.__class__([as_string(v) for v in val])
+    elif getattr(val, "__module__", None) == "prestring.utils":
+        return val
+    elif isinstance(val, _LazyFormatRepr):  # xxx:
+        return str(val)
     elif hasattr(val, "emit"):
         return UnRepr(val)
     elif callable(val) and hasattr(val, "__name__"):
