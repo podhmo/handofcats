@@ -1,6 +1,6 @@
 from functools import partial
 import contextlib
-from .actions._fake import Fail
+from .actions._fake import Fail, _FakeModule
 
 block = partial(contextlib.suppress, Fail)
 
@@ -43,11 +43,12 @@ def first_parser_activate(params):
 
 
 @codegen
-def logging_setup(m, parser):
+def logging_setup(parser, *, m=None):
+    m = m or _FakeModule()
     list_ = m.symbol(list)
 
     m.sep()
-    m.stmt("# setup logging")
+    m.stmt("# setup logging -- start")
     logging_ = m.import_("logging")
 
     # logging_level_choices = list(logging._nameToLevel.keys())
@@ -59,9 +60,10 @@ def logging_setup(m, parser):
     m.stmt(
         parser.add_argument("--logging", choices=logging_level_choices, default=None)
     )
+    m.stmt("# setup logging -- end")
     m.sep()
 
-    return partial(logging_activate, m)
+    return partial(logging_activate, m=m)
 
 
 DEFAULT_LOGGING_FORMAT = "level:%(levelname)s	name:%(name)s	where:%(filename)s:%(lineno)s	relative:%(relativeCreated)s	message:%(message)s"
@@ -69,10 +71,11 @@ DEFAULT_LOGGING_FORMAT = "level:%(levelname)s	name:%(name)s	where:%(filename)s:%
 
 @codegen
 def logging_activate(
-    m, params, *, logging_level=None, logging_format=None, logging_stream=None
+    params, *, logging_level=None, logging_format=None, logging_stream=None, m=None
 ):
+    m = m or _FakeModule()
     m.sep()
-    m.stmt("# activate logging")
+    m.stmt("# activate logging -- start")
 
     os_ = m.import_("os")
     sys_ = m.import_("sys")
@@ -101,8 +104,7 @@ def logging_activate(
             m.stmt(
                 print_(
                     m.format_(
-                        "** {where}: DEBUG=1, activate logging **",
-                        where="__name__",
+                        "** {where}: DEBUG=1, activate logging **", where="__name__",
                     ),
                     file=sys_.stderr,
                 )
@@ -160,4 +162,5 @@ def logging_activate(
                     level=logging_level, format=logging_format, stream=logging_stream,
                 )
             )
+    m.stmt("# activate logging -- end")
     m.sep()
