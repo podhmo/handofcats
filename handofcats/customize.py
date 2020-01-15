@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+from functools import partial
 
 
 def first_parser_setup(parser):
@@ -24,21 +25,35 @@ def first_parser_activate(params):
     params.pop("untyped", None)  # xxx: ./actions/codegen.py
 
 
-def logging_setup(parser):
+def logging_setup(parser, *, debug: bool = False):
     logging_levels = list(logging._nameToLevel.keys())
     parser.add_argument("--logging", choices=logging_levels, default=None)
-    return logging_activate
+    return partial(logging_activate, debug=debug)
 
 
 def logging_activate(
-    params, *, logging_level=None, logging_format=None, logging_stream=None
+    params,
+    *,
+    debug: bool = False,
+    logging_level=None,
+    logging_format=None,
+    logging_stream=None,
+    logging_time=None,  # "relative", "asctime", None
 ):
+    time_format_map = {
+        "relative": "relative:%(relativeCreated)s	",
+        "asctime": "asctime:%(asctime)s	",
+        None: "",
+    }
+    if os.environ.get("LOGGING_TIME"):
+        logging_time = os.environ["LOGGING_TIME"]
+
     logging_format = (
         logging_format
-        or "level:%(levelname)s	name:%(name)s	where:%(filename)s:%(lineno)s	relative:%(relativeCreated)s	message:%(message)s"
+        or f"level:%(levelname)s	name:%(name)s	where:%(filename)s:%(lineno)s	{time_format_map.get(logging_time, '')}message:%(message)s"
     )
 
-    if os.environ.get("DEBUG"):
+    if debug or os.environ.get("DEBUG"):
         logging_level = logging.DEBUG
         print("** {where}: DEBUG=1, activate logging **".format(where=__name__))
 
