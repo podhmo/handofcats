@@ -85,14 +85,14 @@ def logging_activate(
 
     m.sep()
     # logging_level = None
-    logging_level = m.let("logging_level", None)
+    logging_level = m.let("logging_level", logging_level)
     # logging_format = logging_format or DEFAULT_LOGGING_FORMAT
     logging_format = m.let(
         "logging_format",
         m.or_(m.symbol(logging_format), m.constant(DEFAULT_LOGGING_FORMAT)),
     )
     # logging_stream = None
-    logging_stream = m.let("logging_stream", None)
+    logging_stream = m.let("logging_stream", logging_stream)
 
     # if os.environ.get("DEBUG"):
     with block():
