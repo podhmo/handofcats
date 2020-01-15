@@ -80,7 +80,8 @@ def logging_activate(
     m.sep()
     m.stmt("# activate logging")
 
-    # logging_level = m.let("logging_level", None)
+    # logging_level = None
+    logging_level = m.let("logging_level", None)
 
     # logging_format = logging_format or DEFAULT_LOGGING_FORMAT
     # BUG: None or DEFAULT_LOGGING_FORMAT

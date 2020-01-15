@@ -32,6 +32,7 @@ default: 00 01 02 03 04 05
 06:
 	python run.py --expose | tee dst/$@run-exposed.py
 	flake8 --ignore=E501,E302 dst/$@run-exposed.py
+	python dst/$@run-exposed.py $(TEE) dst/$@run.output
 
 clean:
 	rm -rf dst

@@ -29,6 +29,7 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import sys
 
     # activate logging
+    logging_level = None
     logging_format = None or 'level:%(levelname)s\tname:%(name)s\twhere:%(filename)s:%(lineno)s\trelative:%(relativeCreated)s\tmessage:%(message)s'
     if os.environ.get('DEBUG'):
         logging_level = logging.DEBUG
