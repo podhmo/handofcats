@@ -48,6 +48,9 @@ class _FakeModule(_Helper):
     def symbol(self, ob: t.Any) -> t.Any:
         return ob
 
+    def constant(self, ob: str) -> str:
+        return ob
+
     def setattr(self, ob: t.Any, name: str, val: t.Any) -> None:
         setattr(ob, name, val)
 

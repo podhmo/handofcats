@@ -21,7 +21,7 @@ class _Helper:
 
     def or_(self, x: "Emittable", y: "Emittable") -> "Stringer":
         """like `or <ob>`"""
-        return LazyFormat("{} in {}", x, y)
+        return LazyFormat("{} or {}", x, y)
 
     def in_(self, x: "Emittable", y: "Emittable") -> "Stringer":
         """like `in <ob>`"""
@@ -65,11 +65,16 @@ class Module(_Module, _Helper):  # type: ignore
         """like `<ob>.<name>`"""
         return Attr(name, co=ob)
 
-    def symbol(self, ob: t.Union[str, t.Any]) -> "Symbol":
+    def symbol(self, ob: t.Any) -> t.Optional["Symbol"]:
         """like `<ob>`"""
+        if ob is None:
+            return None
         if isinstance(ob, (str, int, float, bool)):
             return Symbol(str(ob))
         return Symbol(ob.__name__)
+
+    def constant(self, ob: str) -> str:
+        return repr(ob)
 
 
 class _LazyFormatRepr(LazyFormat):
@@ -183,6 +188,16 @@ class Attr:
         # if name == "emit":
         #     raise AttributeError(name)
         return Attr(name, co=self)
+
+    def __getitem__(self, name: str) -> "Attr":
+        # if name == "emit":
+        #     raise AttributeError(name)
+        return GetItem(name, co=self)
+
+
+class GetItem(Attr):
+    def __str__(self) -> str:
+        return f"{self._co}[{as_string(self.name)}]"
 
 
 class Call:
