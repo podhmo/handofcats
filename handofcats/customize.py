@@ -31,11 +31,24 @@ def logging_setup(parser):
 
 
 def logging_activate(
-    params, *, logging_level=None, logging_format=None, logging_stream=None
+    params,
+    *,
+    logging_level=None,
+    logging_format=None,
+    logging_stream=None,
+    logging_time=None,  # "relative", "asctime", None
 ):
+    time_format_map = {
+        "relative": "relative:%(relativeCreated)s	",
+        "asctime": "asctime:%(asctime)s	",
+        None: "",
+    }
+    if os.environ.get("LOGGING_TIME"):
+        logging_time = os.environ["LOGGING_TIME"]
+
     logging_format = (
         logging_format
-        or "level:%(levelname)s	name:%(name)s	where:%(filename)s:%(lineno)s	relative:%(relativeCreated)s	message:%(message)s"
+        or f"level:%(levelname)s	name:%(name)s	where:%(filename)s:%(lineno)s	{time_format_map.get(logging_time, '')}message:%(message)s"
     )
 
     if os.environ.get("DEBUG"):
