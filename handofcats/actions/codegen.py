@@ -215,7 +215,9 @@ def run_as_multi_command(
         customizations = []
         if not config.ignore_logging:
             customizations.append(customize.logging_setup)
-        parser, activate_functions = setup_parser(m, fn, customizations=customizations)
+        parser, activate_functions = setup_parser(
+            m, functions, customizations=customizations
+        )
 
         # args = parser.parse_args(argv)
         args = m.let("args", parser.parse_args(m.symbol("argv")))
