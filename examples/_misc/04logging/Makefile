@@ -28,6 +28,11 @@ default: 00 01 02 03 04 05
 05: dst
 	LOGGIG_FORMAT=stdout LOGGING_FORMAT='${FORMAT}' DEBUG=1 python -m handofcats def.py:run $(TEE) dst/$@run-from-handofcats-with-format.output
 
+# codegen
+06:
+	python run.py --expose | tee dst/$@run-exposed.py
+	flake8 --ignore=E501,E302 dst/$@run-exposed.py
+
 clean:
 	rm -rf dst
 .PHONY: clean
