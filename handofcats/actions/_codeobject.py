@@ -2,13 +2,36 @@ from functools import update_wrapper
 import typing as t
 import typing_extensions as tx
 from prestring.python import Module as _Module
-from prestring.utils import LazyArgumentsAndKeywords, UnRepr
+from prestring.utils import LazyArgumentsAndKeywords, UnRepr, LazyFormat
 
 # note: internal package, move to prestring?
 
 
 # TODO: typed prestring module
-class Module(_Module):  # type: ignore
+
+
+class _Helper:
+    def is_(self, x: "Emittable", y: "Emittable") -> "Stringer":
+        """like `is <ob>`"""
+        return LazyFormat("{} is {}", x, y)
+
+    def is_not(self, x: "Emittable", y: "Emittable") -> "Stringer":
+        """like `is <ob>`"""
+        return LazyFormat("{} is not {}", x, y)
+
+    def or_(self, x: "Emittable", y: "Emittable") -> "Stringer":
+        """like `or <ob>`"""
+        return LazyFormat("{} or {}", x, y)
+
+    def in_(self, x: "Emittable", y: "Emittable") -> "Stringer":
+        """like `in <ob>`"""
+        return LazyFormat("{} in {}", x, y)
+
+    def format_(self, fmt: str, *args: t.Any, **kwargs: t.Any) -> "_LazyFormatRepr":
+        return _LazyFormatRepr(fmt, *args, **kwargs)
+
+
+class Module(_Module, _Helper):  # type: ignore
     def import_(self, module: str, as_: t.Optional[str] = None) -> "Symbol":
         """like `import <name>`"""
         sym = Symbol(as_ or module)
@@ -29,7 +52,7 @@ class Module(_Module):  # type: ignore
         return super().stmt(str(fmt_or_emittable), *args, **kwargs)  # type: ignore
 
     def let(self, name: str, val: "Emittable") -> "Emittable":
-        """like `<name> = ob`"""
+        """like `<name> = <ob>`"""
         assigned = let(name, val)
         assigned.emit(m=self)
         return assigned
@@ -42,11 +65,27 @@ class Module(_Module):  # type: ignore
         """like `<ob>.<name>`"""
         return Attr(name, co=ob)
 
-    def symbol(self, ob: t.Union[str, t.Any]) -> "Symbol":
+    def symbol(
+        self, ob: t.Any, *, unrepr: t.Optional[str] = None
+    ) -> t.Optional["Symbol"]:
         """like `<ob>`"""
-        if isinstance(ob, str):
-            return Symbol(ob)
+        if unrepr is not None:
+            return Symbol(UnRepr(unrepr))
+        if ob is None:
+            return None
+        if isinstance(ob, (str, int, float, bool)):
+            return Symbol(str(ob))
         return Symbol(ob.__name__)
+
+    def constant(self, ob: str) -> str:
+        return repr(ob)
+
+
+class _LazyFormatRepr(LazyFormat):
+    def __str__(self) -> str:
+        return "{!r}.format({})".format(
+            self.fmt, LazyArgumentsAndKeywords(self.args, self.kwargs)
+        )
 
 
 class Emittable(tx.Protocol):
@@ -68,6 +107,10 @@ def as_string(val: t.Any) -> t.Union[t.Dict[str, t.Any], t.List[t.Any], str, UnR
         return {k: as_string(v) for k, v in val.items()}
     elif isinstance(val, (tuple, list)):
         return val.__class__([as_string(v) for v in val])
+    elif getattr(val, "__module__", None) == "prestring.utils":
+        return val
+    elif isinstance(val, _LazyFormatRepr):  # xxx:
+        return str(val)
     elif hasattr(val, "emit"):
         return UnRepr(val)
     elif callable(val) and hasattr(val, "__name__"):
@@ -149,6 +192,16 @@ class Attr:
         # if name == "emit":
         #     raise AttributeError(name)
         return Attr(name, co=self)
+
+    def __getitem__(self, name: str) -> "Attr":
+        # if name == "emit":
+        #     raise AttributeError(name)
+        return GetItem(name, co=self)
+
+
+class GetItem(Attr):
+    def __str__(self) -> str:
+        return f"{self._co}[{as_string(self.name)}]"
 
 
 class Call:

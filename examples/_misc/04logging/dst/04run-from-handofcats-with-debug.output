@@ -1,0 +1,12 @@
+** handofcats.customize: DEBUG=1, activate logging **
+level:DEBUG	name:def	where:def.py:7	relative:57.87491798400879	message:"debug" logger's message
+level:INFO	name:def	where:def.py:8	relative:58.012962341308594	message:"info" logger's message
+level:WARNING	name:def	where:def.py:9	relative:58.07781219482422	message:"warning" logger's message
+level:ERROR	name:def	where:def.py:10	relative:58.139801025390625	message:"error" logger's message
+level:CRITICAL	name:def	where:def.py:11	relative:58.19869041442871	message:"critical" logger's message
+level:INFO	name:def	where:def.py:13	relative:58.26091766357422	message:
+MULTILINE MESSAGE
+
+- hello
+- byebye
+
