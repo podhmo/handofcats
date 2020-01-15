@@ -25,12 +25,14 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
 
     args = parser.parse_args(argv)
     params = vars(args).copy()
+
+    # activate logging
     import os
     import sys
 
-    # activate logging
     logging_level = None
     logging_format = None or 'level:%(levelname)s\tname:%(name)s\twhere:%(filename)s:%(lineno)s\trelative:%(relativeCreated)s\tmessage:%(message)s'
+    logging_stream = None
     if os.environ.get('DEBUG'):
         logging_level = logging.DEBUG
         print('** {where}: DEBUG=1, activate logging **'.format(where=__name__), file=sys.stderr)

@@ -71,6 +71,9 @@ DEFAULT_LOGGING_FORMAT = "level:%(levelname)s	name:%(name)s	where:%(filename)s:%
 def logging_activate(
     m, params, *, logging_level=None, logging_format=None, logging_stream=None
 ):
+    m.sep()
+    m.stmt("# activate logging")
+
     os_ = m.import_("os")
     sys_ = m.import_("sys")
     logging_ = m.import_("logging")
@@ -78,17 +81,15 @@ def logging_activate(
     getattr_ = m.symbol(getattr)
 
     m.sep()
-    m.stmt("# activate logging")
-
     # logging_level = None
     logging_level = m.let("logging_level", None)
-
     # logging_format = logging_format or DEFAULT_LOGGING_FORMAT
-    # BUG: None or DEFAULT_LOGGING_FORMAT
     logging_format = m.let(
         "logging_format",
         m.or_(m.symbol(logging_format), m.constant(DEFAULT_LOGGING_FORMAT)),
     )
+    # logging_stream = None
+    logging_stream = m.let("logging_stream", None)
 
     # if os.environ.get("DEBUG"):
     with block():
