@@ -1,6 +1,6 @@
-level:DEBUG	name:__main__	where:run.py:9	relative:54.949045181274414	message:debug message
-level:INFO	name:__main__	where:run.py:10	relative:55.082082748413086	message:info message
-level:WARNING	name:__main__	where:run.py:11	relative:55.190086364746094	message:warning message
-level:ERROR	name:__main__	where:run.py:12	relative:55.28712272644043	message:error message
-level:CRITICAL	name:__main__	where:run.py:13	relative:55.37700653076172	message:critical message
+level:DEBUG	name:__main__	where:run.py:9	message:debug message
+level:INFO	name:__main__	where:run.py:10	message:info message
+level:WARNING	name:__main__	where:run.py:11	message:warning message
+level:ERROR	name:__main__	where:run.py:12	message:error message
+level:CRITICAL	name:__main__	where:run.py:13	message:critical message
 ** handofcats.customize: DEBUG=1, activate logging **
