@@ -8,7 +8,30 @@ from prestring.utils import LazyArgumentsAndKeywords, UnRepr, LazyFormat
 
 
 # TODO: typed prestring module
-class Module(_Module):  # type: ignore
+
+
+class _Helper:
+    def is_(self, x: "Emittable", y: "Emittable") -> "Stringer":
+        """like `is <ob>`"""
+        return LazyFormat("{} is {}", x, y)
+
+    def is_not(self, x: "Emittable", y: "Emittable") -> "Stringer":
+        """like `is <ob>`"""
+        return LazyFormat("{} is not {}", x, y)
+
+    def or_(self, x: "Emittable", y: "Emittable") -> "Stringer":
+        """like `or <ob>`"""
+        return LazyFormat("{} in {}", x, y)
+
+    def in_(self, x: "Emittable", y: "Emittable") -> "Stringer":
+        """like `in <ob>`"""
+        return LazyFormat("{} in {}", x, y)
+
+    def format_(self, fmt: str, *args: t.Any, **kwargs: t.Any) -> "_LazyFormatRepr":
+        return _LazyFormatRepr(fmt, *args, **kwargs)
+
+
+class Module(_Module, _Helper):  # type: ignore
     def import_(self, module: str, as_: t.Optional[str] = None) -> "Symbol":
         """like `import <name>`"""
         sym = Symbol(as_ or module)
@@ -27,21 +50,6 @@ class Module(_Module):  # type: ignore
             assert not kwargs
             return fmt_or_emittable.emit(m=self)
         return super().stmt(str(fmt_or_emittable), *args, **kwargs)  # type: ignore
-
-    def is_(self, x: "Emittable", y: "Emittable") -> "Stringer":
-        """like `is <ob>`"""
-        return LazyFormat("{} is {}", x, y)
-
-    def is_not(self, x: "Emittable", y: "Emittable") -> "Stringer":
-        """like `is <ob>`"""
-        return LazyFormat("{} is not {}", x, y)
-
-    def in_(self, x: "Emittable", y: "Emittable") -> "Stringer":
-        """like `in <ob>`"""
-        return LazyFormat("{} in {}", x, y)
-
-    def format_(self, fmt: str, *args: t.Any, **kwargs: t.Any) -> "_LazyFormatRepr":
-        return _LazyFormatRepr(fmt, *args, **kwargs)
 
     def let(self, name: str, val: "Emittable") -> "Emittable":
         """like `<name> = <ob>`"""

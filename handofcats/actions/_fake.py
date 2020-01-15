@@ -4,7 +4,24 @@ from importlib import import_module
 from types import ModuleType
 
 
-class _FakeModule:
+class _Helper:
+    def is_(self, x: t.Any, y: t.Any) -> bool:
+        return x is y
+
+    def is_not(self, x: t.Any, y: t.Any) -> bool:
+        return x is not y
+
+    def in_(self, x: t.Any, y: t.Any) -> bool:
+        return x in y
+
+    def or_(self, x: t.Any, y: t.Any) -> bool:
+        return x or y
+
+    def format_(self, fmt: str, *args, **kwargs) -> str:
+        return fmt.format(*args, **kwargs)
+
+
+class _FakeModule(_Helper):
     """fake _codeobject.Module. no effect"""
 
     def import_(self, name) -> ModuleType:
@@ -21,18 +38,6 @@ class _FakeModule:
         if not cond:
             raise Fail(cond)
         yield None
-
-    def is_(self, x: t.Any, y: t.Any) -> bool:
-        return x is y
-
-    def is_not(self, x: t.Any, y: t.Any) -> bool:
-        return x is not y
-
-    def in_(self, x: t.Any, y: t.Any) -> bool:
-        return x in y
-
-    def format_(self, fmt: str, *args, **kwargs) -> str:
-        return fmt.format(*args, **kwargs)
 
     def sep(self):
         pass
