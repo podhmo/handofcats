@@ -104,7 +104,8 @@ def logging_activate(
             m.stmt(
                 print_(
                     m.format_(
-                        "** {where}: DEBUG=1, activate logging **", where="__name__",
+                        "** {where}: DEBUG=1, activate logging **",
+                        where=m.symbol(__name__, unrepr="__name__"),
                     ),
                     file=sys_.stderr,
                 )

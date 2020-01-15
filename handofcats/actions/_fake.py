@@ -45,7 +45,7 @@ class _FakeModule(_Helper):
     def return_(self, ob: t.Any) -> t.Any:
         return ob
 
-    def symbol(self, ob: t.Any) -> t.Any:
+    def symbol(self, ob: t.Any, *, unrepr: t.Optional[str] = None) -> t.Any:
         return ob
 
     def constant(self, ob: str) -> str:

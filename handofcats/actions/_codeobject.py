@@ -65,8 +65,12 @@ class Module(_Module, _Helper):  # type: ignore
         """like `<ob>.<name>`"""
         return Attr(name, co=ob)
 
-    def symbol(self, ob: t.Any) -> t.Optional["Symbol"]:
+    def symbol(
+        self, ob: t.Any, *, unrepr: t.Optional[str] = None
+    ) -> t.Optional["Symbol"]:
         """like `<ob>`"""
+        if unrepr is not None:
+            return Symbol(UnRepr(unrepr))
         if ob is None:
             return None
         if isinstance(ob, (str, int, float, bool)):
