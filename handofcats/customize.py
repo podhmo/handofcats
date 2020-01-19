@@ -55,7 +55,10 @@ def logging_activate(
 
     if debug or os.environ.get("DEBUG"):
         logging_level = logging.DEBUG
-        print("** {where}: DEBUG=1, activate logging **".format(where=__name__))
+        print(
+            "** {where}: DEBUG=1, activate logging **".format(where=__name__),
+            file=sys.stderr,
+        )
 
     if os.environ.get("LOGGING_LEVEL"):
         logging_level = logging._nameToLevel.get(os.environ["LOGGING_LEVEL"])
