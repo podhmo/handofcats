@@ -259,9 +259,11 @@ def _cleanup_code(code: str, *, typed: bool) -> str:
         if sym.fullname == "handofcats.as_subcommand":
             candidates.append(f"@{sym.name}")
             candidates.append(f"{sym.name}.run(")
+            candidates.append(f"{sym.name}(")
         elif sym.fullname == "handofcats":
             candidates.append(f"@{sym.name}.as_subcommand")
             candidates.append(f"{sym.name}.as_subcommand.run(")
+            candidates.append(f"{sym.name}.as_subcommand(")
 
         # config
         if sym.fullname == "handofcats.Config":

@@ -45,11 +45,20 @@ def as_command(
 _default_multi_driver = None
 
 
-def as_subcommand(fn: TargetFunction, *, driver=MultiDriver) -> TargetFunction:
+def as_subcommand(
+    fn: t.Optional[TargetFunction] = None,
+    *,
+    driver=MultiDriver,
+    config: t.Optional[Config] = None,
+) -> TargetFunction:
     global _default_multi_driver
     if _default_multi_driver is None:
         create_driver = import_symbol_maybe(driver)
         _default_multi_driver = create_driver()
+
+    if fn is None:
+        return _as_subcommand_run(level=2, config=config)
+
     _default_multi_driver.register(fn)
     return fn
 
