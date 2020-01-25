@@ -115,6 +115,10 @@ class MultiDriver:
         self.functions: t.List[TargetFunction] = functions or []
 
     def register(self, fn: TargetFunction) -> TargetFunction:
+        # O(N), but do not mind.
+        if fn in self.functions:
+            return fn
+
         self.functions.append(fn)
         return fn
 
