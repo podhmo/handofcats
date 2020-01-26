@@ -50,7 +50,7 @@ def logging_activate(
 
     logging_format = (
         logging_format
-        or f"level:%(levelname)s	name:%(name)s	where:%(filename)s:%(lineno)s	{time_format_map.get(logging_time, '')}message:%(message)s"
+        or f"level:%(levelname)s	name:%(name)sL%(lineno)s	{time_format_map.get(logging_time, '')}message:%(message)s"
     )
 
     if debug or os.environ.get("DEBUG"):

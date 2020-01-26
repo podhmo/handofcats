@@ -1,7 +1,7 @@
+** handofcats.customize: DEBUG=1, activate logging **
 {"level": "DEBUG", "funcname": "run", "message": "'"debug" logger\'s message'"}
 {"level": "INFO", "funcname": "run", "message": "'"info" logger\'s message'"}
 {"level": "WARNING", "funcname": "run", "message": "'"warning" logger\'s message'"}
 {"level": "ERROR", "funcname": "run", "message": "'"error" logger\'s message'"}
 {"level": "CRITICAL", "funcname": "run", "message": "'"critical" logger\'s message'"}
 {"level": "INFO", "funcname": "run", "message": "'\nMULTILINE MESSAGE\n\n- hello\n- byebye\n'"}
-** handofcats.customize: DEBUG=1, activate logging **
