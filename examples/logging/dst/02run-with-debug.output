@@ -1,6 +1,6 @@
-level:DEBUG	name:__main__	where:run.py:9	message:debug message
-level:INFO	name:__main__	where:run.py:10	message:info message
-level:WARNING	name:__main__	where:run.py:11	message:warning message
-level:ERROR	name:__main__	where:run.py:12	message:error message
-level:CRITICAL	name:__main__	where:run.py:13	message:critical message
 ** handofcats.customize: DEBUG=1, activate logging **
+level:DEBUG	name:__main__L9	message:debug message
+level:INFO	name:__main__L10	message:info message
+level:WARNING	name:__main__L11	message:warning message
+level:ERROR	name:__main__L12	message:error message
+level:CRITICAL	name:__main__L13	message:critical message
