@@ -1,15 +1,34 @@
 # handofcats
 
-<https://travis-ci.org/podhmo/handofcats.svg>
+[![Build Status](https://travis-ci.org/podhmo/handofcats.svg?branch=master)](https://travis-ci.org/podhmo/handofcats)
 
 A tiny magically Converter that making executable command from
 plain python function. If the function is type annotated, it is used.
 
-- If you want single-command, `as_command()` is helpful ✨
-- If you want sub-commands, `as_subcommand()` is helpful ✨
-- If you want something like [create-react-app's eject](https://github.com/facebook/create-react-app#philosophy), use [`--expose` option](https://github.com/podhmo/handofcats#--expose) ◀️
+## Feature
 
-## `as_command()`
+- ✨Using plain python function as Console application
+
+  - If you want to treat python function as single-command, `as_command()` is helpful
+  - If you want to treat python function as sub-commands, `as_subcommand()` is helpful
+
+-  ◀️Escape from dependencies, if dislike this library
+
+  - If you want something like [create-react-app's eject](https://github.com/facebook/create-react-app#philosophy), use [`--expose` option](https://github.com/podhmo/handofcats#--expose)
+
+## Installing
+
+You can install via pip command, as you know.
+
+```console
+$ pip install handofcats
+```
+
+## Using plain python function as Console application
+
+### `as_command()`
+
+If you want plain python function to treat as single command, you can attach with `as_command` decorator. Then it acts as executable command.
 
 greeting.py
 
@@ -23,7 +42,7 @@ def greeting(message: str, is_surprised: bool = False, name: str = "foo") -> Non
     print("{name}: {message}{suffix}".format(name=name, message=message, suffix=suffix))
 ```
 
-🚀 Using as single-command
+🚀 It acts as single-command.
 
 ``` console
 $ python greeting.py hello
@@ -34,7 +53,7 @@ $ python greeting.py --is-surprised --name=bar bye
 bar: bye!
 ```
 
-help message
+Then, help message is here.
 
 ``` console
 $ python greeting.py -h
@@ -61,9 +80,11 @@ optional arguments:
 
 ( :warning: TODO: detail description )
 
-## `as_subcommand()` and `as_subcommand.run()`
+### `as_subcommand()` and `as_subcommand.run()`
 
-If you want sub-commands, from following code.
+Sub-command support is also included, so handofcats can be useful, when using plain python functions as sub-commands.
+
+Using `as_subcommand` decorator, and calling `as_subcommand.run()`. There is no need to write `if __name__ == "__main__"`.
 
 cli.py
 
@@ -72,12 +93,12 @@ from handofcats import as_subcommand
 
 
 @as_subcommand
-def hello(*, name: str = "world"):
+def hello(*, name: str = "world") -> None:
     print(f"hello {name}")
 
 
 @as_subcommand
-def byebye(name):
+def byebye(name: str) -> None:
     print(f"byebye {name}")
 
 
@@ -85,7 +106,7 @@ def byebye(name):
 as_subcommand.run()
 ```
 
-🚀 Using as sub-commands
+🚀 It acts as sub-commands. 
 
 ``` cosole
 $ python cli.py hello
@@ -98,7 +119,7 @@ $ python cli.py byebye foo
 byebye foo
 ```
 
-help message
+Then, help message is here.
 
 ``` cosole
 $ python cli.py -h
@@ -127,14 +148,15 @@ optional arguments:
   --name NAME  (default: 'world')
 ```
 
-## `--expose`
+## Dropping dependencies
 
-Runing with `--expose` option, generationg the code that dropping
-dependencies of handofcats module.
+If you dislike handofcats, you can drop it.
 
-Something like [create-react-app'seject](https://github.com/facebook/create-react-app#philosophy) .
+### `--expose`
 
 > No Lock-In: You can “eject” to a custom setup at any time. Run a single-command, and all the configuration and build dependencies will be moved directly into your project, so you can pick up right where you left off.
+
+Something like [create-react-app'seject](https://github.com/facebook/create-react-app#philosophy) , runing with `--expose` option, generationg the code that dropping dependencies of handofcats module.
 
 If you want to eject from [the code described above](https://github.com/podhmo/handofcats#as_command), `--expose` is helpful, maybe.
 
@@ -172,7 +194,11 @@ target source code.
 
 For handofcats, eject action is `--inplace --exepose`.
 
-## `handofcats` command
+## If you're lazy, you can even skip using decorators
+
+If you're lazy, passing file to `handofcats` command. After installing this package, you can use the `handofcats` command.
+
+For example, pass the following file to `handofcats` command:
 
 sum.py
 
@@ -181,8 +207,7 @@ def sum(x: int, y: int) -> None:
     print(f"{x} + {y} = {x + y}")
 ```
 
-It is also ok, calling the function that not decorated via handofcats
-command.
+It acts as single-command, even not decorated by the decorators introduced earlier.
 
 ``` console
 $ handofcats sum.py:sum 10 20
