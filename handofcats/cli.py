@@ -88,17 +88,20 @@ def main(argv=None):
 
     # as multi command
     driver = get_default_multi_driver()
-    if args.cont is not None:
-        driver.config = dataclasses.replace(
-            driver.config, cont=_import_symbol(args.cont)
-        )
-
     if driver is not None:
         assert isinstance(driver, args.multi_driver)
+        if args.cont is not None:
+            driver.config = dataclasses.replace(
+                driver.config, cont=_import_symbol(args.cont)
+            )
         return driver.run(rest_argv)
 
     fns = _collect_functions(module)
     driver = args.multi_driver(fns)
+    if args.cont is not None:
+        driver.config = dataclasses.replace(
+            driver.config, cont=_import_symbol(args.cont)
+        )
     return driver.run(rest_argv)
 
 
