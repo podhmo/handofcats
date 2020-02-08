@@ -10,7 +10,7 @@ class CodegenConfig:
 
     @classmethod
     def as_simple(cls, *, inplace: bool) -> "CodegenConfig":
-        return cls(inplace=inplace, typed=False, use_primitive_parser=False)
+        return cls(inplace=inplace, typed=False, use_primitive_parser=True)
 
 
 @dataclasses.dataclass(frozen=True)

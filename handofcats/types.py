@@ -1,5 +1,6 @@
 import typing as t
 import typing_extensions as tx
+from .config import Config
 
 # TODO: document
 
@@ -29,6 +30,7 @@ class SetupParserFunction(tx.Protocol[T]):
         fn_or_functions: T,
         *,
         m: t.Optional[PrestringModule] = ...,
+        config: Config,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
     ) -> t.Tuple[ArgumentParser, t.List[CustomizeActivateFunction]]:
         ...

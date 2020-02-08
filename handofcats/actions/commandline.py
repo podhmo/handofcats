@@ -53,7 +53,9 @@ def run_as_single_command(
         # TODO: include generated code, emitted by `--expose`
         customizations.append(customize.logging_setup)
 
-    parser, activate_functions = setup_parser(fn, m=m, customizations=customizations)
+    parser, activate_functions = setup_parser(
+        fn, m=m, customizations=customizations, config=config,
+    )
     args = parser.parse_args(argv)
     params = vars(args).copy()
 
@@ -82,7 +84,7 @@ def run_as_multi_command(
         customizations.append(customize.logging_setup)
 
     parser, activate_functions = setup_parser(
-        functions, m=m, customizations=customizations
+        functions, m=m, customizations=customizations, config=config,
     )
     args = parser.parse_args(argv)
     params = vars(args).copy()

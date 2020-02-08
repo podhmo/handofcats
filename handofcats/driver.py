@@ -67,6 +67,7 @@ class Driver:
         self,
         fn: TargetFunction,
         *,
+        config: Config = default_config,
         m: t.Optional[PrestringModule] = None,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
     ) -> t.Tuple[ArgumentParser, t.List[CustomizeActivateFunction]]:
@@ -80,21 +81,30 @@ class Driver:
         m.sep()
 
         # parser = argparse.ArgumentParser(prog=fn.__name, help=fn.__doc__)
-        parser = m.let(
-            "parser",
-            argparse.ArgumentParser(
-                prog=m.getattr(m.symbol(fn), "__name__"),
-                description=m.getattr(m.symbol(fn), "__doc__"),
-                formatter_class=m.symbol(type)(
-                    "_HelpFormatter",
-                    (
-                        argparse.ArgumentDefaultsHelpFormatter,
-                        argparse.RawTextHelpFormatter,
-                    ),
-                    {},
+        if config.codegen_config.use_primitive_parser:
+            parser = m.let(
+                "parser",
+                argparse.ArgumentParser(
+                    prog=m.getattr(m.symbol(fn), "__name__"),
+                    description=m.getattr(m.symbol(fn), "__doc__"),
                 ),
-            ),
-        )
+            )
+        else:
+            parser = m.let(
+                "parser",
+                argparse.ArgumentParser(
+                    prog=m.getattr(m.symbol(fn), "__name__"),
+                    description=m.getattr(m.symbol(fn), "__doc__"),
+                    formatter_class=m.symbol(type)(
+                        "_HelpFormatter",
+                        (
+                            argparse.ArgumentDefaultsHelpFormatter,
+                            argparse.RawTextHelpFormatter,
+                        ),
+                        {},
+                    ),
+                ),
+            )
 
         # parser.print_usage = parser.print_help  # type: ignore
         m.setattr(parser, "print_usage", parser.print_help)
@@ -179,6 +189,7 @@ class MultiDriver:
         functions: t.List[TargetFunction],
         *,
         m: t.Optional[PrestringModule] = None,
+        config: Config = default_config,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
     ) -> t.Tuple[ArgumentParser, t.List[CustomizeActivateFunction]]:
         if m is None:
@@ -191,19 +202,22 @@ class MultiDriver:
         m.sep()
 
         # parser = argparse.ArgumentParser()
-        parser = m.let(
-            "parser",
-            argparse.ArgumentParser(
-                formatter_class=m.symbol(type)(
-                    "_HelpFormatter",
-                    (
-                        argparse.ArgumentDefaultsHelpFormatter,
-                        argparse.RawTextHelpFormatter,
+        if config.codegen_config.use_primitive_parser:
+            parser = m.let("parser", argparse.ArgumentParser())
+        else:
+            parser = m.let(
+                "parser",
+                argparse.ArgumentParser(
+                    formatter_class=m.symbol(type)(
+                        "_HelpFormatter",
+                        (
+                            argparse.ArgumentDefaultsHelpFormatter,
+                            argparse.RawTextHelpFormatter,
+                        ),
+                        {},
                     ),
-                    {},
                 ),
-            ),
-        )
+            )
 
         activate_functions = []
         for setup in customizations or []:

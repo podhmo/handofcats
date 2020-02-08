@@ -14,7 +14,7 @@ def first_parser_setup(parser):
         "--inplace", action="store_true", help="overwrite file"
     )  # xxx (./actions/codegen.py)
     parser.add_argument(
-        "--simple", action="store_true", help="minimum expression is dumped",
+        "--simple", action="store_true", help="use minimum expression",
     )  # xxx (./actions/codegen.py)
     return first_parser_activate
 
