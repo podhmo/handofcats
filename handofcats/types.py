@@ -30,7 +30,7 @@ class SetupParserFunction(tx.Protocol[T]):
         fn_or_functions: T,
         *,
         m: t.Optional[PrestringModule] = ...,
-        config: Config,
+        config: t.Optional[Config] = ...,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
     ) -> t.Tuple[ArgumentParser, t.List[CustomizeActivateFunction]]:
         ...

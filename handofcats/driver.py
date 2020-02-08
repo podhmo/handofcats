@@ -65,12 +65,16 @@ class Driver:
 
     def setup_parser(
         self,
-        fn: TargetFunction,
+        fn: t.Optional[TargetFunction] = None,
         *,
-        config: Config = default_config,
+        config: t.Optional[Config] = None,
         m: t.Optional[PrestringModule] = None,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
     ) -> t.Tuple[ArgumentParser, t.List[CustomizeActivateFunction]]:
+        if fn is None:
+            fn = self.fn
+        if config is None:
+            config = self.config
         if m is None:
             from .actions.commandline import _FakeModule
 
@@ -191,12 +195,16 @@ class MultiDriver:
 
     def setup_parser(
         self,
-        functions: t.List[TargetFunction],
+        functions: t.Optional[t.List[TargetFunction]] = None,
         *,
         m: t.Optional[PrestringModule] = None,
-        config: Config = default_config,
+        config: t.Optional[Config] = None,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
     ) -> t.Tuple[ArgumentParser, t.List[CustomizeActivateFunction]]:
+        if functions is None:
+            functions = self.functions
+        if config is None:
+            config = self.config
         if m is None:
             from .actions.commandline import _FakeModule
 
