@@ -112,7 +112,12 @@ class Driver:
         m.stmt("  # type: ignore")
 
         injector = self.injector_class(fn)
-        injector.inject(parser, callback=m.stmt)
+        injector.inject(
+            parser,
+            callback=m.stmt,
+            ignore_arguments=config.ignore_arguments,
+            ignore_flags=config.ignore_flags,
+        )
 
         activate_functions = []
         for setup in customizations or []:
@@ -250,7 +255,12 @@ class MultiDriver:
                     formatter_class=parser.formatter_class,
                 ),
             )
-            Injector(target_fn).inject(sub_parser, callback=m.stmt)
+            Injector(target_fn).inject(
+                sub_parser,
+                callback=m.stmt,
+                ignore_arguments=config.ignore_arguments,
+                ignore_flags=config.ignore_flags,
+            )
 
             # sub_parser.set_defaults(subcommand=fn)
             m.stmt(sub_parser.set_defaults(subcommand=fn))
