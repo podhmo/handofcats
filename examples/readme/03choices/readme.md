@@ -1,7 +1,7 @@
 help
 ```console
 $ python -W ignore -m handofcats dump.py:run -h
-usage: run [-h] [--format {json,csv}] [--expose] [--inplace] [--untyped]
+usage: run [-h] [--format {json,csv}] [--expose] [--inplace] [--simple]
            [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
 
 optional arguments:
@@ -9,7 +9,7 @@ optional arguments:
   --format {json,csv}   - (default: json)
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
-  --untyped             untyped expression is dumped (default: False)
+  --simple              use minimum expression (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run

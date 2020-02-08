@@ -1,7 +1,7 @@
 python -m handofcats 00single.py:hello
 hello world
 python -m handofcats 00single.py:hello -h
-usage: hello [-h] [--name NAME] [--expose] [--inplace] [--untyped]
+usage: hello [-h] [--name NAME] [--expose] [--inplace] [--simple]
              [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
 
 optional arguments:
@@ -9,7 +9,7 @@ optional arguments:
   --name NAME           - (default: world)
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
-  --untyped             untyped expression is dumped (default: False)
+  --simple              use minimum expression (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 python -m handofcats 00single.py:hello --expose
 import typing as t
