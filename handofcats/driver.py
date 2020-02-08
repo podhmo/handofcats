@@ -79,20 +79,15 @@ class Driver:
             from .actions.commandline import _FakeModule
 
             m = _FakeModule()
+        use_primitive_parser = config.codegen_config.use_primitive_parser
 
         # import argparse
         argparse = m.import_("argparse")
         m.sep()
 
         # parser = argparse.ArgumentParser(prog=fn.__name, help=fn.__doc__)
-        if config.codegen_config.use_primitive_parser:
-            parser = m.let(
-                "parser",
-                argparse.ArgumentParser(
-                    prog=m.getattr(m.symbol(fn), "__name__"),
-                    description=m.getattr(m.symbol(fn), "__doc__"),
-                ),
-            )
+        if use_primitive_parser:
+            parser = m.let("parser", argparse.ArgumentParser())
         else:
             parser = m.let(
                 "parser",
@@ -110,10 +105,11 @@ class Driver:
                 ),
             )
 
-        # parser.print_usage = parser.print_help  # type: ignore
-        m.setattr(parser, "print_usage", parser.print_help)
-        m.unnewline()
-        m.stmt("  # type: ignore")
+        if not use_primitive_parser:
+            # parser.print_usage = parser.print_help  # type: ignore
+            m.setattr(parser, "print_usage", parser.print_help)
+            m.unnewline()
+            m.stmt("  # type: ignore")
 
         injector = self.injector_class(fn)
         injector.inject(
