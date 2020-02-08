@@ -1,6 +1,7 @@
 import typing as t
 import argparse
 import magicalimport
+import dataclasses
 from handofcats import get_default_multi_driver
 from types import ModuleType
 from .types import TargetFunction
@@ -44,6 +45,9 @@ def main(argv=None):
         help="target EntryPoint. (format '<file name>:<attr>' or '<file name>')",
     )
     parser.add_argument(
+        "--cont", help="continuation, if not None value is returned, default is print",
+    )
+    parser.add_argument(
         "--driver",
         type=_import_symbol,
         default="handofcats.driver:Driver",
@@ -75,10 +79,20 @@ def main(argv=None):
         except AttributeError as e:
             parser.error(f"""\x1b[33m{e}\x1b[0m""")
         driver = args.driver(fn)
+        if args.cont is not None:
+            driver.config = dataclasses.replace(
+                driver.config, cont=_import_symbol(args.cont)
+            )
+
         return driver.run(rest_argv)
 
     # as multi command
     driver = get_default_multi_driver()
+    if args.cont is not None:
+        driver.config = dataclasses.replace(
+            driver.config, cont=_import_symbol(args.cont)
+        )
+
     if driver is not None:
         assert isinstance(driver, args.multi_driver)
         return driver.run(rest_argv)

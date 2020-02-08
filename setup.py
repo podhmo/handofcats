@@ -18,7 +18,7 @@ if sys.version_info[:2] <= (3, 6):
 
 docs_extras = []
 tests_require = []
-dev_extras = ["flake8", "black"]
+dev_extras = ["flake8", "black", "mypy"]
 testing_extras = tests_require + dev_extras
 
 setup(
