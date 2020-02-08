@@ -6,6 +6,7 @@ from .types import (
     ArgumentParser,
     CustomizeSetupFunction,
     CustomizeActivateFunction,
+    PrestringModule,
 )
 from .config import Config, default_config
 from . import customize
@@ -64,12 +65,16 @@ class Driver:
 
     def setup_parser(
         self,
-        m,
         fn: TargetFunction,
-        argv=None,
         *,
+        m: t.Optional[PrestringModule] = None,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
     ) -> t.Tuple[ArgumentParser, t.List[CustomizeActivateFunction]]:
+        if m is None:
+            from .actions.commandline import _FakeModule
+
+            m = _FakeModule()
+
         # import argparse
         argparse = m.import_("argparse")
         m.sep()
@@ -171,11 +176,16 @@ class MultiDriver:
 
     def setup_parser(
         self,
-        m,
         functions: t.List[TargetFunction],
         *,
+        m: t.Optional[PrestringModule] = None,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
     ) -> t.Tuple[ArgumentParser, t.List[CustomizeActivateFunction]]:
+        if m is None:
+            from .actions.commandline import _FakeModule
+
+            m = _FakeModule()
+
         # import argparse
         argparse = m.import_("argparse")
         m.sep()

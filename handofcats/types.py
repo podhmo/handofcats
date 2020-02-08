@@ -26,10 +26,9 @@ CustomizeSetupFunction = t.Callable[[ArgumentParser], CustomizeActivateFunction]
 
 class SetupParserFunction(tx.Protocol[T]):
     def __call__(
-        m: PrestringModule,
         fn_or_functions: T,
-        argv=None,
         *,
+        m: t.Optional[PrestringModule] = ...,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
     ) -> t.Tuple[ArgumentParser, t.List[CustomizeActivateFunction]]:
         ...

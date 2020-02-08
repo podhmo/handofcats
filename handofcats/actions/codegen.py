@@ -119,7 +119,7 @@ def run_as_single_command(
 
     # def main(argv=None):
     with mdef:
-        parser, _ = setup_parser(m, fn, customizations=[])
+        parser, _ = setup_parser(fn, m=m, customizations=[])
 
         # args = parser.parse_args(argv)
         args = m.let("args", parser.parse_args(m.symbol("argv")))
@@ -205,7 +205,7 @@ def run_as_multi_command(
 
     # def main(argv=None):
     with mdef:
-        parser, _ = setup_parser(m, functions, customizations=[])
+        parser, _ = setup_parser(functions, m=m, customizations=[])
 
         # args = parser.parse_args(argv)
         args = m.let("args", parser.parse_args(m.symbol("argv")))
