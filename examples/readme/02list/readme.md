@@ -1,7 +1,7 @@
 help
 ```console
 $ handofcats sum.py:psum -h
-usage: psum [-h] [--ys YS] [--expose] [--inplace] [--untyped]
+usage: psum [-h] [--ys YS] [--expose] [--inplace] [--simple]
             [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
             [xs [xs ...]]
 
@@ -13,7 +13,7 @@ optional arguments:
   --ys YS               - (default: None)
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
-  --untyped             untyped expression is dumped (default: False)
+  --simple              use minimum expression (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run

@@ -6,6 +6,7 @@ import tempfile
 import pathlib
 from functools import partial
 from prestring.naming import titleize
+from ..config import Config, default_config
 from ..types import TargetFunction, SetupParserFunction
 from ._codeobject import Module
 
@@ -71,8 +72,7 @@ def run_as_single_command(
     fn: TargetFunction,
     argv: t.Optional[str],
     outname: str = "main",
-    inplace: bool = False,
-    typed: bool = False,
+    config: Config = default_config,
 ) -> None:
     """ generate main() code
 
@@ -97,6 +97,8 @@ def run_as_single_command(
         main()
     ```
     """
+    inplace = config.codegen_config.inplace
+    typed = config.codegen_config.typed
 
     m = Module()
     m.sep()
@@ -117,7 +119,7 @@ def run_as_single_command(
 
     # def main(argv=None):
     with mdef:
-        parser, _ = setup_parser(m, fn, customizations=[])
+        parser, _ = setup_parser(fn, m=m, customizations=[], config=config)
 
         # args = parser.parse_args(argv)
         args = m.let("args", parser.parse_args(m.symbol("argv")))
@@ -142,8 +144,7 @@ def run_as_multi_command(
     functions: t.List[TargetFunction],
     argv: t.Optional[str] = None,
     outname: str = "main",
-    inplace: bool = False,
-    typed: bool = False,
+    config: Config = default_config,
 ) -> t.Any:
     """ generate main() code
 
@@ -182,6 +183,8 @@ def run_as_multi_command(
         main()
     ```
     """
+    inplace = config.codegen_config.inplace
+    typed = config.codegen_config.typed
 
     m = Module()
     m.sep()
@@ -202,7 +205,7 @@ def run_as_multi_command(
 
     # def main(argv=None):
     with mdef:
-        parser, _ = setup_parser(m, functions, customizations=[])
+        parser, _ = setup_parser(functions, m=m, customizations=[], config=config)
 
         # args = parser.parse_args(argv)
         args = m.let("args", parser.parse_args(m.symbol("argv")))

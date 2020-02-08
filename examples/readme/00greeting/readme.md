@@ -2,7 +2,7 @@ help
 ```console
 $ python greeting.py -h
 usage: greeting [-h] [--is-surprised] [--name NAME] [--expose] [--inplace]
-                [--untyped]
+                [--simple]
                 [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
                 message
 
@@ -17,7 +17,7 @@ optional arguments:
   --name NAME           - (default: foo)
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
-  --untyped             untyped expression is dumped (default: False)
+  --simple              use minimum expression (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run

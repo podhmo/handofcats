@@ -1,7 +1,7 @@
 help
 ```console
 $ handofcats sum.py:sum -h
-usage: sum [-h] [--expose] [--inplace] [--untyped]
+usage: sum [-h] [--expose] [--inplace] [--simple]
            [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
            x y
 
@@ -13,7 +13,7 @@ optional arguments:
   -h, --help            show this help message and exit
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
-  --untyped             untyped expression is dumped (default: False)
+  --simple              use minimum expression (default: False)
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 ```
 run

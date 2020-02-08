@@ -1,10 +1,12 @@
 import typing as t
+import dataclasses
 from .injector import Injector
 from .types import (
     TargetFunction,
     ArgumentParser,
     CustomizeSetupFunction,
     CustomizeActivateFunction,
+    PrestringModule,
 )
 from .config import Config, default_config
 from . import customize
@@ -29,6 +31,7 @@ class Driver:
         import argparse
 
         fn = self.fn
+        config = self.config
 
         if self.config.ignore_expose:
             rest_argv = argv
@@ -42,49 +45,66 @@ class Driver:
             if fargs.expose:
                 from .actions import codegen
 
+                factory = config.codegen_config.__class__
+                if fargs.simple:
+                    factory = config.codegen_config.as_simple
+                config = dataclasses.replace(
+                    config, codegen_config=factory(inplace=fargs.inplace)
+                )
+
                 return codegen.run_as_single_command(
-                    self.setup_parser,
-                    fn=fn,
-                    argv=rest_argv,
-                    inplace=fargs.inplace,
-                    typed=not fargs.untyped,
+                    self.setup_parser, fn=fn, argv=rest_argv, config=config,
                 )
 
         # run command normally
         from .actions import commandline
 
         return commandline.run_as_single_command(
-            self.setup_parser, fn=fn, argv=rest_argv, config=self.config
+            self.setup_parser, fn=fn, argv=rest_argv, config=config
         )
 
     def setup_parser(
         self,
-        m,
         fn: TargetFunction,
-        argv=None,
         *,
+        config: Config = default_config,
+        m: t.Optional[PrestringModule] = None,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
     ) -> t.Tuple[ArgumentParser, t.List[CustomizeActivateFunction]]:
+        if m is None:
+            from .actions.commandline import _FakeModule
+
+            m = _FakeModule()
+
         # import argparse
         argparse = m.import_("argparse")
         m.sep()
 
         # parser = argparse.ArgumentParser(prog=fn.__name, help=fn.__doc__)
-        parser = m.let(
-            "parser",
-            argparse.ArgumentParser(
-                prog=m.getattr(m.symbol(fn), "__name__"),
-                description=m.getattr(m.symbol(fn), "__doc__"),
-                formatter_class=m.symbol(type)(
-                    "_HelpFormatter",
-                    (
-                        argparse.ArgumentDefaultsHelpFormatter,
-                        argparse.RawTextHelpFormatter,
-                    ),
-                    {},
+        if config.codegen_config.use_primitive_parser:
+            parser = m.let(
+                "parser",
+                argparse.ArgumentParser(
+                    prog=m.getattr(m.symbol(fn), "__name__"),
+                    description=m.getattr(m.symbol(fn), "__doc__"),
                 ),
-            ),
-        )
+            )
+        else:
+            parser = m.let(
+                "parser",
+                argparse.ArgumentParser(
+                    prog=m.getattr(m.symbol(fn), "__name__"),
+                    description=m.getattr(m.symbol(fn), "__doc__"),
+                    formatter_class=m.symbol(type)(
+                        "_HelpFormatter",
+                        (
+                            argparse.ArgumentDefaultsHelpFormatter,
+                            argparse.RawTextHelpFormatter,
+                        ),
+                        {},
+                    ),
+                ),
+            )
 
         # parser.print_usage = parser.print_help  # type: ignore
         m.setattr(parser, "print_usage", parser.print_help)
@@ -130,8 +150,9 @@ class MultiDriver:
         import argparse
 
         functions = self.functions
+        config = self.config
 
-        if self.config.ignore_expose:
+        if config.ignore_expose:
             rest_argv = argv
         else:
             first_parser = argparse.ArgumentParser(add_help=False)
@@ -143,46 +164,60 @@ class MultiDriver:
                 # code generation is needed
                 from .actions import codegen
 
+                factory = config.codegen_config.__class__
+                if fargs.simple:
+                    factory = config.codegen_config.as_simple
+                config = dataclasses.replace(
+                    config, codegen_config=factory(inplace=fargs.inplace)
+                )
                 return codegen.run_as_multi_command(
                     self.setup_parser,
                     functions=functions,
                     argv=rest_argv,
-                    inplace=fargs.inplace,
-                    typed=not fargs.untyped,
+                    config=config,
                 )
 
         # run command normally
         from .actions import commandline
 
         return commandline.run_as_multi_command(
-            self.setup_parser, functions=functions, argv=rest_argv, config=self.config,
+            self.setup_parser, functions=functions, argv=rest_argv, config=config,
         )
 
     def setup_parser(
         self,
-        m,
         functions: t.List[TargetFunction],
         *,
+        m: t.Optional[PrestringModule] = None,
+        config: Config = default_config,
         customizations: t.Optional[t.List[CustomizeSetupFunction]] = None,
     ) -> t.Tuple[ArgumentParser, t.List[CustomizeActivateFunction]]:
+        if m is None:
+            from .actions.commandline import _FakeModule
+
+            m = _FakeModule()
+
         # import argparse
         argparse = m.import_("argparse")
         m.sep()
 
         # parser = argparse.ArgumentParser()
-        parser = m.let(
-            "parser",
-            argparse.ArgumentParser(
-                formatter_class=m.symbol(type)(
-                    "_HelpFormatter",
-                    (
-                        argparse.ArgumentDefaultsHelpFormatter,
-                        argparse.RawTextHelpFormatter,
+        if config.codegen_config.use_primitive_parser:
+            parser = m.let("parser", argparse.ArgumentParser())
+        else:
+            parser = m.let(
+                "parser",
+                argparse.ArgumentParser(
+                    formatter_class=m.symbol(type)(
+                        "_HelpFormatter",
+                        (
+                            argparse.ArgumentDefaultsHelpFormatter,
+                            argparse.RawTextHelpFormatter,
+                        ),
+                        {},
                     ),
-                    {},
                 ),
-            ),
-        )
+            )
 
         activate_functions = []
         for setup in customizations or []:
@@ -199,7 +234,7 @@ class MultiDriver:
         m.setattr(subparsers, "required", True)  # for py3.6
         m.sep()
 
-        for i, target_fn in enumerate(self.functions):
+        for i, target_fn in enumerate(functions):
             # fn = <target function>
             fn = m.let("fn", m.symbol(target_fn))
             if i > 0:
