@@ -4,7 +4,7 @@ python:
   - "3.6"
   - "3.7"
   - "3.8-dev"
-  # - "nightly"
+  - "nightly"
 install:
   - pip install -e .[testing]
 script: make ci
