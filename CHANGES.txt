@@ -1,3 +1,9 @@
+3.1.0
+
+- add `--cont` option
+- add `--simple` option, for `--expose`
+- remove `--untyped` option, for `--expose`
+
 3.0.1
 
 - (README uploading is failed)
