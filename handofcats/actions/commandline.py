@@ -59,7 +59,8 @@ def run_as_single_command(
 
     for activate in activate_functions:
         activate(params)
-    return fn(**params)
+    val = fn(**params)
+    return config.cont(val)
 
 
 def run_as_multi_command(
@@ -88,4 +89,5 @@ def run_as_multi_command(
         activate(params)
 
     subcommand = params.pop("subcommand")
-    return subcommand(**params)
+    val = subcommand(**params)
+    return config.cont(val)
