@@ -86,13 +86,7 @@ class Driver:
 
         # parser = argparse.ArgumentParser(prog=fn.__name, help=fn.__doc__)
         if config.codegen_config.use_primitive_parser:
-            parser = m.let(
-                "parser",
-                argparse.ArgumentParser(
-                    prog=m.getattr(m.symbol(fn), "__name__"),
-                    description=m.getattr(m.symbol(fn), "__doc__"),
-                ),
-            )
+            parser = m.let("parser", argparse.ArgumentParser())
         else:
             parser = m.let(
                 "parser",
