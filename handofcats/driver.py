@@ -1,4 +1,5 @@
 import typing as t
+import dataclasses
 from .injector import Injector
 from .types import (
     TargetFunction,
@@ -29,6 +30,7 @@ class Driver:
         import argparse
 
         fn = self.fn
+        config = self.config
 
         if self.config.ignore_expose:
             rest_argv = argv
@@ -42,19 +44,22 @@ class Driver:
             if fargs.expose:
                 from .actions import codegen
 
+                factory = config.codegen_config.__class__
+                if fargs.simple:
+                    factory = config.codegen_config.as_simple
+                config = dataclasses.replace(
+                    config, codegen_config=factory(inplace=fargs.inplace)
+                )
+
                 return codegen.run_as_single_command(
-                    self.setup_parser,
-                    fn=fn,
-                    argv=rest_argv,
-                    inplace=fargs.inplace,
-                    typed=not fargs.untyped,
+                    self.setup_parser, fn=fn, argv=rest_argv, config=config,
                 )
 
         # run command normally
         from .actions import commandline
 
         return commandline.run_as_single_command(
-            self.setup_parser, fn=fn, argv=rest_argv, config=self.config
+            self.setup_parser, fn=fn, argv=rest_argv, config=config
         )
 
     def setup_parser(
@@ -130,8 +135,9 @@ class MultiDriver:
         import argparse
 
         functions = self.functions
+        config = self.config
 
-        if self.config.ignore_expose:
+        if config.ignore_expose:
             rest_argv = argv
         else:
             first_parser = argparse.ArgumentParser(add_help=False)
@@ -143,19 +149,24 @@ class MultiDriver:
                 # code generation is needed
                 from .actions import codegen
 
+                factory = config.codegen_config.__class__
+                if fargs.simple:
+                    factory = config.codegen_config.as_simple
+                config = dataclasses.replace(
+                    config, codegen_config=factory(inplace=fargs.inplace)
+                )
                 return codegen.run_as_multi_command(
                     self.setup_parser,
                     functions=functions,
                     argv=rest_argv,
-                    inplace=fargs.inplace,
-                    typed=not fargs.untyped,
+                    config=config,
                 )
 
         # run command normally
         from .actions import commandline
 
         return commandline.run_as_multi_command(
-            self.setup_parser, functions=functions, argv=rest_argv, config=self.config,
+            self.setup_parser, functions=functions, argv=rest_argv, config=config,
         )
 
     def setup_parser(
@@ -199,7 +210,7 @@ class MultiDriver:
         m.setattr(subparsers, "required", True)  # for py3.6
         m.sep()
 
-        for i, target_fn in enumerate(self.functions):
+        for i, target_fn in enumerate(functions):
             # fn = <target function>
             fn = m.let("fn", m.symbol(target_fn))
             if i > 0:
