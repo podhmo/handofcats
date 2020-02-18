@@ -93,7 +93,10 @@ class Resolver:
         return name in self._kwonlydefaults or name in self._defaults
 
     def resolve_default(self, name: str) -> t.Optional[t.Any]:
-        return self._kwonlydefaults.get(name) or self._defaults.get(name)
+        val = self._kwonlydefaults.get(name)
+        if val is not None:
+            return val
+        return self._defaults.get(name)
 
     def resolve_type(self, name: str) -> t.Optional[t.Type]:
         if self.argspec.annotations is None:
