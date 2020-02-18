@@ -196,7 +196,7 @@ class Tests(unittest.TestCase):
                 msg="(xs:list=[]), must be append",
                 fn=f_list__any2,
                 expected=[
-                    {'name': 'add_argument', 'args': ('--xs',), 'kwargs': {'action': "append", "required": False}}, # noqa
+                    {'name': 'add_argument', 'args': ('--xs',), 'kwargs': {'action': "append", "required": False, "help": "(default: [])", "default": []}}, # noqa
                 ],
             ),
             C(
