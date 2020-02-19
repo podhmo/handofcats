@@ -1,3 +1,7 @@
+3.1.2
+
+- fix falsy default value is treated as None
+
 3.1.1
 
 - fix `--cont` option support completely, in handofcats command
