@@ -15,6 +15,7 @@ class Module(_Module):  # type: ignore
         super().import_(module, as_=as_)
         return sym
 
+    # TODO: to prestring's feature
     def stmt(
         self,
         fmt_or_emittable: t.Union[t.Any, "Emittable"],
@@ -30,9 +31,8 @@ class Module(_Module):  # type: ignore
 
     def let(self, name: str, val: "Emittable") -> "Emittable":
         """like `<name> = ob`"""
-        assigned = let(name, val)
-        assigned.emit(m=self)
-        return assigned
+        self.stmt("{} = {}", name, val)
+        return Symbol(name)
 
     def setattr(self, co: "Emittable", name: str, val: t.Any):
         """like `<ob>.<name> = <val>`"""
@@ -57,10 +57,6 @@ class Emittable(tx.Protocol):
 class Stringer(tx.Protocol):
     def __str__(self) -> str:
         ...
-
-
-def let(name: str, co: Emittable) -> "Assign":
-    return Assign(name, co=co)
 
 
 def as_string(val: t.Any) -> t.Union[t.Dict[str, t.Any], t.List[t.Any], str, UnRepr]:
@@ -95,22 +91,6 @@ class Object(Emittable):
         if self._use_count > 1:
             raise RuntimeError("assign to a variable")
         self._use_count += 1
-        return Attr(name, co=self)
-
-
-class Assign(Emittable):
-    def __init__(self, name: str, co: Stringer) -> None:
-        self.name = name
-        self._co = co
-
-    def emit(self, *, m: Module) -> Module:
-        m.stmt("{} = {}", self.name, self._co)
-        return m
-
-    def __str__(self) -> str:
-        return self.name
-
-    def __getattr__(self, name: str) -> "Attr":
         return Attr(name, co=self)
 
 
