@@ -5,7 +5,7 @@ from .types import TargetFunction
 from .config import Config, default_config
 
 
-def import_symbol_maybe(ob_or_path: str, *, sep: str = ":") -> t.Optional[t.Any]:
+def _import_symbol_maybe(ob_or_path: str, *, sep: str = ":") -> t.Optional[t.Any]:
     from magicalimport import import_symbol
 
     if not isinstance(ob_or_path, str):
@@ -22,7 +22,7 @@ def as_command(
     _force=False,
     config: Config = default_config,
 ) -> TargetFunction:
-    create_driver = import_symbol_maybe(driver)
+    create_driver = _import_symbol_maybe(driver)
     if argv is None:
         argv = sys.argv[1:]
 
@@ -48,7 +48,7 @@ _default_multi_driver = None
 def as_subcommand(fn: TargetFunction, *, driver=MultiDriver) -> TargetFunction:
     global _default_multi_driver
     if _default_multi_driver is None:
-        create_driver = import_symbol_maybe(driver)
+        create_driver = _import_symbol_maybe(driver)
         _default_multi_driver = create_driver()
     _default_multi_driver.register(fn)
     return fn
