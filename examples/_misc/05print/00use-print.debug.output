@@ -1,0 +1,3 @@
+** handofcats.customize: DEBUG=1, activate logging **
+level:INFO	name:__main__L7	message:hello
+level:INFO	name:__main__L8	message:byebye

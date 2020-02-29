@@ -1,0 +1,19 @@
+
+
+
+def run():
+    print("hello")
+    print("byebye")
+
+
+def main(argv=None):
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    args = parser.parse_args(argv)
+    params = vars(args).copy()
+    return run(**params)
+
+
+if __name__ == '__main__':
+    main()

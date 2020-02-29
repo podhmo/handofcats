@@ -1,8 +1,11 @@
 import typing as t
 import sys
+import os
 from .driver import Driver, MultiDriver
 from .types import TargetFunction
 from .config import Config, default_config
+
+__all__ = ["as_command", "as_subcommand", "print"]
 
 
 def _import_symbol_maybe(ob_or_path: str, *, sep: str = ":") -> t.Optional[t.Any]:
@@ -11,6 +14,11 @@ def _import_symbol_maybe(ob_or_path: str, *, sep: str = ":") -> t.Optional[t.Any
     if not isinstance(ob_or_path, str):
         return ob_or_path
     return import_symbol(ob_or_path, sep=sep, cwd=True)
+
+
+########################################
+# for as_command
+########################################
 
 
 def as_command(
@@ -41,6 +49,14 @@ def as_command(
     else:
         return call(fn, level=level, argv=argv)
 
+
+# alias (TODO: remove)
+handofcats = as_command
+
+
+########################################
+# for as_subcommand
+########################################
 
 _default_multi_driver = None
 
@@ -86,5 +102,18 @@ def get_default_multi_driver() -> t.Optional[MultiDriver]:
 as_subcommand.run = _as_subcommand_run  # noqa
 
 
-# alias (TODO: remove)
-handofcats = as_command
+########################################
+# for print
+########################################
+
+
+def _get_print_function(*, name="__main__"):
+    if bool(os.environ.get("DEBUG", "").strip()):
+        import logging
+
+        return logging.getLogger(name).info
+    else:
+        return sys.modules["builtins"].print
+
+
+print = _get_print_function()
