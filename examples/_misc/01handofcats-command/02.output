@@ -44,6 +44,7 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     import argparse
 
     parser = argparse.ArgumentParser(formatter_class=type('_HelpFormatter', (argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter), {}))
+    parser.print_usage = parser.print_help  # type: ignore
     subparsers = parser.add_subparsers(title='subcommands', dest='subcommand')
     subparsers.required = True
 
