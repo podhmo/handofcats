@@ -227,6 +227,10 @@ class MultiDriver:
                     ),
                 ),
             )
+            # parser.print_usage = parser.print_help  # type: ignore
+            m.setattr(parser, "print_usage", parser.print_help)
+            m.unnewline()
+            m.stmt("  # type: ignore")
 
         activate_functions = []
         for setup in customizations or []:
