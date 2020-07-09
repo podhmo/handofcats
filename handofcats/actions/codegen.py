@@ -217,7 +217,7 @@ def run_as_multi_command(
         m.let("subcommand", params.pop("subcommand"))
 
         # return subcommand(**params)
-        m.return_(f"subcommand(**params)")
+        m.return_("subcommand(**params)")
 
     # if __name__ == "__main__":
     with m.if_("__name__ == '__main__'"):
