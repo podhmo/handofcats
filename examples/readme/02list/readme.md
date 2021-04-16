@@ -3,12 +3,12 @@ help
 $ handofcats sum.py:psum -h
 usage: psum [-h] [--ys YS] [--expose] [--inplace] [--simple]
             [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
-            [xs [xs ...]]
+            [xs ...]
 
 positional arguments:
   xs                    - (default: None)
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --ys YS               - (default: None)
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
@@ -46,7 +46,8 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     parser.add_argument('--ys', required=False, action='append', type=int, help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
-    return psum(**params)
+    action = psum
+    return action(**params)
 
 
 if __name__ == '__main__':

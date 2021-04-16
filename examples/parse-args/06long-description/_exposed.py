@@ -24,7 +24,8 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     parser.add_argument('file_name', help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
-    return run(**params)
+    action = run
+    return action(**params)
 
 
 if __name__ == '__main__':
