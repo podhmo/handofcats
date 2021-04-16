@@ -3,7 +3,7 @@ import typing as t
 
 
 def hello(*, name: str = "world", nickname: t.Optional[str] = None) -> None:
-    print(f"hello, world")
+    print(f"hello, {name}")
 
 
 def byebye(*, args: t.List[str]) -> None:
@@ -20,19 +20,21 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
 
     fn = hello
     sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__, formatter_class=parser.formatter_class)
+    sub_parser.print_usage = sub_parser.print_help  # type: ignore
     sub_parser.add_argument('--name', required=False, default='world', help='-')
     sub_parser.add_argument('--nickname', required=False, help='-')
     sub_parser.set_defaults(subcommand=fn)
 
     fn = byebye  # type: ignore
     sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__, formatter_class=parser.formatter_class)
+    sub_parser.print_usage = sub_parser.print_help  # type: ignore
     sub_parser.add_argument('--args', required=True, action='append', help='-')
     sub_parser.set_defaults(subcommand=fn)
 
     args = parser.parse_args(argv)
     params = vars(args).copy()
-    subcommand = params.pop('subcommand')
-    return subcommand(**params)
+    action = params.pop('subcommand')
+    return action(**params)
 
 
 if __name__ == '__main__':
