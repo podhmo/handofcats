@@ -1,3 +1,8 @@
+3.3.0
+
+- run with `FAKE_CALL=1` envvar, skipping actual command execution.
+- show help instead of usage in also sub-commands
+
 3.2.0
 
 - add print() function at handofcats module
