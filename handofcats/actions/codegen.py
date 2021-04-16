@@ -6,9 +6,14 @@ import tempfile
 import pathlib
 from functools import partial
 from prestring.naming import titleize
+from prestring.python import PythonModule
+from prestring.codeobject import CodeObjectModuleMixin
 from ..config import Config, default_config
 from ..types import TargetFunction, SetupParserFunction
-from ._codeobject import Module
+
+
+class Module(PythonModule, CodeObjectModuleMixin):
+    pass
 
 
 logger = logging.getLogger(__name__)
