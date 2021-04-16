@@ -149,7 +149,7 @@ def run_as_single_command(
                 m.from_("functools", "partial")
 
                 # action = partial(getcallargs, action)
-                m.stmt("action = partial(getcallargs, action)")
+                m.stmt("action = partial(getcallargs, action)  # type: ignore")
 
         # return action(**params)
         m.return_("action(**params)")
