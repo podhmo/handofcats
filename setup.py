@@ -12,7 +12,7 @@ try:
 except IOError:
     README = CHANGES = ""
 
-install_requires = ["prestring", "typing_extensions", "magicalimport"]
+install_requires = ["prestring>=0.9.0", "typing_extensions", "magicalimport"]
 if sys.version_info[:2] <= (3, 6):
     install_requires.append("dataclasses")
 
