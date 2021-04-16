@@ -137,7 +137,7 @@ def run_as_single_command(
         m.stmt(f"action = {fn.__name__}")
 
         if not config.codegen_config.use_primitive_parser:
-            os = m.toplevel.import_("os")
+            m.toplevel.import_("os")
 
             # if bool(os.getenv("FAKE_CALL")):
             with m.if_("""bool(os.getenv("FAKE_CALL"))"""):
@@ -244,7 +244,7 @@ def run_as_multi_command(
         m.let("action", params.pop("subcommand"))
 
         if not config.codegen_config.use_primitive_parser:
-            os = m.toplevel.import_("os")
+            m.toplevel.import_("os")
 
             # if bool(os.getenv("FAKE_CALL")):
             with m.if_("""bool(os.getenv("FAKE_CALL"))"""):
