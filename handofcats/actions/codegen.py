@@ -79,7 +79,7 @@ def run_as_single_command(
     outname: str = "main",
     config: Config = default_config,
 ) -> None:
-    """ generate main() code
+    """generate main() code
 
     something like
 
@@ -136,6 +136,21 @@ def run_as_single_command(
         # action = <fn>
         m.stmt(f"action = {fn.__name__}")
 
+        if not config.codegen_config.use_primitive_parser:
+            m.toplevel.import_("os")
+
+            # if bool(os.getenv("FAKE_CALL")):
+            with m.if_("""bool(os.getenv("FAKE_CALL"))"""):
+
+                # from inspect import getcallargs
+                m.from_("inspect", "getcallargs")
+
+                # from functools import partial
+                m.from_("functools", "partial")
+
+                # action = partial(getcallargs, action)
+                m.stmt("action = partial(getcallargs, action)  # type: ignore")
+
         # return action(**params)
         m.return_("action(**params)")
 
@@ -155,7 +170,7 @@ def run_as_multi_command(
     outname: str = "main",
     config: Config = default_config,
 ) -> t.Any:
-    """ generate main() code
+    """generate main() code
 
     something like
 
@@ -227,6 +242,21 @@ def run_as_multi_command(
 
         # action = params.pop("subcommand")
         m.let("action", params.pop("subcommand"))
+
+        if not config.codegen_config.use_primitive_parser:
+            m.toplevel.import_("os")
+
+            # if bool(os.getenv("FAKE_CALL")):
+            with m.if_("""bool(os.getenv("FAKE_CALL"))"""):
+
+                # from inspect import getcallargs
+                m.from_("inspect", "getcallargs")
+
+                # from functools import partial
+                m.from_("functools", "partial")
+
+                # action = partial(getcallargs, action)
+                m.stmt("action = partial(getcallargs, action)")
 
         # return action(**params)
         m.return_("action(**params)")

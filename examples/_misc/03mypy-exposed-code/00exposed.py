@@ -1,4 +1,5 @@
 import typing as t
+import os
 
 
 
@@ -20,6 +21,10 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     args = parser.parse_args(argv)
     params = vars(args).copy()
     action = hello
+    if bool(os.getenv("FAKE_CALL")):
+        from inspect import getcallargs
+        from functools import partial
+        action = partial(getcallargs, action)  # type: ignore
     return action(**params)
 
 
