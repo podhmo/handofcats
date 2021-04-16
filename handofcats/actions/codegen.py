@@ -91,7 +91,8 @@ def run_as_single_command(
 
         args = parser.parse_args(argv)
         params = vars(args).copy()
-        return hello(**params)
+        action = hello
+        return action(**params)
 
     if __name__ == "__main__":
         main()
@@ -127,8 +128,11 @@ def run_as_single_command(
         # params = vars(args).copy()
         _ = m.let("params", m.symbol("vars")(args).copy())
 
-        # return fn(**params)
-        m.return_(f"{fn.__name__}(**params)")
+        # action = <fn>
+        m.stmt(f"action = {fn.__name__}")
+
+        # return action(**params)
+        m.return_("action(**params)")
 
     # if __name__ == "__main__":
     with m.if_("__name__ == '__main__'"):
@@ -175,8 +179,8 @@ def run_as_multi_command(
 
         args = parser.parse_args(argv)
         params = vars(args).copy()
-        subcommand = params.pop('subcommand')
-        return subcommand(**params)
+        action = params.pop('subcommand')
+        return action(**params)
 
 
     if __name__ == '__main__':
@@ -213,11 +217,11 @@ def run_as_multi_command(
         # params = vars(args).copy()
         params = m.let("params", m.symbol("vars")(args).copy())
 
-        # subcommand = params.pop("subcommand")
-        m.let("subcommand", params.pop("subcommand"))
+        # action = params.pop("subcommand")
+        m.let("action", params.pop("subcommand"))
 
-        # return subcommand(**params)
-        m.return_("subcommand(**params)")
+        # return action(**params)
+        m.return_("action(**params)")
 
     # if __name__ == "__main__":
     with m.if_("__name__ == '__main__'"):
