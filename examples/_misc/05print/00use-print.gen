@@ -12,7 +12,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser()
     args = parser.parse_args(argv)
     params = vars(args).copy()
-    return run(**params)
+    action = run
+    return action(**params)
 
 
 if __name__ == '__main__':
