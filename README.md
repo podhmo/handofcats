@@ -1,6 +1,5 @@
-# handofcats
+# handofcats ![Python package](https://github.com/podhmo/handofcats/workflows/Python%20package/badge.svg) [![PyPi version](https://img.shields.io/pypi/v/handofcats.svg)](https://pypi.python.org/pypi/handofcats) [![](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/download/releases/3.7.0/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://black.readthedocs.io/en/stable/)
 
-[![Build Status](https://travis-ci.org/podhmo/handofcats.svg?branch=master)](https://travis-ci.org/podhmo/handofcats)
 
 A tiny magically Converter that making executable command from
 plain python function. If the function is type annotated, it is used.
