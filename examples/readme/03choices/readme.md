@@ -34,6 +34,7 @@ bar,21
 ```console
 $ python -W ignore -m handofcats dump.py:run --expose | tee dump-exposed.py
 import typing as t
+import os
 import sys
 
 
@@ -79,6 +80,10 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     args = parser.parse_args(argv)
     params = vars(args).copy()
     action = run
+    if bool(os.getenv("FAKE_CALL")):
+        from inspect import getcallargs
+        from functools import partial
+        action = partial(getcallargs, action)
     return action(**params)
 
 

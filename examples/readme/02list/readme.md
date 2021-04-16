@@ -28,6 +28,7 @@ handofcats sum.py:psum 10 20 --ys 1 --ys 2
 ```console
 $ handofcats sum.py:psum --expose | tee sum-exposed.py
 import typing as t
+import os
 
 
 
@@ -47,6 +48,10 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     args = parser.parse_args(argv)
     params = vars(args).copy()
     action = psum
+    if bool(os.getenv("FAKE_CALL")):
+        from inspect import getcallargs
+        from functools import partial
+        action = partial(getcallargs, action)
     return action(**params)
 
 
