@@ -243,6 +243,7 @@ class MultiDriver:
             "subparsers", parser.add_subparsers(title="subcommands", dest="subcommand")
         )
 
+
         # subparsers.required = True
         m.setattr(subparsers, "required", True)  # for py3.6
         m.sep()
@@ -263,6 +264,13 @@ class MultiDriver:
                     formatter_class=parser.formatter_class,
                 ),
             )
+
+            if not config.codegen_config.use_primitive_parser:
+                # sub_parser.print_usage = sub_parser.print_help  # type: ignore
+                m.setattr(sub_parser, "print_usage", sub_parser.print_help)
+                m.unnewline()
+                m.stmt("  # type: ignore")
+
             Injector(target_fn).inject(
                 sub_parser,
                 callback=m.stmt,
