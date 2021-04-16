@@ -1,9 +1,14 @@
 import typing as t
+import logging
 from importlib import import_module
 from types import ModuleType
+import os
 from ..types import TargetFunction, SetupParserFunction
 from .. import customize
 from ..config import Config, default_config
+
+
+logger = logging.getLogger(__name__)
 
 
 class _FakeModule:
@@ -54,13 +59,18 @@ def run_as_single_command(
         customizations.append(customize.logging_setup)
 
     parser, activate_functions = setup_parser(
-        fn, m=m, customizations=customizations, config=config,
+        fn,
+        m=m,
+        customizations=customizations,
+        config=config,
     )
     args = parser.parse_args(argv)
     params = vars(args).copy()
 
     for activate in activate_functions:
         activate(params)
+
+    fn = _bind_fake_call_if_needed(fn)
     val = fn(**params)
     if val is None:
         return None
@@ -84,7 +94,10 @@ def run_as_multi_command(
         customizations.append(customize.logging_setup)
 
     parser, activate_functions = setup_parser(
-        functions, m=m, customizations=customizations, config=config,
+        functions,
+        m=m,
+        customizations=customizations,
+        config=config,
     )
     args = parser.parse_args(argv)
     params = vars(args).copy()
@@ -92,8 +105,20 @@ def run_as_multi_command(
     for activate in activate_functions:
         activate(params)
 
-    subcommand = params.pop("subcommand")
-    val = subcommand(**params)
+    fn = params.pop("subcommand")
+    fn = _bind_fake_call_if_needed(fn)
+    val = fn(**params)
     if val is None:
         return None
     return config.cont(val)
+
+
+def _bind_fake_call_if_needed(fn):
+    if not bool(os.getenv("FAKE_CALL")):
+        return fn
+
+    from inspect import getcallargs
+    from functools import partial
+
+    logger.info("FAKE_CALL is activated, does not actually execute the command")
+    return partial(getcallargs, fn)
