@@ -116,7 +116,7 @@ class CollectSymbolVisitor(PyTreeVisitor):
                 sym = parse_import_as_name(x)
                 sym = dataclasses.replace(
                     sym,
-                    fullname=f"{module}.{sym.name}",
+                    fullname=f"{module}.{sym.fullname}",
                     id=id(node),
                     from_=type_repr(node.type),
                 )
