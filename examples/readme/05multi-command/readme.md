@@ -5,7 +5,7 @@ usage: cli.py [-h] [--expose] [--inplace] [--simple]
               [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
               {hello,byebye} ...
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
@@ -22,7 +22,7 @@ help ( subcommand )
 $ python cli.py hello -h
 usage: cli.py hello [-h] [--name NAME]
 
-optional arguments:
+options:
   -h, --help   show this help message and exit
   --name NAME  - (default: world)
 ```

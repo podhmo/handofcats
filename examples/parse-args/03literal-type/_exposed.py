@@ -19,7 +19,8 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     parser.add_argument('--value', required=True, choices=['0', '1', '-1'], type=int, help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
-    return run(**params)
+    action = run
+    return action(**params)
 
 
 if __name__ == '__main__':

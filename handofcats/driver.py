@@ -26,7 +26,8 @@ class Driver:
     __call__ = register
 
     def run(
-        self, argv=None,
+        self,
+        argv=None,
     ):
         import argparse
 
@@ -53,7 +54,10 @@ class Driver:
                 )
 
                 return codegen.run_as_single_command(
-                    self.setup_parser, fn=fn, argv=rest_argv, config=config,
+                    self.setup_parser,
+                    fn=fn,
+                    argv=rest_argv,
+                    config=config,
                 )
 
         # run command normally
@@ -150,7 +154,8 @@ class MultiDriver:
     __call__ = register
 
     def run(
-        self, argv=None,
+        self,
+        argv=None,
     ):
         import argparse
 
@@ -186,7 +191,10 @@ class MultiDriver:
         from .actions import commandline
 
         return commandline.run_as_multi_command(
-            self.setup_parser, functions=functions, argv=rest_argv, config=config,
+            self.setup_parser,
+            functions=functions,
+            argv=rest_argv,
+            config=config,
         )
 
     def setup_parser(
@@ -263,6 +271,13 @@ class MultiDriver:
                     formatter_class=parser.formatter_class,
                 ),
             )
+
+            if not config.codegen_config.use_primitive_parser:
+                # sub_parser.print_usage = sub_parser.print_help  # type: ignore
+                m.setattr(sub_parser, "print_usage", sub_parser.print_help)
+                m.unnewline()
+                m.stmt("  # type: ignore")
+
             Injector(target_fn).inject(
                 sub_parser,
                 callback=m.stmt,

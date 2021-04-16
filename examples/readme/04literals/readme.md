@@ -4,7 +4,7 @@ $ handofcats dump.py:run -h
 usage: run [-h] [--format {json,csv}] [--expose] [--inplace] [--simple]
            [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --format {json,csv}   - (default: json)
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
@@ -77,7 +77,8 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     parser.add_argument('--format', required=False, default='json', choices=["'json'", "'csv'"], help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
-    return run(**params)
+    action = run
+    return action(**params)
 
 
 if __name__ == '__main__':

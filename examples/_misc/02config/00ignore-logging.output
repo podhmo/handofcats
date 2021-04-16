@@ -1,6 +1,6 @@
 usage: hello [-h] [--expose] [--inplace] [--simple]
 
-optional arguments:
+options:
   -h, --help  show this help message and exit
   --expose    dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace   overwrite file (default: False)

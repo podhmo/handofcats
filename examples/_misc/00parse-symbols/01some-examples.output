@@ -5,7 +5,7 @@ foo.bar.baz -- Symbol(fullname='foo.bar.baz', name='foo.bar.baz', id=0, from_='i
 b -- Symbol(fullname='foo.bar.baz', name='b', id=0, from_='import_name')
 j -- Symbol(fullname='i.j', name='j', id=0, from_='import_from')
 k -- Symbol(fullname='i.j.k', name='k', id=0, from_='import_from')
-K -- Symbol(fullname='i.j.K', name='K', id=0, from_='import_from')
+K -- Symbol(fullname='i.j.k', name='K', id=0, from_='import_from')
 zzz -- Symbol(fullname='...xxx.zzz', name='zzz', id=0, from_='import_from')
 AAA -- Symbol(fullname='yyy.zzz.AAA', name='AAA', id=0, from_='import_from')
 bbb -- Symbol(fullname='yyy.zzz.BBB', name='bbb', id=0, from_='import_from')

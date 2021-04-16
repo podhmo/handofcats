@@ -116,7 +116,7 @@ class CollectSymbolVisitor(PyTreeVisitor):
                 sym = parse_import_as_name(x)
                 sym = dataclasses.replace(
                     sym,
-                    fullname=f"{module}.{sym.name}",
+                    fullname=f"{module}.{sym.fullname}",
                     id=id(node),
                     from_=type_repr(node.type),
                 )
@@ -146,18 +146,21 @@ class CollectSymbolVisitor(PyTreeVisitor):
 
 # debug output
 if __name__ == "__main__":
+    import textwrap
 
     def parse_imported_symbols(t: Node) -> t.Dict[str, Symbol]:
         v = CollectSymbolVisitor()
         v.visit(t)
         return v.symbols
 
-    t = parse_string(
-        """
-    from handofcats import as_subcommand
-    from handofcats import as_subcommand as register
+    code = textwrap.dedent(
+        """\
+    from foo.bar.boo import as_subcommand
+    from foo.bar.boo import as_subcommand as register
     """
     )
+
+    t = parse_string(code)
     D = parse_imported_symbols(t)
     for name, sym in D.items():
         print(f"{name} -- {sym}")

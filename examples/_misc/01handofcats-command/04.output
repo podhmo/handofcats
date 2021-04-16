@@ -6,7 +6,7 @@ usage: handofcats [--cont CONT] [--driver DRIVER]
 positional arguments:
   entry_point           target EntryPoint. (format '<file name>:<attr>' or '<file name>')
 
-optional arguments:
+options:
   --cont CONT           continuation, if not None value is returned, default is print (default: None)
   --driver DRIVER       DI, driver class, this is experimental (default: handofcats.driver:Driver) (default: handofcats.driver:Driver)
   --multi-driver MULTI_DRIVER

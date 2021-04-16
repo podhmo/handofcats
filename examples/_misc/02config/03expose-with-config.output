@@ -12,7 +12,8 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     parser.print_usage = parser.print_help  # type: ignore
     args = parser.parse_args(argv)
     params = vars(args).copy()
-    return hello(**params)
+    action = hello
+    return action(**params)
 
 
 if __name__ == '__main__':
