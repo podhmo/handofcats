@@ -7,7 +7,7 @@ usage: __main__.py [-h] [--expose] [--inplace] [--simple]
                    [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
                    {hello,byebye} ...
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
   --inplace             overwrite file (default: False)
@@ -21,7 +21,7 @@ subcommands:
 python -m handofcats 02multi.py hello -h
 usage: __main__.py hello [-h] [--name NAME]
 
-optional arguments:
+options:
   -h, --help   show this help message and exit
   --name NAME  - (default: world)
 python -m handofcats 02multi.py --expose
@@ -50,18 +50,20 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
 
     fn = hello
     sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__, formatter_class=parser.formatter_class)
+    sub_parser.print_usage = sub_parser.print_help  # type: ignore
     sub_parser.add_argument('--name', required=False, default='world', help='-')
     sub_parser.set_defaults(subcommand=fn)
 
     fn = byebye  # type: ignore
     sub_parser = subparsers.add_parser(fn.__name__, help=fn.__doc__, formatter_class=parser.formatter_class)
+    sub_parser.print_usage = sub_parser.print_help  # type: ignore
     sub_parser.add_argument('name', help='-')
     sub_parser.set_defaults(subcommand=fn)
 
     args = parser.parse_args(argv)
     params = vars(args).copy()
-    subcommand = params.pop('subcommand')
-    return subcommand(**params)
+    action = params.pop('subcommand')
+    return action(**params)
 
 
 if __name__ == '__main__':

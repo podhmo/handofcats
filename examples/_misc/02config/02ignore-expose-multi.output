@@ -2,7 +2,7 @@ usage: 02ignore-expose-multi.py [-h]
                                 [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
                                 {hello,byebye} ...
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
 

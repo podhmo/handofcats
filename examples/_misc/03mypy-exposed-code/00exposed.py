@@ -19,7 +19,8 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     parser.add_argument('--nickname', required=False, help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
-    return hello(**params)
+    action = hello
+    return action(**params)
 
 
 if __name__ == '__main__':

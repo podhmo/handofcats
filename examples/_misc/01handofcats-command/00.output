@@ -4,7 +4,7 @@ python -m handofcats 00single.py:hello -h
 usage: hello [-h] [--name NAME] [--expose] [--inplace] [--simple]
              [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --name NAME           - (default: world)
   --expose              dump generated code. with --inplace, eject from handofcats dependency (default: False)
@@ -25,7 +25,8 @@ def main(argv: t.Optional[t.List[str]] = None) -> t.Any:
     parser.add_argument('--name', required=False, default='world', help='-')
     args = parser.parse_args(argv)
     params = vars(args).copy()
-    return hello(**params)
+    action = hello
+    return action(**params)
 
 
 if __name__ == '__main__':

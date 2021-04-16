@@ -1,18 +1,11 @@
 import typing as t
 
-
-
-@register
 def hello(*, name: str = "world"):
     print(f"hello {name}")
 
 
-@register
 def byebye(name):
     print(f"byebye {name}")
-
-
-register.run()
 
 
 def main(argv: t.Optional[t.List[str]] = None) -> t.Any:

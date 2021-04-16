@@ -1,6 +1,6 @@
 usage: hello [-h]
              [--logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}]
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --logging {CRITICAL,FATAL,ERROR,WARN,WARNING,INFO,DEBUG,NOTSET}
